@@ -1,0 +1,21 @@
+{
+  "name": "live-rubber-mobile",
+  "private": true,
+  "packageManager": "bun@1.0.0",
+  "workspaces": [
+    "ui/mobile"
+  ],
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "dev:server": "cd service && go run cmd/server/main.go",
+    "dev:mobile": "cd ui/mobile && bun run start",
+    "proto:generate": "cd shared && buf generate",
+    "setup": "bun install && bun run proto:generate",
+    "typecheck": "cd ui/mobile && bun run typecheck",
+    "lint": "cd ui/mobile && bun run lint"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.8",
+    "@bufbuild/buf": "^1.28.1"
+  }
+}

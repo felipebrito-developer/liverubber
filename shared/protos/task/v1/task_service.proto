@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package task.v1;
+
+import "shared/protos/base/pagination.proto";
+import "base/common.proto";
+
+option go_package = "github.com/yourusername/liverubber/gen/task/v1";
+option typescript_package = "task.v1";
+
+service TaskService {
+  rpc CreateTask(CreateTaskRequest) returns (Task);
+  rpc GetTask(GetTaskRequest) returns (Task);
+  rpc ListTasks(ListTasksRequest) returns (ListTasksResponse);
+  rpc UpdateTask(UpdateTaskRequest) returns (Task);
+  rpc DeleteTask(DeleteTaskRequest) returns (base.Empty);
+}

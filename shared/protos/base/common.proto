@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package base;
+
+option go_package = "github.com/felipebrito-developer/liverubber/gen/base";
+option typescript_package = "base";
+
+message Empty {}
+
+message Timestamp {
+  int64 seconds = 1;
+  int32 nanos = 2;
+}
