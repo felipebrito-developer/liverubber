@@ -4,10 +4,10 @@ Here is describe the project structure, to help on LLM's prompts and overall pro
 
 ## Project Overview
 
-- Mobile app for file organization and better track of goals and finances.
+- Mobile app for file organization and better track of task, events, goals, exercises and finances.
 - Only for Android, but IOS in future.
 - Monorepo
-- UI and logic separation.
+- UI and business logic separation.
 - Local database.
 
 ## Architecture
@@ -15,28 +15,29 @@ Here is describe the project structure, to help on LLM's prompts and overall pro
 ### Architecture Summary
 
 LiveRubber/
-├── docs/
+├── docs/                           # General project documentation
 ├── service/                        # Go backend
 ├── ui/                             # Multiple Ui folders (Future)
-|   └─ mobile/                      # React Native app  
-├── shared/                         # Shared resources
+|   └─ mobile/                      # React Native Mobile App Folders 
+├── shared/                         # Shared resources (JSON schemas, types generations functions and logic )
 ├── turbo.json
 ├── package.json
 └── README.md
 
 ### Shared
 
-This Folder contains all types structures and generation scripts in gRPC for proto
+This Folder contains all types JSON schemas and code generation with quicktype lib
 
 shared/
-├── protos/
-│   ├── base/                        # Proto base types
-│   │   ├── pagination.proto
-│   │   └── common.proto
-│   ├── task/v1/                     # Domain version
-│   │   ├── task.proto               # Task Entity protos
-│   │   └── service.proto            # Task services
-└── scripts/                         # Code gen scripts
+├── schemas/
+│   ├── base/                        # base schemas used across other schemas
+│   │   ├── common-api.json
+│   │   └── common-data.json
+│   ├── entities/                        # Domain version
+│   │   └── task                         # Task Entity protos
+│   │       ├── task.proto               # Task Entity protos
+│   │       └── service.proto            # Task services
+└── scripts/                             # Code gen scripts
     └── generate-proto.sh
 
 ### Backend

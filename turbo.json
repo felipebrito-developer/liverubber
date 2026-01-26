@@ -1,15 +1,23 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
-    "proto:generate": {
-      "outputs": ["service/gen/**", "ui/mobile/gen/**"]
+  "tasks": {
+    "generate:types": {},
+    "lint": {
+      "outputs": [
+        ".next/**"
+      ],
+      "cache": false
     },
-    "dev": {
-      "cache": false,
-      "persistent": true
+    "type-check": {
+      "outputs": [
+        ".next/**"
+      ]
     },
     "build": {
-      "outputs": ["dist/**", "build/**"]
-    }
+      "dependsOn": [
+        "generate-types"
+      ]
+    },
+    "setup": {}
   }
 }

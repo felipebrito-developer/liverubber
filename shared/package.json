@@ -1,0 +1,13 @@
+{
+  "name": "shared",
+  "private": true,
+  "scripts": {
+    "generate:types": "bun ./scripts/type-generator.ts"
+  },
+  "devDependencies": {
+    "quicktype": "^23.0.0",
+    "typescript": "^5.0.0",
+    "@types/bun": "^1.0.0"
+  },
+  "packageManager": "bun@1.0.0"
+}
