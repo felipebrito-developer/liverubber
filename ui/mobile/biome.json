@@ -5,11 +5,16 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
+      "recommended": true,
+      "style": {
+        "noImplicitAny": "error",
+        "noUntypedPublicSignature": "warn"
+      }
     }
   },
   "formatter": {
     "indentStyle": "space",
-    "indentSize": 2
+    "indentSize": 2,
+    "lineWidth": 100
   }
 }

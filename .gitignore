@@ -1,7 +1,15 @@
+#git
+.git/
+.github/
+
 # Bun
 bun.lockb
 node_modules/
 *.tsbuildinfo
+
+#turbo
+.turbo/
+**/.turbo/
 
 # Go
 service/bin/
@@ -15,10 +23,12 @@ service/gen/
 *.dylib
 
 # React Native
+ui/mobile/.bundle/
 ui/mobile/node_modules/
 ui/mobile/gen/
 ui/mobile/android/build/
-ui/mobile/ios/build/
+# no IOS build for now
+ui/mobile/ios/
 ui/mobile/.gradle/
 ui/mobile/.expo/
 *.apk
