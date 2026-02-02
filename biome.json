@@ -1,20 +1,62 @@
 {
-  "organizeImports": {
-    "enabled": true
-  },
-  "linter": {
-    "enabled": true,
-    "rules": {
-      "recommended": true,
-      "style": {
-        "noImplicitAny": "error",
-        "noUntypedPublicSignature": "warn"
-      }
-    }
-  },
-  "formatter": {
-    "indentStyle": "space",
-    "indentSize": 2,
-    "lineWidth": 100
-  }
+	"$schema": "https://biomejs.dev/schemas/2.3.7/schema.json",
+	"formatter": {
+		"enabled": true,
+		"formatWithErrors": false,
+		"attributePosition": "auto",
+		"indentStyle": "tab",
+		"indentWidth": 2,
+		"lineEnding": "lf",
+		"lineWidth": 80
+	},
+	"files": {
+		"includes": [
+			"**/*.{ts,tsx,js,json}",
+			"test/**/*.js",
+			"!**/*.min.js",
+			"!**/node_modules",
+			"!**/Pods",
+			"!**/dist",
+			"!**/build"
+		]
+	},
+	"linter": {
+		"rules": {
+			"correctness": {
+				"noUnusedVariables": {
+					"level": "error",
+					"fix": "unsafe"
+				}
+			},
+			"style": {
+				"useTemplate": {
+					"level": "warn",
+					"fix": "safe"
+				}
+			}
+		}
+	},
+	"javascript": {
+		"formatter": {
+			"arrowParentheses": "always",
+			"bracketSameLine": false,
+			"bracketSpacing": true,
+			"jsxQuoteStyle": "double",
+			"quoteProperties": "asNeeded",
+			"semicolons": "always",
+			"trailingCommas": "all"
+		}
+	},
+	"json": {
+		"formatter": {
+			"trailingCommas": "none"
+		}
+	},
+	"assist": {
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
+		}
+	}
 }

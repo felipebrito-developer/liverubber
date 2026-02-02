@@ -1,81 +1,69 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "base/common-api",
-  "title": "Common API Types",
-  "type": "object",
-  "properties": {
-    "request": {
-      "$ref": "#/definitions/APIRequest"
-    },
-    "response": {
-      "$ref": "#/definitions/APIResponse"
-    },
-    "paginatedResponse": {
-      "$ref": "#/definitions/APIPaginatedResponse"
-    }
-  },
-  "definitions": {
-    "APIRequest": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "format": "uuid"
-        }
-      },
-      "required": [
-        "id"
-      ]
-    },
-    "APIResponse": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "format": "uuid"
-        },
-        "timestamp": {
-          "type": "string",
-          "format": "date-time"
-        }
-      },
-      "required": [
-        "id",
-        "timestamp"
-      ]
-    },
-    "APIPaginatedResponse": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "format": "uuid"
-        },
-        "status": {
-          "type": "string",
-          "enum": [
-            "error",
-            "success",
-            "cancelled"
-          ]
-        },
-        "currentPage": {
-          "type": "number",
-          "format": "int32"
-        },
-        "totalPages": {
-          "type": "number",
-          "format": "int32"
-        },
-        "totalItems": {
-          "type": "number",
-          "format": "int32"
-        }
-      },
-      "required": [
-        "id",
-        "status"
-      ]
-    }
-  }
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "base/common-api",
+	"title": "Common API Types",
+	"type": "object",
+	"properties": {
+		"request": {
+			"$ref": "#/definitions/APIRequest"
+		},
+		"response": {
+			"$ref": "#/definitions/APIResponse"
+		},
+		"paginatedResponse": {
+			"$ref": "#/definitions/APIPaginatedResponse"
+		}
+	},
+	"definitions": {
+		"APIRequest": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string",
+					"format": "uuid"
+				}
+			},
+			"required": ["id"]
+		},
+		"APIResponse": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string",
+					"format": "uuid"
+				},
+				"timestamp": {
+					"type": "string",
+					"format": "date-time"
+				}
+			},
+			"required": ["id", "timestamp"]
+		},
+		"APIPaginatedResponse": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string",
+					"format": "uuid"
+				},
+				"status": {
+					"type": "string",
+					"enum": ["error", "success", "cancelled"]
+				},
+				"currentPage": {
+					"type": "number",
+					"format": "int32"
+				},
+				"totalPages": {
+					"type": "number",
+					"format": "int32"
+				},
+				"totalItems": {
+					"type": "number",
+					"format": "int32"
+				}
+			},
+			"required": ["id", "status"]
+		}
+	}
 }

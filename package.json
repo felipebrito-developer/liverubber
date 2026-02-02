@@ -1,26 +1,26 @@
 {
-  "name": "liverubber",
-  "private": true,
-  "packageManager": "bun@1.3.3",
-  "workspaces": [
-    "service",
-    "ui/mobile",
-    "shared"
-  ],
-  "scripts": {
-    "dev": "turbo run dev --parallel",
-    "install:go-packages": "bun run deps:update --filter=service",
-    "build": "turbo run generate:types --filter=shared",
-    "generate:types": "turbo run generate:types --filter=shared",
-    "generate:types:validate": "bun shared/scripts/generate-with-validation.ts",
-    "validate:schemas": "bun shared/scripts/validate-schemas.ts",
-    "install": "bun install && bun run generate:types",
-    "setup:all": "turbo run setup",
-    "clean": "turbo run clean"
-  },
-  "devDependencies": {
-    "turbo": "^2.6.1",
-    "@biomejs/biome": "^2.3.7",
-    "typescript": "^5.9.3"
-  }
+	"name": "liverubber",
+	"private": true,
+	"packageManager": "bun@1.3.3",
+	"workspaces": [
+		"service",
+		"ui/mobile",
+		"shared"
+	],
+	"scripts": {
+		"dev": "turbo run dev --parallel",
+		"install:go-packages": "bun run deps:update --filter=service",
+		"build": "turbo run generate:types --filter=shared",
+		"generate:types": "turbo run generate:types --filter=shared",
+		"generate:types:validate": "bun shared/scripts/generate-with-validation.ts",
+		"validate:schemas": "bun shared/scripts/validate-schemas.ts",
+		"setup:all": "turbo run setup",
+		"clean:cache": "turbo run clean",
+		"clean:all": "rm -rf node_modules && rm -rf ../*/node_modules  && turbo run clean"
+	},
+	"devDependencies": {
+		"turbo": "^2.6.1",
+		"@biomejs/biome": "^2.3.7",
+		"typescript": "^5.9.3"
+	}
 }

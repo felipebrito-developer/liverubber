@@ -1,35 +1,31 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "base/common-data",
-    "title": "Common Data Types",
-    "type": "object",
-    "properties": {
-        "entity": {
-            "$ref": "#/definitions/Entity"
-        }
-    },
-    "definitions": {
-        "Entity": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string",
-                    "format": "uuid"
-                },
-                "createdAt": {
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "updatedAt": {
-                    "type": "string",
-                    "format": "date-time"
-                }
-            },
-            "required": [
-                "id",
-                "createdAt",
-                "updatedAt"
-            ]
-        }
-    }
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "base/common-data",
+	"title": "Common Data Types",
+	"type": "object",
+	"properties": {
+		"entity": {
+			"$ref": "#/definitions/Entity"
+		}
+	},
+	"definitions": {
+		"Entity": {
+			"type": "object",
+			"properties": {
+				"id": {
+					"type": "string",
+					"format": "uuid"
+				},
+				"createdAt": {
+					"type": "string",
+					"format": "date-time"
+				},
+				"updatedAt": {
+					"type": "string",
+					"format": "date-time"
+				}
+			},
+			"required": ["id", "createdAt", "updatedAt"]
+		}
+	}
 }

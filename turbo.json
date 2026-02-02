@@ -1,23 +1,17 @@
 {
-  "$schema": "https://turbo.build/schema.json",
-  "tasks": {
-    "generate:types": {},
-    "lint": {
-      "outputs": [
-        ".next/**"
-      ],
-      "cache": false
-    },
-    "type-check": {
-      "outputs": [
-        ".next/**"
-      ]
-    },
-    "build": {
-      "dependsOn": [
-        "generate-types"
-      ]
-    },
-    "setup": {}
-  }
+	"$schema": "https://turbo.build/schema.json",
+	"tasks": {
+		"generate:types": {},
+		"lint": {
+			"outputs": [".next/**"],
+			"cache": false
+		},
+		"type-check": {
+			"outputs": [".next/**"]
+		},
+		"build": {
+			"dependsOn": ["generate-types"]
+		},
+		"setup": {}
+	}
 }
