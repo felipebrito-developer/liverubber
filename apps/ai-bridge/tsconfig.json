@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"lib": ["ESNext"],
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"allowImportingTsExtensions": true,
+		"noEmit": true,
+		"strict": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"baseUrl": ".",
+		"paths": {
+			"@liverubber/shared/*": ["../../packages/shared/*"],
+			"@liverubber/security": ["../../packages/security/src/index.ts"]
+		}
+	},
+	"include": ["./src/**/*.ts"],
+	"exclude": ["node_modules", "dist"]
+}

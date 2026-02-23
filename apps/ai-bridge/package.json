@@ -1,0 +1,22 @@
+{
+	"name": "@liverubber/ai-bridge",
+	"private": true,
+	"scripts": {
+		"dev": "bun run --watch src/index.ts",
+		"build": "bun build ./src/index.ts --outdir dist --target node",
+		"type-check": "tsc --noEmit",
+		"setup": "bun install"
+	},
+	"dependencies": {
+		"ai": "^4.3.16",
+		"@ai-sdk/google": "^1.2.19",
+		"@ai-sdk/openai": "^1.3.22",
+		"hono": "^4.7.7",
+		"@liverubber/security": "workspace:*"
+	},
+	"devDependencies": {
+		"typescript": "^5.9.3",
+		"@types/bun": "^1.0.0"
+	},
+	"packageManager": "bun@1.3.3"
+}

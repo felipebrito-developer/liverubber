@@ -1,0 +1,22 @@
+# LiveRubber Project Rules
+
+## Architecture Overview
+- Structure: Monorepo (Turborepo + Bun).
+- Frameworks: React Native (Mobile), Node.js (Service).
+- Design Pattern: Clean Architecture (Handler -> Service -> Repository -> Domain).
+- Database: SQLite (local).
+
+## AI & Privacy
+- Local Agents: Use Ollama/DeepSeek for PII (Personally Identifiable Information).
+- Cloud Agents: Use Gemini Flash for generic logic (anonymized data only).
+- Connectivity: Always use Model Context Protocol (MCP) to bridge LLMs to SQLite.
+
+## Coding Standards
+- Language: TypeScript with strict typing.
+- Linting/Formatting: Biome.
+- State Management: Jotai (Mobile).
+- Data Fetching: TanStack Query.
+
+## Contextual Hints
+- Domain logic is always in `apps/service/src/internal/domain`.
+- Shared types reside in `packages/shared/@types`.

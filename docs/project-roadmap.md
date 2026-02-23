@@ -2,77 +2,25 @@
 
 ## Incomplete Steps
 
-### Base Structure
+### AI & PRIVACY (Priority)
+- [ ] Configure `ai-bridge` service with Vercel AI SDK.
+- [ ] Implement Privacy Router (Local vs Cloud decision logic).
+- [ ] Setup MCP Server in `service/` to expose SQLite safely.
+- [ ] Implement data anonymization utility in `packages/security`.
 
-### AI Prompts
-
-- Create an application context prompt for questions, to use in free AI agents.
-
-### ARCHITECTURE DEFINITIONS
-
-- Arch design
-- Data structure
-- System design
-- Code Structure
-
-### DESIGN
-
-- Create some mockups for the screens
-- Think about user behaviors inside the app
+### BACKEND
+- [ ] Create database migrations for `meaning`, `goal`, `task`.
+- [ ] Implement CRUD for entities.
+- [ ] Create repository layer for database access.
 
 ### FRONTEND
-
-- Define component structure of screens
-- Create some template components for the screens structure
-- Define correct structure for router
-- create app first screen
-- create welcome page
-- create tasks view screen
-- create login page
-- create simple auth flow
-- create gRPC client
-  
-### BACKEND
-
-- Create entities types
-- Create entities tables
-- Create database migrations
-- Create CRUD for entities
-- Create first services for getting data from sqlite
-- Create service to access mobile local database
-
-### SHARED/MONOREPO
-
-- create first gRPC types
-- create gRPC generation file
-- generate first types in typescript and go
-- Define shared libs
-- Biome installation
-- Monorepo structure configuration
-- Turbo.js installation
-- Turbo.js build process and configuration
-- Type generation lib definition
-- Create type generation scripts
+- [ ] Define component structure and templates.
+- [ ] Create tasks view and welcome page.
+- [ ] Integrate TanStack Query with `ai-bridge` endpoints.
 
 ## Complete Steps
-
-### Finished Base Structure
-
-- create roadmap
-- create project structure
-- create folder base structure
-- define base libs
-- base libs configs
-- create project repo
-
-### FINISHED SHARED/MONOREPO
-
-- Define shared libs
-- Biome installation
-- Monorepo structure configuration
-- Turbo.js installation
-
-## Future Ideas
-
-- database sync with cloud
-- thematic behaviors (garden, rpg)
+- [x] Activate CUDA (GPU) in WSL2 for local inference.
+- [x] Clean/Remove legacy Antigravity installations in WSL.
+- [x] Configure Antigravity Windows-to-WSL remote connection.
+- [x] Define Shared Type structure under `shared/@types/`.
+- [x] Monorepo structure configuration (Turbo.js + Bun).

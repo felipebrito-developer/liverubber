@@ -1,0 +1,17 @@
+{
+	"name": "@liverubber/security",
+	"private": true,
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"scripts": {
+		"type-check": "tsc --noEmit",
+		"build": "bun build ./src/index.ts --outdir dist --target node",
+		"setup": "bun install"
+	},
+	"devDependencies": {
+		"typescript": "^5.9.3",
+		"@types/bun": "^1.0.0"
+	},
+	"packageManager": "bun@1.3.3"
+}

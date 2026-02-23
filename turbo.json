@@ -1,17 +1,25 @@
 {
 	"$schema": "https://turbo.build/schema.json",
 	"tasks": {
-		"generate:types": {},
-		"lint": {
-			"outputs": [".next/**"],
+		"build": {
+			"dependsOn": ["^build"],
+			"outputs": ["dist/**"]
+		},
+		"dev": {
+			"dependsOn": ["^build"],
+			"persistent": true,
 			"cache": false
 		},
 		"type-check": {
-			"outputs": [".next/**"]
+			"dependsOn": ["^build"],
+			"outputs": []
 		},
-		"build": {
-			"dependsOn": ["generate-types"]
+		"lint": {
+			"cache": false
 		},
-		"setup": {}
+		"setup": {},
+		"clean": {
+			"cache": false
+		}
 	}
 }

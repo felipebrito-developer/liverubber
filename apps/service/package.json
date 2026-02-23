@@ -1,0 +1,20 @@
+{
+	"name": "@liverubber/service",
+	"private": true,
+	"scripts": {
+		"dev": "bun run --watch src/cmd/server.ts",
+		"mcp": "bun run src/internal/mcp/server.ts",
+		"build": "bun build ./src/cmd/server.ts --outdir dist --target node",
+		"type-check": "tsc --noEmit",
+		"setup": "bun install"
+	},
+	"dependencies": {
+		"@modelcontextprotocol/sdk": "^1.12.1",
+		"zod": "^3.24.0"
+	},
+	"devDependencies": {
+		"typescript": "^5.9.3",
+		"@types/bun": "^1.0.0"
+	},
+	"packageManager": "bun@1.3.3"
+}

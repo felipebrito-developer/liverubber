@@ -1,0 +1,16 @@
+{
+	"name": "@liverubber/shared",
+	"private": true,
+	"exports": {
+		"./@types/*": "./@types/*"
+	},
+	"scripts": {
+		"type-check": "tsc --noEmit",
+		"setup": "bun install"
+	},
+	"devDependencies": {
+		"typescript": "^5.0.0",
+		"@types/bun": "^1.0.0"
+	},
+	"packageManager": "bun@1.3.3"
+}
