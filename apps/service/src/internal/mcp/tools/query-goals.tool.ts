@@ -1,16 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-
-// Stub domain type — extend shared types once goal entity is defined
-interface GoalDefinition {
-	id: string;
-	title: string;
-	description?: string;
-	status: "active" | "paused" | "completed" | "abandoned";
-	targetDate?: string;
-	createdAt: string;
-	updatedAt: string;
-}
+import { getDB } from "../../db/index.js";
 
 const QueryGoalsInputSchema = z.object({
 	status: z
@@ -26,36 +16,15 @@ const QueryGoalsInputSchema = z.object({
 		.describe("Maximum number of goals to return"),
 });
 
-/** Stub — replace with real SQLite repository. */
-function fetchGoalsStub(
-	filters: z.infer<typeof QueryGoalsInputSchema>,
-): GoalDefinition[] {
-	const goals: GoalDefinition[] = [
-		{
-			id: "goal-001",
-			title: "Read 12 books this year",
-			status: "active",
-			targetDate: "2026-12-31",
-			createdAt: new Date().toISOString(),
-			updatedAt: new Date().toISOString(),
-		},
-		{
-			id: "goal-002",
-			title: "Run a 5K",
-			description: "Complete a 5K race without stopping",
-			status: "paused",
-			createdAt: new Date().toISOString(),
-			updatedAt: new Date().toISOString(),
-		},
-	];
-
-	let results = goals;
-
-	if (filters.status) {
-		results = results.filter((g) => g.status === filters.status);
-	}
-
-	return results.slice(0, filters.limit);
+interface GoalRow {
+	goal_id: number;
+	meaning_id: number | null;
+	name: string;
+	description: string;
+	status: string;
+	due_date: string | null;
+	progress: number;
+	cover_image_id: number | null;
 }
 
 /**
@@ -63,15 +32,31 @@ function fetchGoalsStub(
  *
  * Tool contract:
  *   - Name: `query_goals`
- *   - Returns: JSON array of GoalDefinition objects
+ *   - Returns: JSON array of goal rows from the SQLite `goal` table
  */
 export function registerQueryGoalsTool(server: McpServer): void {
 	server.tool(
 		"query_goals",
-		"Retrieve goals from the local database. Supports filtering by status.",
+		"Retrieve goals from the local SQLite database. Supports filtering by status.",
 		QueryGoalsInputSchema.shape,
 		async (input: z.infer<typeof QueryGoalsInputSchema>) => {
-			const goals = fetchGoalsStub(input);
+			const db = getDB();
+
+			const conditions: string[] = [];
+			const params: (string | number)[] = [];
+
+			if (input.status) {
+				conditions.push("status = ?");
+				params.push(input.status);
+			}
+
+			const where =
+				conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+
+			const query = `SELECT * FROM goal ${where} LIMIT ?`;
+			params.push(input.limit);
+
+			const goals = db.prepare(query).all(...params) as GoalRow[];
 
 			return {
 				content: [

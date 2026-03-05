@@ -1,6 +1,6 @@
-import type { TaskDefinition } from "@liverubber/shared/@types/task/task.type";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
+import { getDB } from "../../db/index.js";
 
 const GetTasksInputSchema = z.object({
 	status: z
@@ -20,55 +20,15 @@ const GetTasksInputSchema = z.object({
 		.describe("Maximum number of tasks to return"),
 });
 
-/**
- * Stub repository — replace with real SQLite repository once implemented.
- * Returns a few representative tasks to exercise the tool contract.
- */
-function fetchTasksStub(
-	filters: z.infer<typeof GetTasksInputSchema>,
-): TaskDefinition[] {
-	const tasks: TaskDefinition[] = [
-		{
-			id: "task-001",
-			title: "Set up MCP server",
-			description: "Initialize MCP layer for LiveRubber backend",
-			priority: "high",
-			status: "in_progress",
-			createdAt: new Date().toISOString(),
-			updatedAt: new Date().toISOString(),
-			tags: ["backend", "architecture"],
-		},
-		{
-			id: "task-002",
-			title: "Implement AI bridge",
-			description: "Privacy-aware LLM routing microservice",
-			priority: "high",
-			status: "pending",
-			createdAt: new Date().toISOString(),
-			updatedAt: new Date().toISOString(),
-			tags: ["ai", "architecture"],
-		},
-		{
-			id: "task-003",
-			title: "Review nutrition plan",
-			priority: "medium",
-			status: "pending",
-			createdAt: new Date().toISOString(),
-			updatedAt: new Date().toISOString(),
-		},
-	];
-
-	let results = tasks;
-
-	if (filters.status) {
-		results = results.filter((t) => t.status === filters.status);
-	}
-
-	if (filters.priority) {
-		results = results.filter((t) => t.priority === filters.priority);
-	}
-
-	return results.slice(0, filters.limit);
+interface TaskRow {
+	task_id: number;
+	goal_id: number | null;
+	parent_task_id: number | null;
+	title: string;
+	description: string;
+	status: string | null;
+	due_date: string | null;
+	priority: string | null;
 }
 
 /**
@@ -76,15 +36,36 @@ function fetchTasksStub(
  *
  * Tool contract:
  *   - Name: `get_tasks`
- *   - Returns: JSON array of TaskDefinition objects
+ *   - Returns: JSON array of task rows from the SQLite `task` table
  */
 export function registerGetTasksTool(server: McpServer): void {
 	server.tool(
 		"get_tasks",
-		"Retrieve tasks from the local database. Supports filtering by status and priority.",
+		"Retrieve tasks from the local SQLite database. Supports filtering by status and priority.",
 		GetTasksInputSchema.shape,
 		async (input: z.infer<typeof GetTasksInputSchema>) => {
-			const tasks = fetchTasksStub(input);
+			const db = getDB();
+
+			const conditions: string[] = [];
+			const params: (string | number)[] = [];
+
+			if (input.status) {
+				conditions.push("status = ?");
+				params.push(input.status);
+			}
+
+			if (input.priority) {
+				conditions.push("priority = ?");
+				params.push(input.priority);
+			}
+
+			const where =
+				conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+
+			const query = `SELECT * FROM task ${where} LIMIT ?`;
+			params.push(input.limit);
+
+			const tasks = db.prepare(query).all(...params) as TaskRow[];
 
 			return {
 				content: [
