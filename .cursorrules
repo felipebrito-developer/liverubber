@@ -1,22 +1,160 @@
-# LiveRubber Project Rules
+# LiveRubber — Cursor Rules
 
-## Architecture Overview
-- Structure: Monorepo (Turborepo + Bun).
-- Frameworks: React Native (Mobile), Node.js (Service).
-- Design Pattern: Clean Architecture (Handler -> Service -> Repository -> Domain).
-- Database: SQLite (local).
+## Project Overview
+LiveRubber is a **local-first monorepo** for ADHD task management.
+It uses a **Hybrid AI Architecture**: Ollama (local GPU) for sensitive data and Gemini Flash (cloud) for generic reasoning, bridged via **Model Context Protocol (MCP)**.
 
-## AI & Privacy
-- Local Agents: Use Ollama/DeepSeek for PII (Personally Identifiable Information).
-- Cloud Agents: Use Gemini Flash for generic logic (anonymized data only).
-- Connectivity: Always use Model Context Protocol (MCP) to bridge LLMs to SQLite.
+---
+
+## Monorepo Structure
+```
+LiveRubber/
+├── apps/
+│   ├── service/      → Node.js + TypeScript backend (SQLite) + MCP Server
+│   └── ai-bridge/    → AI Orchestrator (Privacy Router, Ollama, Gemini)
+├── packages/
+│   ├── shared/       → Shared TypeScript types (@liverubber/shared)
+│   └── security/     → PII scrubbing & AES-GCM encryption (@liverubber/security)
+├── ui/
+│   └── mobile/       → React Native app (Android-first)
+└── docs/             → Project documentation (context, structure, roadmap)
+```
+**Package manager**: Bun 1.3+ | **Build system**: Turborepo | **Runtime**: WSL2 + CUDA
+
+---
+
+## AI & Privacy Rules (Critical)
+
+1. **Local-only for user content**: Any prompt containing tasks, diary entries, goals, or personal identifiers MUST be routed to **Ollama** (local, via `apps/ai-bridge`). It never leaves the device.
+2. **Scrub before cloud**: Any data sent to **Gemini Flash** MUST pass through `scrubPII()` from `packages/security`. This is enforced inside `gemini.service.ts` — do NOT bypass it.
+3. **MCP as the data interface**: The AI never queries SQLite directly. It calls MCP Tools exposed by `apps/service/src/internal/mcp/`. Do not write raw SQL in AI bridge code.
+4. **`X-LLM-Route` header**: The `POST /ai/chat` endpoint always responds with this header (`ollama` or `gemini`) so clients can log and audit routing decisions.
+
+---
+
+## Architecture: apps/service (Backend)
+
+**Pattern**: Clean Architecture — `handler → service → repository → domain`
+
+```
+apps/service/src/
+├── cmd/server.ts                    # HTTP server entry point
+├── internal/
+│   ├── domain/                      # Entity types (pure data)
+│   ├── handler/                     # HTTP route handlers
+│   ├── service/                     # Business logic
+│   ├── repository/sqlite/           # SQLite data access
+│   └── mcp/                         # MCP layer (NEW)
+│       ├── server.ts                # McpServer (stdio transport)
+│       └── tools/
+│           ├── get-tasks.tool.ts    # get_tasks MCP tool
+│           └── query-goals.tool.ts  # query_goals MCP tool
+└── utils/
+```
+
+- MCP server runs as a **stdio subprocess** — use `bun run mcp` to start it.
+- MCP tools use **Zod schemas** for input validation and return structured JSON.
+- Stub repositories (`fetchTasksStub`) are placeholders — replace with real SQLite repos when ready.
+
+---
+
+## Architecture: apps/ai-bridge (AI Orchestrator)
+
+```
+apps/ai-bridge/src/
+├── index.ts                         # Hono server on port 3001
+├── config/sensitive-keywords.ts     # Keyword list that triggers local routing
+├── router/ai.router.ts              # POST /ai/chat  |  GET /health
+└── services/
+    ├── privacy-router.service.ts    # resolveRoute(prompt) → "ollama" | "gemini"
+    ├── ollama.service.ts            # Vercel AI SDK → Ollama (localhost:11434)
+    └── gemini.service.ts            # Vercel AI SDK → Gemini Flash (+ scrubPII)
+```
+
+- Start: `cp .env.example .env && bun run dev`
+- Ollama model: configurable via `OLLAMA_MODEL` env var (default: `deepseek-r1:8b`)
+- Gemini model: `gemini-2.0-flash-exp`
+
+---
+
+## Architecture: packages/security
+
+| Export | Signature | Purpose |
+|--------|-----------|---------|
+| `scrubPII` | `(text: string) => string` | Strip emails, phones, CPF, dates, URLs from text |
+| `scrubFields` | `<T>(obj: T, keys: string[]) => T` | Deep-scrub specific object fields |
+| `encryptPayload` | `(data, key) => Promise<string>` | AES-GCM encrypt (IV:ciphertext format) |
+| `decryptPayload` | `(data, key) => Promise<string>` | AES-GCM decrypt |
+
+Import: `import { scrubPII } from '@liverubber/security'`
+
+---
+
+## Shared Types — packages/shared
+
+- All cross-workspace types live in `packages/shared/@types/`
+- **Never duplicate types** across workspaces — always import from `@liverubber/shared`
+- New domains (e.g. `goal`, `meaning`) → add `packages/shared/@types/<domain>/<domain>.type.ts`
+- AI Agent types and MCP input/output schemas also belong here
+
+| Location | Contents |
+|----------|---------|
+| `@types/base/entity.type.ts` | `Entity`, `Status`, `Priority` |
+| `@types/base/router-response.type.ts` | `ResponseBase<T>`, `PaginatedResponse<T>` |
+| `@types/task/task.type.ts` | `TaskDefinition` |
+
+---
+
+## Frontend: ui/mobile
+
+- **State**: Jotai (`atom`, `useAtom`) for local/global state
+- **Data fetching**: TanStack Query (wraps `ai-bridge` and `service` API calls)
+- **Navigation**: React Navigation 7.x
+- **Structure**: Feature-based (`features/<domain>/components|screens|hooks`)
+- **Native**: Kotlin for Android-specific modules
+
+---
 
 ## Coding Standards
-- Language: TypeScript with strict typing.
-- Linting/Formatting: Biome.
-- State Management: Jotai (Mobile).
-- Data Fetching: TanStack Query.
 
-## Contextual Hints
-- Domain logic is always in `apps/service/src/internal/domain`.
-- Shared types reside in `packages/shared/@types`.
+- **TypeScript strict mode** on all workspaces — no `any`, no implicit types
+- **Biome** for linting and formatting (`biome check --write .`)
+- **Feature-based** folder structure (not file-type-based)
+- Max line width: **100 characters**, 2-space indent
+- MCP tool callbacks must have **explicit Zod-inferred types** on their parameters
+- Use `console.error` for logs in MCP server (stdout is reserved for JSON-RPC)
+
+---
+
+## Key Commands
+
+```bash
+bun install                  # Install all workspace dependencies
+bun run dev                  # Start all services in parallel (Turbo)
+bun run build                # Build all workspaces
+bun run type-check           # Type-check all workspaces
+bun run lint                 # Lint all workspaces
+
+# Per workspace
+cd apps/service  && bun run mcp   # Start MCP server (stdio)
+cd apps/ai-bridge && bun run dev  # Start AI bridge on :3001
+```
+
+---
+
+## Current Priorities (Roadmap)
+
+**In progress / next up:**
+- [ ] Configure `ai-bridge` Vercel AI SDK providers (Ollama + Gemini) fully
+- [ ] Implement Privacy Router keyword list refinement
+- [ ] Setup MCP Server tools for SQLite (replace stubs with real repos)
+- [ ] Create database migrations: `task`, `goal`, `meaning`
+- [ ] Implement CRUD repository layer in `apps/service`
+
+**Done:**
+- [x] Monorepo structure (Turborepo + Bun + `apps/*` / `packages/*`)
+- [x] Shared types under `packages/shared/@types/`
+- [x] `packages/security` — PII scrub + AES-GCM
+- [x] `apps/service` MCP server scaffold (get_tasks, query_goals tools)
+- [x] `apps/ai-bridge` privacy router scaffold (Hono + Ollama + Gemini)
+- [x] CUDA/GPU activated in WSL2 for Ollama inference

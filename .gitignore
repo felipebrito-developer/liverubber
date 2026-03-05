@@ -39,6 +39,7 @@ ui/mobile/.expo/
 .idea/
 *.swp
 *.swo
+*.code-workspace
 
 # OS
 .DS_Store
@@ -49,3 +50,11 @@ Thumbs.db
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# AI
+.cursorrules
+
+# SQLite databases (generated at runtime)
+*.db
+*.db-shm
+*.db-wal
