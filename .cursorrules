@@ -1,5 +1,16 @@
 # LiveRubber — Cursor Rules
 
+## 📝 Documentation Update Rule (MANDATORY)
+
+> **At the start of every work session and after every meaningful change, the AI agent MUST:**
+> 1. Update `docs/mvp-progress.md` — tick completed tasks `[x]`, update progress bars, and add a row to the Daily Progress Log.
+> 2. Update `docs/project-context.md` — if new architecture decisions, patterns, or layers are added.
+> 3. Update `docs/project-roadmap.md` — if new features are added or priorities shift.
+> 4. Update this file (`.cursorrules`) — if the tech stack, commands, or architecture changes.
+> **Never add or change a feature without updating the relevant doc files.**
+
+---
+
 ## Project Overview
 LiveRubber is a **local-first monorepo** for ADHD task management.
 It uses a **Hybrid AI Architecture**: Ollama (local GPU) for sensitive data and Gemini Flash (cloud) for generic reasoning, bridged via **Model Context Protocol (MCP)**.
@@ -112,6 +123,16 @@ Import: `import { scrubPII } from '@liverubber/security'`
 - **Navigation**: React Navigation 7.x
 - **Structure**: Feature-based (`features/<domain>/components|screens|hooks`)
 - **Native**: Kotlin for Android-specific modules
+
+---
+
+## Integrated AI Skills
+
+The following skills are available in `.agents/skills/` and provide specialized capabilities:
+
+- **adhd-design-expert**: Designs digital experiences for ADHD brains using neuroscience research and UX principles. Use for reducing cognitive load, time blindness solutions, and dopamine-driven engagement.
+- **mobile-offline-support**: Implement offline-first mobile apps with local storage, sync strategies, and conflict resolution (AsyncStorage, Realm, SQLite).
+- **sleek-design-mobile-apps**: High-level mobile app design, screen creation, and interaction with Sleek projects.
 
 ---
 

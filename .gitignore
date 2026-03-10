@@ -11,26 +11,22 @@ node_modules/
 .turbo/
 **/.turbo/
 
-# Go
-service/bin/
-service/dist/
-service/gen/
-*.test
-*.exe
-*.exe~
-*.dll
-*.so
-*.dylib
+# Backend
+apps/service/dist/
 
 # React Native
-ui/mobile/.bundle/
-ui/mobile/node_modules/
-ui/mobile/gen/
-ui/mobile/android/build/
+apps/mobile/.bundle/
+apps/mobile/node_modules/
+apps/mobile/gen/
+apps/mobile/android/build/
+apps/mobile/android/.gradle/
+apps/mobile/android/app/build/
+apps/mobile/android/app/.cxx/
+apps/mobile/android/.kotlin/
+
 # no IOS build for now
-ui/mobile/ios/
-ui/mobile/.gradle/
-ui/mobile/.expo/
+apps/mobile/ios/
+apps/mobile/.expo/
 *.apk
 *.aab
 
@@ -53,6 +49,8 @@ yarn-error.log*
 
 # AI
 .cursorrules
+.agent/
+.agents/
 
 # SQLite databases (generated at runtime)
 *.db
