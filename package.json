@@ -13,7 +13,12 @@
 		"lint": "turbo run lint",
 		"setup:all": "turbo run setup",
 		"clean:cache": "turbo run clean",
-		"clean:all": "rm -rf node_modules && turbo run clean"
+		"clean:all": "rm -rf node_modules && turbo run clean",
+		"mobile:android": "turbo run android --filter=mobile",
+		"mobile:android:build": "turbo run android:build --filter=mobile",
+		"mobile:android:clean": "cd apps/mobile/android && ./gradlew clean",
+		"mobile:android:clean-all": "rm -rf apps/mobile/android/build apps/mobile/android/app/build",
+		"mobile:start": "turbo run start --filter=mobile"
 	},
 	"devDependencies": {
 		"turbo": "^2.6.1",

@@ -3,34 +3,40 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"android": "react-native run-android",
-		"ios": "react-native run-ios",
+		"android": "cd android && ./gradlew installDebug",
+		"android:build": "cd android && ./gradlew assembleDebug",
+		"ios": "react-native start",
 		"start": "react-native start",
 		"dev": "react-native start",
 		"type-check": "tsc --noEmit",
 		"lint": "biome check ./src"
 	},
 	"dependencies": {
-		"@react-navigation/native": "^7.1.6",
+		"@react-navigation/bottom-tabs": "^7.3.10",
+		"@react-navigation/native": "^7.1.33",
 		"@react-navigation/native-stack": "^7.3.10",
 		"@tanstack/react-query": "^5.72.2",
 		"jotai": "^2.12.2",
-		"react": "18.3.1",
-		"react-native": "0.77.0",
+		"react": "19.2.3",
+		"react-native": "0.84.1",
 		"react-native-gesture-handler": "~2.23.1",
 		"react-native-paper": "^5.13.1",
 		"react-native-reanimated": "~3.17.1",
 		"react-native-safe-area-context": "^5.3.0",
-		"react-native-screens": "^4.10.0",
-		"react-native-vector-icons": "^10.2.0"
+		"react-native-screens": "^4.5.0",
+		"react-native-vector-icons": "^10.3.0"
 	},
 	"devDependencies": {
+		"@react-native/codegen": "0.84.1",
+		"@react-native/gradle-plugin": "0.84.1",
+		"@react-native-community/cli": "latest",
 		"@biomejs/biome": "^2.3.7",
-		"@react-native/babel-preset": "0.77.0",
-		"@react-native/eslint-config": "0.77.0",
-		"@react-native/metro-config": "0.77.0",
-		"@react-native/typescript-config": "0.77.0",
-		"@types/react": "^18.3.1",
+		"@react-native/babel-preset": "0.84.1",
+		"babel-plugin-module-resolver": "^5.0.0",
+		"@react-native/eslint-config": "0.84.1",
+		"@react-native/metro-config": "0.84.1",
+		"@react-native/typescript-config": "0.84.1",
+		"@types/react": "^19.1.1",
 		"@types/react-native": "^0.73.0",
 		"@types/react-native-vector-icons": "^6.4.18",
 		"babel-jest": "^29.6.3",
@@ -38,6 +44,6 @@
 		"typescript": "^5.9.3"
 	},
 	"engines": {
-		"node": ">=18"
+		"node": ">=22"
 	}
 }

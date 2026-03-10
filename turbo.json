@@ -20,6 +20,13 @@
 		"setup": {},
 		"clean": {
 			"cache": false
+		},
+		"start": {
+			"cache": false,
+			"persistent": true
+		},
+		"android": {
+			"cache": false
 		}
 	}
 }
