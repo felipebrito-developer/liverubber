@@ -42,7 +42,7 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
 		try {
 			// TODO: hook up to auth service
 			await new Promise((r) => setTimeout(r, 800));
-			navigation.navigate("Home");
+			navigation.navigate("MainTab");
 		} finally {
 			setLoading(false);
 		}

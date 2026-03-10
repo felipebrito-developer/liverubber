@@ -45,6 +45,14 @@ export const colors = {
 	meaningGold: "#D4AF37", // "Why" anchors
 	winLoop: "#7BAE7F", // "Your future self is proud"
 	ghostedTask: "#3A3A3E", // ghost list blurred items
+
+	// ─── Convenience aliases (used by components) ───────────────────────────────
+	/** Muted blue-lavender: secondary actions & "AI Insights" stat */
+	secondary: "#8BA0C4",
+	/** System error alias (not shown for overdue — use overdueColor copy instead) */
+	error: "#C4694A",
+	/** Muted orange: "Let's try again?" for overdue tasks */
+	warning: "#C4824A",
 } as const;
 
 export const spacing = {

@@ -1,4 +1,5 @@
-const AI_BRIDGE_BASE_URL = process.env.AI_BRIDGE_URL ?? "http://10.0.2.2:3001";
+const AI_BRIDGE_BASE_URL =
+	process.env.AI_BRIDGE_URL ?? "http://172.18.225.169:3001";
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 	const response = await fetch(`${AI_BRIDGE_BASE_URL}${path}`, {
