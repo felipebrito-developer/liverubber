@@ -13,6 +13,7 @@
 		"forceConsistentCasingInFileNames": true,
 		"baseUrl": ".",
 		"paths": {
+			"@liverubber/shared": ["../../packages/shared/index.ts"],
 			"@liverubber/shared/*": ["../../packages/shared/*"]
 		}
 	},

@@ -22,6 +22,9 @@ LiveRubber (Turborepo)
 ### 2. Shared Types
 Types live in `shared/@types/`. **Important**: AI Agent types and MCP schemas must also be defined here to ensure the `ai-bridge` and `service` remain in sync.
 
+### 3. Test-Driven Development (TDD)
+**TDD is mandatory** across all layers of the monorepo. Tests must be written before implementation to ensure all features are well-tested from the ground up.
+
 ---
 
 ### 3. Backend (service/) Architecture

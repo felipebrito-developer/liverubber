@@ -1,12 +1,15 @@
 {
-	"extends": "@react-native/typescript-config/tsconfig.json",
+	"extends": "./node_modules/@react-native/typescript-config/tsconfig.json",
 	"compilerOptions": {
 		"strict": true,
 		"skipLibCheck": true,
 		"baseUrl": ".",
 		"paths": {
-			"@/*": ["src/*"]
-		}
+			"@/*": ["src/*"],
+			"@liverubber/shared/*": ["../../packages/shared/*"]
+		},
+		"types": ["jest", "node"],
+		"jsx": "react-native"
 	},
 	"include": ["src/**/*.ts", "src/**/*.tsx", "index.js"],
 	"exclude": ["node_modules", ".android", ".ios"]

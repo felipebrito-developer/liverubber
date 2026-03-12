@@ -1,14 +1,14 @@
 # 🏁 LiveRubber — MVP Progress Tracker
 
-> Last updated: **2026-03-07**
-> This file is updated by AI (Antigravity) at the start of every work session.
+> Last updated: **2026-03-11**
+> This file is updated by AI (Antigravity) regularly during work sessions.
 
 ---
 
 ## 📊 Overall MVP Progress
 
 ```
-Overall  [████████░░░░░░░░░░░░] 40%
+Overall  [██████████░░░░░░░░░] 50%
 ```
 
 | Layer        | Area                  | Progress              | Status      |
@@ -16,7 +16,7 @@ Overall  [████████░░░░░░░░░░░░] 40%
 | 🏗 Infra     | Monorepo / Tooling    | ██████████ 100%       | ✅ Done      |
 | 🤖 AI        | AI Bridge             | ████░░░░░░ 40%        | 🔄 In Progress |
 | 🗄 Backend   | Service / MCP / DB    | ████░░░░░░ 40%        | 🔄 In Progress |
-| 📱 Frontend  | Mobile App            | ██████░░░░ 60%        | 🔄 In Progress |
+| 📱 Frontend  | Mobile App            | █████████░ 90%        | 🔄 In Progress |
 | 🔒 Security  | Anonymization / Crypto| ░░░░░░░░░░ 0%         | ⏳ Not Started |
 
 ---
@@ -81,9 +81,9 @@ Overall  [████████░░░░░░░░░░░░] 40%
 
 ---
 
-### 📱 MOBILE APP (`apps/mobile`) — 60% Complete
+### 📱 MOBILE APP (`apps/mobile`) — 90% Complete
 ```
-[██████░░░░] 60%
+[█████████░] 90%
 ```
 
 #### ✅ Done
@@ -100,17 +100,18 @@ Overall  [████████░░░░░░░░░░░░] 40%
 - [x] API service layer scaffolded (`src/services/api.ts`)
 - [x] **Auth screens**: WelcomeScreen, LoginScreen, RegisterScreen
 - [x] **Main screens**: HomeScreen, TasksScreen
+- [x] Implement real Auth flow (connect to service API)
+- [x] Connect TasksScreen to API via TanStack Query
+- [x] Integrate `ai-bridge` endpoints (TanStack Query hooks)
+- [x] Implement `MeaningScreen` (show Goals anchored to Meaning)
+- [x] Implement `NowScreen` (Focus Mode — one task at a time)
+- [x] Implement `ReflectionScreen` (Activity Logs + Mood Rating)
+- [x] Implement `ActionScreen` (Activity catalog)
 
 #### ⏳ TODO
-- [ ] Implement real Auth flow (connect to service API)
-- [ ] Connect TasksScreen to API via TanStack Query
-- [ ] Integrate `ai-bridge` endpoints (TanStack Query hooks)
-- [ ] Implement `MeaningScreen` (show Goals anchored to Meaning)
-- [ ] Implement `NowScreen` (Focus Mode — one task at a time)
-- [ ] Implement `ReflectionScreen` (Activity Logs + Mood Rating)
-- [ ] Implement `ActionScreen` (Activity catalog)
 - [ ] Implement low-energy filter UI
 - [ ] Polish UI: animations (Reanimated), gesture handling
+- [ ] Connect remaining screens (Meaning, Action, Reflection) to real API endpoints
 - [ ] End-to-end flow test on Android device
 
 ---
@@ -136,6 +137,13 @@ Overall  [████████░░░░░░░░░░░░] 40%
 | 2026-03-05 | Mobile     | Finished mobile frontend config: theme aliases, component barrels, utils, type-check |
 | 2026-03-06 | Mobile     | Verified app running steps / prerequisites                                    |
 | 2026-03-07 | Docs       | Created this MVP progress tracker 🎉                                          |
+| 2026-03-11 | Docs / App | Configured gesture handler for React Navigation; Documented Test-Driven Development (TDD) as a core principle. |
+| 2026-03-11 | Shared     | Enforced strict TypeScript rules: removed `any` types across the system and centralized domain entities into `packages/shared`. Added jest types. |
+| 2026-03-11 | Shared     | Enforced strict TypeScript rules: removed `any` types across the system and centralized domain entities into `packages/shared`. Added jest types. |
+| 2026-03-11 | Docs       | Synchronized `.cursorrules` with the newly installed AI skills and hardcoded Neuro-UI constraints to prevent standard UI generation. |
+| 2026-03-11 | Shared     | Created all domain entity types mapping the DB schema to `packages/shared/@types` and refactored the `apps/service` DB repositories to return unified camelCase interfaces instead of local rows. |
+| 2026-03-11 | Core       | Enforced new Architecture Naming Conventions: SQLite schemas now use string UUIDs as `id` and include `created_at`/`updated_at`. All TypeScript domain models extend a central `Entity` base interface mapping `snake_case` DB rows to strict `camelCase` objects. |
+| 2026-03-12 | Mobile     | Implemented and reviewed Meaning, Now, Reflection, and Action functional screens, increasing mobile app completeness to 90%. |
 
 ---
 

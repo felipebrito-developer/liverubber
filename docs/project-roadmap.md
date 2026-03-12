@@ -14,8 +14,8 @@
 - [ ] Create repository layer for database access.
 
 ### FRONTEND
-- [ ] Define component structure and templates.
-- [ ] Create tasks view and welcome page.
+- [x] Define component structure and templates.
+- [x] Create tasks view and welcome page.
 - [ ] Integrate TanStack Query with `ai-bridge` endpoints.
 
 ## Complete Steps
@@ -24,3 +24,6 @@
 - [x] Configure Antigravity Windows-to-WSL remote connection.
 - [x] Define Shared Type structure under `shared/@types/`.
 - [x] Monorepo structure configuration (Turbo.js + Bun).
+
+## Future Improvements
+- [ ] Configure `expo` or `react-native-web` to allow the AI to visually test UI changes via browser preview.

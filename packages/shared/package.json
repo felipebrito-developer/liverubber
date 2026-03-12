@@ -1,7 +1,10 @@
 {
 	"name": "@liverubber/shared",
 	"private": true,
+	"main": "index.ts",
+	"types": "index.ts",
 	"exports": {
+		".": "./index.ts",
 		"./@types/*": "./@types/*"
 	},
 	"scripts": {

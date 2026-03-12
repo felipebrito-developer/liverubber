@@ -26,7 +26,12 @@
 			"persistent": true
 		},
 		"android": {
-			"cache": false
+			"cache": false,
+			"persistent": false
+		},
+		"android:build": {
+			"cache": false,
+			"persistent": false
 		}
 	}
 }
