@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 // DB file lives at the service root in data/ so it is gitignore-able
-const DB_PATH = resolve(import.meta.dir, "../../../../data/liverubber.db");
+const DB_PATH = resolve(import.meta.dir, "../../../data/liverubber.db");
 const SCHEMA_PATH = join(import.meta.dir, "schema.sql");
 
 let _db: Database | null = null;
@@ -15,7 +15,14 @@ let _db: Database | null = null;
 export function getDB(): Database {
 	if (_db) return _db;
 
-	_db = new Database(DB_PATH, { create: true });
+	const dbFilePath = Bun.env.NODE_ENV === "test" ? ":memory:" : DB_PATH;
+	if (dbFilePath !== ":memory:") {
+		const dir = resolve(dbFilePath, "..");
+		try {
+			import("node:fs").then((fs) => fs.mkdirSync(dir, { recursive: true }));
+		} catch (_e) {}
+	}
+	_db = new Database(dbFilePath, { create: true });
 
 	// Enable WAL mode for better concurrent read performance
 	_db.exec("PRAGMA journal_mode = WAL;");
@@ -25,7 +32,7 @@ export function getDB(): Database {
 	const schema = readFileSync(SCHEMA_PATH, "utf-8");
 	_db.exec(schema);
 
-	console.error(`[DB] SQLite database ready at: ${DB_PATH}`);
+	console.error(`[DB] SQLite database ready at: ${dbFilePath}`);
 
 	return _db;
 }

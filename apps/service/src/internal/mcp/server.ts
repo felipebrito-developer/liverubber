@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { registerGetTasksTool, registerQueryGoalsTool } from "./tools/index.js";
+import { registerQueryGoalsTool, registerTaskTools } from "./tools/index.js";
 
 const server = new McpServer({
 	name: "liverubber-mcp",
@@ -8,7 +8,7 @@ const server = new McpServer({
 });
 
 // Register all tools
-registerGetTasksTool(server);
+registerTaskTools(server);
 registerQueryGoalsTool(server);
 
 // Start the server with stdio transport (consumed by ai-bridge as a subprocess)
