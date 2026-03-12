@@ -1,12 +1,16 @@
 import { Hono } from "hono";
 import { aiRouter } from "./router/ai.router.js";
+import { authRouter } from "./router/auth.router.js";
+import { tasksRouter } from "./router/tasks.router.js";
 
 const app = new Hono();
 
 const PORT = Number(process.env.AI_BRIDGE_PORT ?? 3001);
 
-// Mount AI router
+// Mount routers
 app.route("/ai", aiRouter);
+app.route("/tasks", tasksRouter);
+app.route("/auth", authRouter);
 
 // Health check
 app.get("/health", (c) => c.json({ status: "ok", service: "ai-bridge" }));
