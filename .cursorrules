@@ -7,7 +7,7 @@
 > 2. Update `docs/project-context.md` — if new architecture decisions, patterns, or layers are added.
 > 3. Update `docs/project-roadmap.md` — if new features are added or priorities shift.
 > 4. Update this file (`.cursorrules`) — if the tech stack, commands, or architecture changes.
-> **Never add or change a feature without updating the relevant doc files.**
+> **Never add or change a feature without updating the relevant doc files and ask before updating this doc files.**
 
 ---
 
@@ -23,11 +23,10 @@ LiveRubber/
 ├── apps/
 │   ├── service/      → Node.js + TypeScript backend (SQLite) + MCP Server
 │   └── ai-bridge/    → AI Orchestrator (Privacy Router, Ollama, Gemini)
+│   └── mobile/    → React Native app (Android-first)
 ├── packages/
 │   ├── shared/       → Shared TypeScript types (@liverubber/shared)
 │   └── security/     → PII scrubbing & AES-GCM encryption (@liverubber/security)
-├── ui/
-│   └── mobile/       → React Native app (Android-first)
 └── docs/             → Project documentation (context, structure, roadmap)
 ```
 **Package manager**: Bun 1.3+ | **Build system**: Turborepo | **Runtime**: WSL2 + CUDA
@@ -68,6 +67,19 @@ apps/service/src/
 - Stub repositories (`fetchTasksStub`) are placeholders — replace with real SQLite repos when ready.
 
 ---
+
+## Architecture & Naming Conventions
+
+- **Database Standard (SQLite / SQL)**:
+  - All DB columns must use `snake_case`.
+  - All tables must have a primary key named `id` (declared as `VARCHAR PRIMARY KEY` to hold UUIDv4 strings). NEVER use auto-incrementing integers for core entities.
+  - Foreign keys must always be named `<table_name>_id` (e.g., `goal_id`, `meaning_id`).
+  - ALL tables must include `created_at DATETIME` and `updated_at DATETIME`.
+
+- **TypeScript Domain Models**:
+  - All TypeScript fields must use `camelCase`.
+  - All domain models must extend the base `Entity` interface (`id`, `createdAt`, `updatedAt`) found in `packages/shared/@types/base`.
+  - Service repos must map from `snake_case` DB rows to `camelCase` TS models before returning them.
 
 ## Architecture: apps/ai-bridge (AI Orchestrator)
 
@@ -118,11 +130,21 @@ Import: `import { scrubPII } from '@liverubber/security'`
 
 ## Frontend: ui/mobile
 
+- **UI Documentation (MANDATORY)**: For any changes on `apps/mobile`, always look at `docs/UI` to review the rules and principles followed in this project.
+- **Neuro-UI Constraints (Priority)**:
+  - **Rule of One**: Only ONE primary Call-to-Action per screen to reduce cognitive load.
+  - **Neuro-Palette**: Background `#121212`, Primary `#A8B5A2`, Accent `#D4AF37`. NEVER use standard neon red or high-vibrancy blues for standard components as they trigger anxiety.
+  - **RSD Protections**: No error vibration haptics. Overdue tasks are "Muted Orange" (not red) and say "Let's try again?".
+  - **Recalibrate over Cancel**: Replace "Delete" or "Cancel" with "Recalibrate" to dodge failure stigma.
+  - **Interaction**: Rely heavily on the Android Bottom Navigation Bar for motor-efficiency and hide Floating Action Buttons inside focus modes.
+- **Don't use EXPO**: I don't want to use Expo Features.
+- **React Native 0.84**: All Libs and features should work with this version, if encounter and conflicts please show me options to choose.
 - **State**: Jotai (`atom`, `useAtom`) for local/global state
 - **Data fetching**: TanStack Query (wraps `ai-bridge` and `service` API calls)
-- **Navigation**: React Navigation 7.x
-- **Structure**: Feature-based (`features/<domain>/components|screens|hooks`)
+- **Navigation**: React Navigation
+- **Structure**: Feature-based (`features/<domain>/components|screens|hooks` for components only for this features), try to create reusable components when possible. 
 - **Native**: Kotlin for Android-specific modules
+- **Local Database**: Use offline-first local storage (e.g., SQLite/AsyncStorage) as dictated by the `mobile-offline-support` AI skill to make the app usable offline.
 
 ---
 
@@ -134,16 +156,23 @@ The following skills are available in `.agents/skills/` and provide specialized 
 - **mobile-offline-support**: Implement offline-first mobile apps with local storage, sync strategies, and conflict resolution (AsyncStorage, Realm, SQLite).
 - **sleek-design-mobile-apps**: High-level mobile app design, screen creation, and interaction with Sleek projects.
 
+**Skill Preferences (To avoid conflicts, always follow these choices):**
+- For Mobile Performance: ALWAYS prefer `react-native-best-practices`. Ignore `vercel-react-native-skills`.
+- For React/UI Patterns: ALWAYS prefer `ui-component-patterns`. Ignore `frontend-patterns`.
+- For Mobile App Design: ALWAYS trigger `adhd-design-expert` alongside `sleek-design-mobile-apps` to ensure structural components adhere to the clinical UI psychology constraints.
+
 ---
 
 ## Coding Standards
 
 - **TypeScript strict mode** on all workspaces — no `any`, no implicit types
 - **Biome** for linting and formatting (`biome check --write .`)
+- **Test-Driven Development (TDD)**: TDD is a core fundamental principle for all layers of this project. Always write tests before implementing new features.
 - **Feature-based** folder structure (not file-type-based)
 - Max line width: **100 characters**, 2-space indent
 - MCP tool callbacks must have **explicit Zod-inferred types** on their parameters
 - Use `console.error` for logs in MCP server (stdout is reserved for JSON-RPC)
+- **Type Safety Escape Hatches**: ONLY use the `AnyType` or `StringRecord` aliases from `packages/shared/@types/base/utils.types.ts` when an explicit `any` type is completely necessary or as a temporary solution. NEVER use the native `any` keyword to prevent global linter bypasses.
 
 ---
 

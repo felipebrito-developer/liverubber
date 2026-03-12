@@ -9,19 +9,23 @@ LiveRubber is a mobile application designed for ADHD or other neurodivergent peo
 ### Monorepo Structure
 ```
 LiveRubber/
-├── service/               # Go backend service
-├── ui/mobile/             # React Native application
-├── shared/                # Shared resources & protobuf schemas
+├── app/service/           # Node.js backend service
+├── app/ai-bridge/         # MCP server for AI integration
+├── app/mobile/            # React Native application (android only for now)
+├── docs/                  # Documentation for AI agents
+├── env/                   # Environment variables
+├── packages/shared/       # Shared resources
+├── packages/security/     # Security related packages
 ├── turbo.json             # Turborepo configuration
+├── .cursorrules           # Agent AI rules
 └── package.json           # Root package configuration
 ```
 
 ### Tech Stack
-- **Backend**: Go with gRPC, SQLite database
-- **Frontend**: React Native 0.81.4, TypeScript, Jotai state management
+- **Backend**: Node.js, SQLite database
+- **Frontend**: React Native 0.84.4, TypeScript, Jotai state management, TanStack Query for data fetching and caching, local SQLite database with WatermellonDB
 - **Build System**: Turborepo with Bun package manager
 - **Code Quality**: Biome for linting and formatting
-- **Communication**: gRPC with Protocol Buffers for type-safe API contracts
 
 ## 🎯 Core Features
 
@@ -30,18 +34,21 @@ LiveRubber/
 - **Local Database**: SQLite for fast, offline-first data persistence
 - **Type Safety**: End-to-end type sharing between frontend and backend
 
-### Planned Features
-- Goal tracking with progress monitoring
-- Financial transaction management
+### MVP Planned Features
 - Routine and habit tracking
-- Cross-platform support (Android & iOS)
+- Goal tracking with progress monitoring
+- Android platform support
+
+### Future Features
+- Exercises and physical activities management
+- Financial transaction management
 
 ## 🚀 Development
 
 ### Prerequisites
-- Bun 1.0+
-- Go 1.21+
-- React Native development environment
+- Bun 1.3+
+- Node.js 22+
+- React Native 0.84+
 
 ### Quick Start
 ```bash
@@ -65,39 +72,16 @@ bun run proto:generate   # Regenerate protobuf types
 bun run typecheck        # Run TypeScript type checking
 bun run lint             # Run Biome linting
 ```
-
-## 📁 Project Structure Details
-
-### Shared Resources (`/shared`)
-- Protocol Buffer schemas for type definitions
-- Code generation scripts
-- Shared configuration
-
-### Backend Service (`/service`)
-- Clean architecture with domain-driven design
-- gRPC handlers for API endpoints
-- SQLite repository layer
-- Business logic services
-
-### Mobile Application (`/ui/mobile`)
-- Feature-based organization
-- Jotai for state management
-- TanStack Query for data fetching and caching
-- Type-safe gRPC client
-
 ## 🔧 Development Philosophy
 
 - **Type Safety First**: gRPC and Protocol Buffers ensure consistent types across stack
-- **Local-First**: SQLite database for offline capability and fast performance
+- **Local-First**: Local SQLite database with WatermellonDB for offline capability and fast performance
 - **Monorepo Efficiency**: Shared tooling and dependencies managed by Turborepo
-- **Clean Architecture**: Separation of concerns with clear boundaries
+- **DRY**: Don't repeat yourself, utilities and shared code in packages/
+- **KISS**: Keep it simple, stupid, keep the code simple and easy to understand
 
 ## 🛠️ Built With
-
-- [Go](https://golang.org/) - Backend language
 - [React Native](https://reactnative.dev/) - Mobile framework
-- [gRPC](https://grpc.io/) - RPC framework
-- [Protocol Buffers](https://protobuf.dev/) - Interface definition language
 - [Turborepo](https://turbo.build/) - Monorepo build system
 - [Bun](https://bun.sh/) - Package manager & runtime
 - [SQLite](https://sqlite.org/) - Local database
