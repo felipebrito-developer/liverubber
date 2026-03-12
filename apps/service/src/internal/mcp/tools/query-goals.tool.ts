@@ -17,14 +17,14 @@ const QueryGoalsInputSchema = z.object({
 });
 
 interface GoalRow {
-	goal_id: number;
-	meaning_id: number | null;
+	goal_id: string;
+	meaning_id: string | null;
 	name: string;
 	description: string;
 	status: string;
 	due_date: string | null;
 	progress: number;
-	cover_image_id: number | null;
+	cover_image_id: string | null;
 }
 
 /**

@@ -24,10 +24,13 @@ function uint8ArrayToHex(bytes: Uint8Array): string {
 
 async function importKey(hexKey: string): Promise<CryptoKey> {
 	const keyBytes = hexToUint8Array(hexKey);
-	return crypto.subtle.importKey("raw", keyBytes, { name: "AES-GCM" }, false, [
-		"encrypt",
-		"decrypt",
-	]);
+	return crypto.subtle.importKey(
+		"raw",
+		keyBytes as unknown as any,
+		{ name: "AES-GCM" },
+		false,
+		["encrypt", "decrypt"],
+	);
 }
 
 /**
@@ -72,9 +75,9 @@ export async function decryptPayload(
 	const iv = hexToUint8Array(ivHex);
 	const cipherBytes = Buffer.from(cipherBase64, "base64");
 	const plainBuffer = await crypto.subtle.decrypt(
-		{ name: "AES-GCM", iv },
+		{ name: "AES-GCM", iv: iv as unknown as any },
 		key,
-		cipherBytes,
+		cipherBytes as unknown as any,
 	);
 	return new TextDecoder().decode(plainBuffer);
 }
