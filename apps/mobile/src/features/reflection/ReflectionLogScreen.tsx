@@ -1,3 +1,4 @@
+import type { AnyType } from "@liverubber/shared";
 import { useState } from "react";
 import {
 	SafeAreaView,
@@ -112,7 +113,7 @@ function CorrelationChart() {
 										styles.barFill,
 										{
 											height:
-												`${(entry.tasksCompleted / MAX_TASKS) * 100}%` as any,
+												`${(entry.tasksCompleted / MAX_TASKS) * 100}%` as AnyType,
 										},
 									]}
 								/>

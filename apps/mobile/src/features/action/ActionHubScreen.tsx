@@ -1,12 +1,12 @@
 import { atom, useAtom } from "jotai";
 import {
-	SafeAreaView,
 	ScrollView,
 	StatusBar,
 	StyleSheet,
 	TouchableOpacity,
 	View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
 import { colors, radius, spacing } from "@/theme";

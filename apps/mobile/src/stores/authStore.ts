@@ -1,11 +1,7 @@
+import type { AuthUser } from "@liverubber/shared";
 import { atom } from "jotai";
 
-export interface AuthUser {
-	id: string;
-	name: string;
-	email: string;
-	token: string;
-}
+export type { AuthUser };
 
 /** Currently authenticated user, null when logged out */
 export const userAtom = atom<AuthUser | null>(null);

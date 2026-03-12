@@ -1,15 +1,11 @@
 import { useAtomValue, useSetAtom } from "jotai";
-import {
-	SafeAreaView,
-	StatusBar,
-	StyleSheet,
-	TouchableOpacity,
-	View,
-} from "react-native";
+import { StatusBar, StyleSheet, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/atoms/Button";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
 import type { HomeScreenProps } from "@/navigation/types";
+import { useTasks } from "@/services/tasksService";
 import { userAtom } from "@/stores/authStore";
 import { colors, spacing } from "@/theme";
 
@@ -25,6 +21,10 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
 	const greeting = user?.name
 		? `Hello, ${user.name.split(" ")[0]} 👋`
 		: "Hello 👋";
+
+	const { data: tasks } = useTasks();
+	const activeCount = tasks?.filter((t) => t.status !== "done").length ?? 0;
+	const completedCount = tasks?.filter((t) => t.status === "done").length ?? 0;
 
 	return (
 		<SafeAreaView style={styles.safe}>
@@ -49,13 +49,13 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
 				<View style={styles.statsRow}>
 					<Card elevated style={styles.statCard}>
 						<Typography variant="h2" color={colors.primary}>
-							0
+							{activeCount}
 						</Typography>
 						<Typography variant="caption">Active Tasks</Typography>
 					</Card>
 					<Card elevated style={styles.statCard}>
 						<Typography variant="h2" color={colors.success}>
-							0
+							{completedCount}
 						</Typography>
 						<Typography variant="caption">Completed</Typography>
 					</Card>

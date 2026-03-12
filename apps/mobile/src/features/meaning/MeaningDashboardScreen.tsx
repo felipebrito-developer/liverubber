@@ -1,12 +1,13 @@
+import type { AnyType } from "@liverubber/shared";
 import { useState } from "react";
 import {
 	FlatList,
-	SafeAreaView,
 	StatusBar,
 	StyleSheet,
 	TouchableOpacity,
 	View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
 import { colors, radius, spacing } from "@/theme";
@@ -97,7 +98,10 @@ function GoalRow({ goal }: { goal: GoalItem }) {
 			{/* Progress bar */}
 			<View style={styles.progressTrack}>
 				<View
-					style={[styles.progressFill, { width: `${goal.progress}%` as any }]}
+					style={[
+						styles.progressFill,
+						{ width: `${goal.progress}%` as AnyType },
+					]}
 				/>
 			</View>
 		</View>

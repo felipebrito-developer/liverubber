@@ -1,10 +1,5 @@
-import {
-	Dimensions,
-	SafeAreaView,
-	StatusBar,
-	StyleSheet,
-	View,
-} from "react-native";
+import { Dimensions, StatusBar, StyleSheet, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/atoms/Button";
 import { Typography } from "@/components/atoms/Typography";
 import type { WelcomeScreenProps } from "@/navigation/types";

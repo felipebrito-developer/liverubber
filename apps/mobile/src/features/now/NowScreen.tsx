@@ -1,3 +1,4 @@
+import type { AnyType } from "@liverubber/shared";
 import { useEffect, useRef, useState } from "react";
 import {
 	Alert,
@@ -283,7 +284,7 @@ export function NowScreen() {
 						<View
 							style={[
 								styles.timerFill,
-								{ width: `${timer.progress * 100}%` as any },
+								{ width: `${timer.progress * 100}%` as AnyType },
 							]}
 						/>
 					</View>

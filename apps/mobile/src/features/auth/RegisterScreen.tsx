@@ -1,21 +1,25 @@
+import { useSetAtom } from "jotai";
 import { useState } from "react";
 import {
 	KeyboardAvoidingView,
 	Platform,
-	SafeAreaView,
 	ScrollView,
 	StatusBar,
 	StyleSheet,
 	TouchableOpacity,
 	View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/atoms/Button";
 import { Typography } from "@/components/atoms/Typography";
 import { FormField } from "@/components/molecules/FormField";
 import type { RegisterScreenProps } from "@/navigation/types";
+import { api } from "@/services/api";
+import { type AuthUser, userAtom } from "@/stores/authStore";
 import { colors, spacing } from "@/theme";
 
 export function RegisterScreen({ navigation }: RegisterScreenProps) {
+	const setUser = useSetAtom(userAtom);
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
@@ -40,9 +44,16 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
 		if (!validate()) return;
 		setLoading(true);
 		try {
-			// TODO: hook up to auth service
-			await new Promise((r) => setTimeout(r, 800));
+			const response = await api.post<{ token: string; user: AuthUser }>(
+				"/auth/register",
+				{ name, email, password },
+			);
+			setUser(response.user);
 			navigation.navigate("MainTab");
+		} catch {
+			setErrors({
+				email: "Registration failed. This email might already be in use.",
+			});
 		} finally {
 			setLoading(false);
 		}

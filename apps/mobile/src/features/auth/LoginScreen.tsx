@@ -1,21 +1,25 @@
+import { useSetAtom } from "jotai";
 import { useState } from "react";
 import {
 	KeyboardAvoidingView,
 	Platform,
-	SafeAreaView,
 	ScrollView,
 	StatusBar,
 	StyleSheet,
 	TouchableOpacity,
 	View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/atoms/Button";
 import { Typography } from "@/components/atoms/Typography";
 import { FormField } from "@/components/molecules/FormField";
 import type { LoginScreenProps } from "@/navigation/types";
+import { api } from "@/services/api";
+import { type AuthUser, userAtom } from "@/stores/authStore";
 import { colors, spacing } from "@/theme";
 
 export function LoginScreen({ navigation }: LoginScreenProps) {
+	const setUser = useSetAtom(userAtom);
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [loading, setLoading] = useState(false);
@@ -35,9 +39,14 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
 		if (!validate()) return;
 		setLoading(true);
 		try {
-			// TODO: hook up to auth service
-			await new Promise((r) => setTimeout(r, 800));
+			const response = await api.post<{ token: string; user: AuthUser }>(
+				"/auth/login",
+				{ email, password },
+			);
+			setUser(response.user);
 			navigation.navigate("MainTab");
+		} catch {
+			setErrors({ email: "Login failed. Please check your credentials." });
 		} finally {
 			setLoading(false);
 		}

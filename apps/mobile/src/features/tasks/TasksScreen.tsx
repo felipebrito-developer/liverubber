@@ -2,11 +2,11 @@ import { useAtom } from "jotai";
 import {
 	ActivityIndicator,
 	FlatList,
-	SafeAreaView,
 	StatusBar,
 	StyleSheet,
 	View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/atoms/Button";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
@@ -67,7 +67,7 @@ function TaskItem({ task }: { task: Task }) {
 	);
 }
 
-export function TasksScreen({ navigation }: TasksScreenProps) {
+export function TasksScreen(_props: TasksScreenProps) {
 	const [filter, setFilter] = useAtom(taskFilterAtom);
 	const { data: tasks, isLoading, isError, refetch } = useTasks();
 

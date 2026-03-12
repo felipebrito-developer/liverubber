@@ -1,10 +1,10 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Provider as JotaiProvider } from "jotai";
-import { StyleSheet } from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { StyleSheet, View } from "react-native";
 import { PaperProvider } from "react-native-paper";
-import { AppNavigator } from "@/navigation/AppNavigator";
-import { paperTheme } from "@/theme";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { AppNavigator } from "./navigation/AppNavigator";
+import { paperTheme } from "./theme";
 
 const queryClient = new QueryClient({
 	defaultOptions: {
@@ -17,15 +17,17 @@ const queryClient = new QueryClient({
 
 export default function App() {
 	return (
-		<GestureHandlerRootView style={styles.root}>
-			<JotaiProvider>
-				<QueryClientProvider client={queryClient}>
-					<PaperProvider theme={paperTheme}>
-						<AppNavigator />
-					</PaperProvider>
-				</QueryClientProvider>
-			</JotaiProvider>
-		</GestureHandlerRootView>
+		<SafeAreaProvider>
+			<View style={styles.root}>
+				<JotaiProvider>
+					<QueryClientProvider client={queryClient}>
+						<PaperProvider theme={paperTheme}>
+							<AppNavigator />
+						</PaperProvider>
+					</QueryClientProvider>
+				</JotaiProvider>
+			</View>
+		</SafeAreaProvider>
 	);
 }
 
