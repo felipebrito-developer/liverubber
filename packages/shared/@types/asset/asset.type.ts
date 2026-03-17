@@ -1,7 +1,11 @@
-import type { Entity } from "../base/entity.type";
+import type { z } from "zod";
+import type {
+	insertAssetSchema,
+	selectAssetSchema,
+} from "../../db/schema/assets";
 
-export interface Asset extends Entity {
-	name: string;
-	filePath: string;
-	mediaType: string;
-}
+/**
+ * Core types inferred from Zod schemas for consistency with DB.
+ */
+export type Asset = z.infer<typeof selectAssetSchema>;
+export type NewAsset = z.infer<typeof insertAssetSchema>;

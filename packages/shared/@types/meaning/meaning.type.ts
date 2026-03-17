@@ -1,13 +1,11 @@
-import type { Entity } from "../base/entity.type";
+import type { z } from "zod";
+import type {
+	insertMeaningSchema,
+	selectMeaningSchema,
+} from "../../db/schema/meanings";
 
-export interface Meaning extends Entity {
-	categoryId: string | null;
-	name: string;
-	description: string;
-	externalLink: string | null;
-}
-
-export interface MeaningAsset {
-	meaningId: string;
-	assetId: string;
-}
+/**
+ * Core types inferred from Zod schemas for consistency with DB.
+ */
+export type Meaning = z.infer<typeof selectMeaningSchema>;
+export type NewMeaning = z.infer<typeof insertMeaningSchema>;

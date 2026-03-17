@@ -1,27 +1,21 @@
-import type { Entity } from "../base/entity.type";
+import type { z } from "zod";
+import type {
+	insertResourceLogSchema,
+	insertResourceStoreSchema,
+	insertResourceTypeSchema,
+	selectResourceLogSchema,
+	selectResourceStoreSchema,
+	selectResourceTypeSchema,
+} from "../../db/schema/resources";
 
-export interface ResourceType extends Entity {
-	amountType: string;
-	name: string;
-	description: string;
-}
+/**
+ * Core types inferred from Zod schemas for consistency with DB.
+ */
+export type ResourceType = z.infer<typeof selectResourceTypeSchema>;
+export type NewResourceType = z.infer<typeof insertResourceTypeSchema>;
 
-export interface ResourceStore extends Entity {
-	resourceTypeId: string;
-	amount: number;
-}
+export type ResourceStore = z.infer<typeof selectResourceStoreSchema>;
+export type NewResourceStore = z.infer<typeof insertResourceStoreSchema>;
 
-export interface ResourceAssignment extends Entity {
-	resourceId: string;
-	entityRelatedId: string;
-	relationType: string;
-	amount: number;
-	isCompleted: boolean;
-}
-
-export interface ResourceLog extends Entity {
-	resourceId: string;
-	amountChange: number;
-	changeType: string;
-	logDate: string | null;
-}
+export type ResourceLog = z.infer<typeof selectResourceLogSchema>;
+export type NewResourceLog = z.infer<typeof insertResourceLogSchema>;

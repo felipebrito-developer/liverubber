@@ -1,10 +1,11 @@
-import type { Entity } from "../base/entity.type";
+import type { z } from "zod";
+import type {
+	insertMilestoneSchema,
+	selectMilestoneSchema,
+} from "../../db/schema/goals";
 
-export interface Milestone extends Entity {
-	goalId: string | null;
-	rewardId: string;
-	name: string;
-	description: string | null;
-	type: string;
-	isCompleted: boolean;
-}
+/**
+ * Core types inferred from Zod schemas for consistency with DB.
+ */
+export type Milestone = z.infer<typeof selectMilestoneSchema>;
+export type NewMilestone = z.infer<typeof insertMilestoneSchema>;

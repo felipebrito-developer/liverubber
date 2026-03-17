@@ -1,16 +1,14 @@
-import type { Entity, Status } from "../base/entity.type";
+import type { z } from "zod";
+import type {
+	insertGoalSchema,
+	selectGoalAssetsSchema,
+	selectGoalSchema,
+} from "../../db/schema/goals";
 
-export interface Goal extends Entity {
-	meaningId: string | null;
-	name: string;
-	description: string;
-	status: Status;
-	dueDate: string | null;
-	progress: number;
-	coverImageId: string | null;
-}
+/**
+ * Core types inferred from Zod schemas for consistency with DB.
+ */
+export type Goal = z.infer<typeof selectGoalSchema>;
+export type NewGoal = z.infer<typeof insertGoalSchema>;
 
-export interface GoalAsset {
-	goalId: string;
-	assetId: string;
-}
+export type GoalAsset = z.infer<typeof selectGoalAssetsSchema>;

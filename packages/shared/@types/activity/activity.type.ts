@@ -1,17 +1,18 @@
-import type { Entity } from "../base/entity.type";
+import type { z } from "zod";
+import type {
+	insertActivitySchema,
+	selectActivitySchema,
+} from "../../db/schema/core";
+import type {
+	insertActivityLogSchema,
+	selectActivityLogSchema,
+} from "../../db/schema/logs";
 
-export interface Activity extends Entity {
-	title: string;
-	description: string;
-	iconName: string;
-	tagId: string;
-}
+/**
+ * Core types inferred from Zod schemas for consistency with DB.
+ */
+export type Activity = z.infer<typeof selectActivitySchema>;
+export type NewActivity = z.infer<typeof insertActivitySchema>;
 
-export interface ActivityLog extends Entity {
-	activityId: string;
-	taskId: string | null;
-	habitId: string | null;
-	completedAt: string;
-	amountAchieved: number;
-	moodRating: number;
-}
+export type ActivityLog = z.infer<typeof selectActivityLogSchema>;
+export type NewActivityLog = z.infer<typeof insertActivityLogSchema>;

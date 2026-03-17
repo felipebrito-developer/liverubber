@@ -1,7 +1,11 @@
-import type { Entity } from "../base/entity.type";
+import type { z } from "zod";
+import type {
+	insertRewardSchema,
+	selectRewardSchema,
+} from "../../db/schema/rewards";
 
-export interface Reward extends Entity {
-	description: string;
-	name: string;
-	type: string;
-}
+/**
+ * Core types inferred from Zod schemas for consistency with DB.
+ */
+export type Reward = z.infer<typeof selectRewardSchema>;
+export type NewReward = z.infer<typeof insertRewardSchema>;

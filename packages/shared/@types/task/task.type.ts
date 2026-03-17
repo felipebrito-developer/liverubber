@@ -1,4 +1,6 @@
-import type { Entity, Priority, Status } from "../base/entity.type";
+import type { z } from "zod";
+import type { insertTaskSchema, selectTaskSchema } from "../../db/schema/tasks";
+import type { Priority, Status } from "../base/entity.type";
 
 export type TaskTag = string;
 
@@ -7,14 +9,10 @@ export type TaskPriority = Priority;
 export type TaskStatus = Status;
 
 /**
- * Core interface precisely matching the SQL `task` table natively.
+ * Core types inferred from Zod schemas for consistency with DB.
  */
-export interface TaskDefinition extends Entity {
-	goalId: string | null;
-	parentTaskId: string | null;
-	title: string;
-	description: string;
-	status: Status;
-	dueDate: string | null;
-	priority: Priority;
-}
+export type Task = z.infer<typeof selectTaskSchema>;
+export type NewTask = z.infer<typeof insertTaskSchema>;
+
+/** @deprecated Use Task instead */
+export type TaskDefinition = Task;

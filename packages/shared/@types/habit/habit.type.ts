@@ -1,10 +1,11 @@
-import type { Entity } from "../base/entity.type";
+import type { z } from "zod";
+import type {
+	insertHabitSchema,
+	selectHabitSchema,
+} from "../../db/schema/habits_events";
 
-export interface Habit extends Entity {
-	meaningId: string | null;
-	frequencyId: string | null;
-	name: string;
-	startDate: string | null;
-	lastUpdate: string | null;
-	streakCount: number;
-}
+/**
+ * Core types inferred from Zod schemas for consistency with DB.
+ */
+export type Habit = z.infer<typeof selectHabitSchema>;
+export type NewHabit = z.infer<typeof insertHabitSchema>;
