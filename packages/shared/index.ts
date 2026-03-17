@@ -1,3 +1,6 @@
+import * as dbSchema from "./db/schema";
+export const schema = dbSchema;
+
 export * from "./@types/activity/activity.type";
 export * from "./@types/asset/asset.type";
 export * from "./@types/base/entity.type";

@@ -197,6 +197,17 @@ export function TasksScreen(_props: TasksScreenProps) {
 					</Card>
 				</View>
 			</Modal>
+
+			{/* Floating Action Button */}
+			<TouchableOpacity
+				style={styles.fab}
+				onPress={() => setIsModalVisible(true)}
+				activeOpacity={0.8}
+			>
+				<Typography variant="h2" style={styles.fabText}>
+					+
+				</Typography>
+			</TouchableOpacity>
 		</SafeAreaView>
 	);
 }
@@ -291,5 +302,27 @@ const styles = StyleSheet.create({
 	modalActions: {
 		flexDirection: "row",
 		gap: spacing.sm,
+	},
+	fab: {
+		position: "absolute",
+		bottom: spacing.xl,
+		right: spacing.xl,
+		width: 56,
+		height: 56,
+		borderRadius: 28,
+		backgroundColor: colors.primary,
+		justifyContent: "center",
+		alignItems: "center",
+		elevation: 4,
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.25,
+		shadowRadius: 3.84,
+	},
+	fabText: {
+		color: colors.onPrimary,
+		fontSize: 32,
+		lineHeight: 36,
+		marginTop: -2,
 	},
 });

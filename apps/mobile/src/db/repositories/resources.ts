@@ -22,6 +22,9 @@ export const resourcesRepository = {
 	async getAllTypes() {
 		return await db.select().from(schema.resourceType);
 	},
+	async createType(data: typeof schema.resourceType.$inferInsert) {
+		return await db.insert(schema.resourceType).values(data).returning();
+	},
 	async createStore(data: typeof schema.resourceStore.$inferInsert) {
 		return await db.insert(schema.resourceStore).values(data).returning();
 	},

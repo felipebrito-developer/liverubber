@@ -3,12 +3,12 @@ import { useEffect, useRef, useState } from "react";
 import {
 	Alert,
 	Modal,
-	SafeAreaView,
 	StatusBar,
 	StyleSheet,
 	TouchableOpacity,
 	View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/atoms/Button";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
@@ -117,7 +117,7 @@ function useCountdown(durationSec: number) {
 	}, [durationSec]);
 
 	useEffect(() => {
-		if (running) {
+		if (running && intervalRef.current) {
 			intervalRef.current = setInterval(() => {
 				setRemaining((r) => {
 					if (r <= 1) {

@@ -1,3 +1,4 @@
+import { schema } from "@liverubber/shared";
 import { open } from "@op-engineering/op-sqlite";
 import { drizzle } from "drizzle-orm/op-sqlite";
 
@@ -6,8 +7,8 @@ const sqliteDB = open({
 	name: "liverubber.db",
 });
 
-// Create the Drizzle ORM client
-export const db = drizzle(sqliteDB);
+// Create the Drizzle ORM client with schema for type safety and relations
+export const db = drizzle(sqliteDB, { schema });
 
 const INITIALIZATION_SQL = `
 CREATE TABLE IF NOT EXISTS asset (
@@ -71,11 +72,11 @@ CREATE TABLE IF NOT EXISTS meaning (
 CREATE TABLE IF NOT EXISTS meaning_assets (
   meaning_id VARCHAR NOT NULL,
   asset_id VARCHAR NOT NULL,
+  is_synced INTEGER DEFAULT 0,
+  last_synced_at DATETIME,
   PRIMARY KEY (meaning_id, asset_id),
   FOREIGN KEY(meaning_id) REFERENCES meaning(id),
-  FOREIGN KEY(asset_id) REFERENCES asset(id),
-  is_synced INTEGER DEFAULT 0,
-  last_synced_at DATETIME
+  FOREIGN KEY(asset_id) REFERENCES asset(id)
 );
 
 CREATE TABLE IF NOT EXISTS goal (
@@ -98,11 +99,11 @@ CREATE TABLE IF NOT EXISTS goal (
 CREATE TABLE IF NOT EXISTS goal_assets (
   goal_id VARCHAR NOT NULL,
   asset_id VARCHAR NOT NULL,
+  is_synced INTEGER DEFAULT 0,
+  last_synced_at DATETIME,
   PRIMARY KEY (goal_id, asset_id),
   FOREIGN KEY(goal_id) REFERENCES goal(id),
-  FOREIGN KEY(asset_id) REFERENCES asset(id),
-  is_synced INTEGER DEFAULT 0,
-  last_synced_at DATETIME
+  FOREIGN KEY(asset_id) REFERENCES asset(id)
 );
 
 CREATE TABLE IF NOT EXISTS habit (
@@ -277,11 +278,16 @@ export async function initializeDatabase() {
 			.filter((s) => s.length > 0);
 
 		for (const ddl of ddlStatements) {
-			await sqliteDB.execute(ddl);
+			try {
+				await sqliteDB.execute(ddl);
+			} catch (statementErr) {
+				console.error(`Failed to execute DDL: ${ddl}`, statementErr);
+				throw statementErr;
+			}
 		}
 
 		console.log("Local SQLite initialized successfully");
 	} catch (err) {
-		console.error("Local SQLite initialization failed", err);
+		console.error("Local SQLite initialization failed overall", err);
 	}
 }
