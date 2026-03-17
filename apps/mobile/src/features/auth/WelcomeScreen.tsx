@@ -10,7 +10,11 @@ const { height } = Dimensions.get("window");
 export function WelcomeScreen({ navigation }: WelcomeScreenProps) {
 	return (
 		<SafeAreaView style={styles.safe}>
-			<StatusBar barStyle="light-content" backgroundColor={colors.background} />
+			<StatusBar
+				barStyle="light-content"
+				backgroundColor={colors.background}
+				translucent={true}
+			/>
 			<View style={styles.container}>
 				{/* Hero Area */}
 				<View style={styles.hero}>

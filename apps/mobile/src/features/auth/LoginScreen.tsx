@@ -14,12 +14,11 @@ import { Button } from "@/components/atoms/Button";
 import { Typography } from "@/components/atoms/Typography";
 import { FormField } from "@/components/molecules/FormField";
 import type { LoginScreenProps } from "@/navigation/types";
-import { api } from "@/services/api";
-import { type AuthUser, userAtom } from "@/stores/authStore";
+import { type AuthUser, saveSessionAction } from "@/stores/authStore";
 import { colors, spacing } from "@/theme";
 
 export function LoginScreen({ navigation }: LoginScreenProps) {
-	const setUser = useSetAtom(userAtom);
+	const saveSession = useSetAtom(saveSessionAction);
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [loading, setLoading] = useState(false);
@@ -34,17 +33,20 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
 		setErrors(next);
 		return Object.keys(next).length === 0;
 	}
-
 	async function handleLogin() {
 		if (!validate()) return;
 		setLoading(true);
 		try {
-			const response = await api.post<{ token: string; user: AuthUser }>(
-				"/auth/login",
-				{ email, password },
-			);
-			setUser(response.user);
-			navigation.navigate("MainTab");
+			// Simulating auth since AI bridge integration is paused
+			const mockUser: AuthUser = {
+				id: `mock_${Date.now()}`,
+				email,
+				name: email.split("@")[0],
+				token: `mock_token_${Math.random().toString(36).substring(7)}`,
+			};
+
+			await saveSession(mockUser);
+			// navigation.navigate("MainTab") is now handled by the navigator guard
 		} catch {
 			setErrors({ email: "Login failed. Please check your credentials." });
 		} finally {

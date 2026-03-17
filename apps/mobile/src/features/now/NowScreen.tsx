@@ -1,4 +1,4 @@
-import type { AnyType } from "@liverubber/shared";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useRef, useState } from "react";
 import {
 	Alert,
@@ -12,6 +12,13 @@ import {
 import { Button } from "@/components/atoms/Button";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
+import { logActivityAction } from "@/stores/logsStore";
+import {
+	isTasksLoadedAtom,
+	loadTasksAction,
+	selectedTaskIdAtom,
+	tasksAtom,
+} from "@/stores/tasksStore";
 import { colors, radius, spacing } from "@/theme";
 
 // ─── Preflight checklist items ─────────────────────────────────────────────────
@@ -21,16 +28,6 @@ const PREFLIGHT_ITEMS = [
 	"Do you have water or a drink nearby?",
 	"Have you silenced notifications?",
 ];
-
-// ─── Demo task (replace with real selected task from Jotai/TanStack Query) ─────
-
-const DEMO_TASK = {
-	id: "t1",
-	title: "Review PR #42",
-	description: "Check the new authentication module. Leave review comments.",
-	meaningTag: "Deep Work",
-	estimatedMin: 25, // Pomodoro default
-};
 
 // ─── Preflight Modal ────────────────────────────────────────────────────────────
 
@@ -116,6 +113,10 @@ function useCountdown(durationSec: number) {
 	const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
 	useEffect(() => {
+		setRemaining(durationSec);
+	}, [durationSec]);
+
+	useEffect(() => {
 		if (running) {
 			intervalRef.current = setInterval(() => {
 				setRemaining((r) => {
@@ -153,11 +154,23 @@ function useCountdown(durationSec: number) {
 // ─── Screen ────────────────────────────────────────────────────────────────────
 
 export function NowScreen() {
+	const selectedTaskId = useAtomValue(selectedTaskIdAtom);
+	const tasks = useAtomValue(tasksAtom);
+	const isTasksLoaded = useAtomValue(isTasksLoadedAtom);
+	const loadTasks = useSetAtom(loadTasksAction);
+	const logActivity = useSetAtom(logActivityAction);
+
 	const [preflightDone, setPreflightDone] = useState(false);
 	const [moodRating, setMoodRating] = useState<number | null>(null);
 	const [completed, setCompleted] = useState(false);
 
-	const timer = useCountdown(DEMO_TASK.estimatedMin * 60);
+	useEffect(() => {
+		if (!isTasksLoaded) loadTasks();
+	}, [isTasksLoaded, loadTasks]);
+
+	const task = tasks.find((t) => t.id === selectedTaskId) || tasks[0];
+
+	const timer = useCountdown(25 * 60); // Default to 25 min pomodoro
 
 	function handleComplete() {
 		timer.reset();
@@ -169,11 +182,26 @@ export function NowScreen() {
 			"Recalibrate",
 			"No problem. What would you like to do?",
 			[
-				{ text: "Snooze 10 min", onPress: () => timer.reset() },
+				{ text: "Reset timer", onPress: () => timer.reset() },
 				{ text: "Change task", style: "cancel" },
 				{ text: "Rest — I need a break", style: "destructive" },
 			],
 			{ cancelable: true },
+		);
+	}
+
+	if (!task) {
+		return (
+			<SafeAreaView style={styles.safe}>
+				<View style={styles.nowContainer}>
+					<Typography variant="h2" align="center">
+						No active task
+					</Typography>
+					<Typography align="center" color={colors.muted}>
+						Start by selecting or creating a task in the hub.
+					</Typography>
+				</View>
+			</SafeAreaView>
 		);
 	}
 
@@ -193,7 +221,7 @@ export function NowScreen() {
 						align="center"
 						style={styles.meaningAnchor}
 					>
-						✦ You just moved closer to: {DEMO_TASK.meaningTag}
+						✦ You just finished: {task.title}
 					</Typography>
 
 					<Card style={styles.moodCard}>
@@ -239,6 +267,13 @@ export function NowScreen() {
 							label="Log & return to Action Hub"
 							fullWidth
 							onPress={() => {
+								logActivity({
+									activityId: "manual_focus", // Placeholder
+									taskId: task.id,
+									moodRating: moodRating || 3,
+									amountAchieved: 1.0,
+									completedAt: new Date().toISOString(),
+								});
 								setCompleted(false);
 								setMoodRating(null);
 								setPreflightDone(false);
@@ -260,18 +295,15 @@ export function NowScreen() {
 			/>
 
 			<View style={styles.nowContainer}>
-				{/* Meaning anchor — always visible at top */}
-				<Typography variant="meaning" align="center">
-					✦ {DEMO_TASK.meaningTag}
-				</Typography>
-
-				{/* Task title — the ONE thing */}
-				<Typography variant="h1" align="center" style={styles.taskTitle}>
-					{DEMO_TASK.title}
-				</Typography>
-				<Typography variant="body" align="center" color={colors.muted}>
-					{DEMO_TASK.description}
-				</Typography>
+				{/* Task info */}
+				<View style={styles.taskInfo}>
+					<Typography variant="h1" align="center" style={styles.taskTitle}>
+						{task.title}
+					</Typography>
+					<Typography variant="body" align="center" color={colors.muted}>
+						{task.description}
+					</Typography>
+				</View>
 
 				{/* Timer display */}
 				<View style={styles.timerContainer}>
@@ -282,10 +314,7 @@ export function NowScreen() {
 					{/* Visual progress bar — combats Time Blindness */}
 					<View style={styles.timerTrack}>
 						<View
-							style={[
-								styles.timerFill,
-								{ width: `${timer.progress * 100}%` as AnyType },
-							]}
+							style={[styles.timerFill, { width: `${timer.progress * 100}%` }]}
 						/>
 					</View>
 				</View>
@@ -370,6 +399,10 @@ const styles = StyleSheet.create({
 		paddingVertical: spacing.xxl,
 		justifyContent: "space-between",
 		gap: spacing.xl,
+	},
+	taskInfo: {
+		gap: spacing.xs,
+		alignItems: "center",
 	},
 	taskTitle: {
 		marginTop: spacing.sm,

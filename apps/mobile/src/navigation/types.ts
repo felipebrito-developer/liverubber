@@ -19,6 +19,7 @@ export type MainTabParamList = {
 	ActionHub: undefined;
 	MeaningDashboard: undefined;
 	Now: undefined;
+	Resources: undefined;
 	Reflection: undefined;
 };
 
@@ -54,6 +55,10 @@ export type MeaningDashboardScreenProps = BottomTabScreenProps<
 	"MeaningDashboard"
 >;
 export type NowScreenProps = BottomTabScreenProps<MainTabParamList, "Now">;
+export type ResourcesScreenProps = BottomTabScreenProps<
+	MainTabParamList,
+	"Resources"
+>;
 export type ReflectionScreenProps = BottomTabScreenProps<
 	MainTabParamList,
 	"Reflection"

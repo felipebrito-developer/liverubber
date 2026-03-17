@@ -4,6 +4,7 @@ import { ActionHubScreen } from "@/features/action/ActionHubScreen";
 import { MeaningDashboardScreen } from "@/features/meaning/MeaningDashboardScreen";
 import { NowScreen } from "@/features/now/NowScreen";
 import { ReflectionLogScreen } from "@/features/reflection/ReflectionLogScreen";
+import { ResourcesScreen } from "@/features/resources/ResourcesScreen";
 import { colors, radius, spacing } from "@/theme";
 import type { MainTabParamList } from "./types";
 
@@ -70,6 +71,16 @@ export function MainTabNavigator() {
 					tabBarLabel: "Focus",
 					tabBarIcon: ({ focused }: { focused: boolean }) => (
 						<TabIcon icon="🎯" focused={focused} />
+					),
+				}}
+			/>
+			<Tab.Screen
+				name="Resources"
+				component={ResourcesScreen}
+				options={{
+					tabBarLabel: "Assets",
+					tabBarIcon: ({ focused }: { focused: boolean }) => (
+						<TabIcon icon="💎" focused={focused} />
 					),
 				}}
 			/>

@@ -1,17 +1,32 @@
 import { useAtomValue, useSetAtom } from "jotai";
+import { useEffect } from "react";
 import { StatusBar, StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/atoms/Button";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
 import type { HomeScreenProps } from "@/navigation/types";
-import { useTasks } from "@/services/tasksService";
 import { userAtom } from "@/stores/authStore";
+import {
+	isTasksLoadedAtom,
+	loadTasksAction,
+	tasksAtom,
+} from "@/stores/tasksStore";
 import { colors, spacing } from "@/theme";
 
 export function HomeScreen({ navigation }: HomeScreenProps) {
 	const user = useAtomValue(userAtom);
 	const setUser = useSetAtom(userAtom);
+
+	const tasks = useAtomValue(tasksAtom);
+	const isTasksLoaded = useAtomValue(isTasksLoadedAtom);
+	const loadTasks = useSetAtom(loadTasksAction);
+
+	useEffect(() => {
+		if (!isTasksLoaded) {
+			loadTasks();
+		}
+	}, [isTasksLoaded, loadTasks]);
 
 	function handleLogout() {
 		setUser(null);
@@ -22,9 +37,8 @@ export function HomeScreen({ navigation }: HomeScreenProps) {
 		? `Hello, ${user.name.split(" ")[0]} 👋`
 		: "Hello 👋";
 
-	const { data: tasks } = useTasks();
-	const activeCount = tasks?.filter((t) => t.status !== "done").length ?? 0;
-	const completedCount = tasks?.filter((t) => t.status === "done").length ?? 0;
+	const activeCount = tasks.filter((t) => t.status !== "done").length;
+	const completedCount = tasks.filter((t) => t.status === "done").length;
 
 	return (
 		<SafeAreaView style={styles.safe}>

@@ -1,5 +1,6 @@
-import type { AnyType } from "@liverubber/shared";
-import { useState } from "react";
+import type { Goal, Meaning } from "@liverubber/shared";
+import { useAtomValue, useSetAtom } from "jotai";
+import { useEffect, useState } from "react";
 import {
 	FlatList,
 	StatusBar,
@@ -10,72 +11,19 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
+import {
+	goalsAtom,
+	isGoalsLoadedAtom,
+	loadGoalsAction,
+} from "@/stores/goalsStore";
+import {
+	isMeaningsLoadedAtom,
+	loadMeaningsAction,
+	meaningsAtom,
+} from "@/stores/meaningsStore";
 import { colors, radius, spacing } from "@/theme";
 
-interface GoalItem {
-	id: string;
-	name: string;
-	status: "active" | "paused" | "completed";
-	progress: number; // 0-100
-}
-
-interface MeaningItem {
-	id: string;
-	name: string;
-	description: string;
-	categoryColor: string;
-	goals: GoalItem[];
-}
-
-// Placeholder data — replace with real DB query via TanStack Query
-const MEANINGS: MeaningItem[] = [
-	{
-		id: "m1",
-		name: "Health & Vitality",
-		description: "Being strong and present in my own body.",
-		categoryColor: colors.success,
-		goals: [
-			{ id: "g1", name: "Run 3x per week", status: "active", progress: 40 },
-			{
-				id: "g2",
-				name: "Sleep 7h consistently",
-				status: "active",
-				progress: 65,
-			},
-		],
-	},
-	{
-		id: "m2",
-		name: "Deep Work",
-		description: "Building things that matter with focused energy.",
-		categoryColor: colors.secondary,
-		goals: [
-			{
-				id: "g3",
-				name: "Ship LiveRubber v1",
-				status: "active",
-				progress: 30,
-			},
-			{
-				id: "g4",
-				name: "Read 2 engineering books",
-				status: "paused",
-				progress: 50,
-			},
-		],
-	},
-	{
-		id: "m3",
-		name: "Relationships",
-		description: "Nurturing the people who give my life meaning.",
-		categoryColor: colors.warning,
-		goals: [
-			{ id: "g5", name: "Weekly family call", status: "active", progress: 80 },
-		],
-	},
-];
-
-function GoalRow({ goal }: { goal: GoalItem }) {
+function GoalRow({ goal }: { goal: Goal }) {
 	return (
 		<View style={styles.goalRow}>
 			<View style={styles.goalHeader}>
@@ -97,18 +45,13 @@ function GoalRow({ goal }: { goal: GoalItem }) {
 			</View>
 			{/* Progress bar */}
 			<View style={styles.progressTrack}>
-				<View
-					style={[
-						styles.progressFill,
-						{ width: `${goal.progress}%` as AnyType },
-					]}
-				/>
+				<View style={[styles.progressFill, { width: `${goal.progress}%` }]} />
 			</View>
 		</View>
 	);
 }
 
-function MeaningCard({ item }: { item: MeaningItem }) {
+function MeaningCard({ meaning, goals }: { meaning: Meaning; goals: Goal[] }) {
 	const [expanded, setExpanded] = useState(false);
 
 	return (
@@ -116,7 +59,7 @@ function MeaningCard({ item }: { item: MeaningItem }) {
 			activeOpacity={0.85}
 			onPress={() => setExpanded((v) => !v)}
 			accessibilityRole="button"
-			accessibilityLabel={`${item.name} — ${expanded ? "collapse" : "expand"} goals`}
+			accessibilityLabel={`${meaning.name} — ${expanded ? "collapse" : "expand"} goals`}
 		>
 			<Card elevated style={styles.meaningCard}>
 				{/* Header */}
@@ -124,17 +67,17 @@ function MeaningCard({ item }: { item: MeaningItem }) {
 					<View
 						style={[
 							styles.categoryDot,
-							{ backgroundColor: item.categoryColor },
+							{ backgroundColor: colors.primary }, // Default to primary until category color is fetched
 						]}
 					/>
 					<View style={styles.meaningText}>
-						<Typography variant="h3">{item.name}</Typography>
+						<Typography variant="h3">{meaning.name}</Typography>
 						<Typography
 							variant="bodySmall"
 							color={colors.muted}
 							style={styles.meaningDesc}
 						>
-							{item.description}
+							{meaning.description}
 						</Typography>
 					</View>
 					<Typography variant="caption" color={colors.muted}>
@@ -149,9 +92,13 @@ function MeaningCard({ item }: { item: MeaningItem }) {
 						<Typography variant="meaning" style={styles.goalsLabel}>
 							Goals attached to this meaning
 						</Typography>
-						{item.goals.map((g) => (
-							<GoalRow key={g.id} goal={g} />
-						))}
+						{goals.length === 0 ? (
+							<Typography variant="caption" color={colors.muted}>
+								No goals attached yet.
+							</Typography>
+						) : (
+							goals.map((g) => <GoalRow key={g.id} goal={g} />)
+						)}
 					</View>
 				)}
 			</Card>
@@ -160,6 +107,24 @@ function MeaningCard({ item }: { item: MeaningItem }) {
 }
 
 export function MeaningDashboardScreen() {
+	const meanings = useAtomValue(meaningsAtom);
+	const isMeaningsLoaded = useAtomValue(isMeaningsLoadedAtom);
+	const loadMeanings = useSetAtom(loadMeaningsAction);
+
+	const goals = useAtomValue(goalsAtom);
+	const isGoalsLoaded = useAtomValue(isGoalsLoadedAtom);
+	const loadGoals = useSetAtom(loadGoalsAction);
+
+	useEffect(() => {
+		if (!isMeaningsLoaded) loadMeanings();
+		if (!isGoalsLoaded) loadGoals();
+	}, [isMeaningsLoaded, loadMeanings, isGoalsLoaded, loadGoals]);
+
+	const data = meanings.map((m) => ({
+		meaning: m,
+		goals: goals.filter((g) => g.meaningId === m.id),
+	}));
+
 	return (
 		<SafeAreaView style={styles.safe}>
 			<StatusBar barStyle="light-content" backgroundColor={colors.background} />
@@ -174,11 +139,24 @@ export function MeaningDashboardScreen() {
 				</Typography>
 			</View>
 			<FlatList
-				data={MEANINGS}
-				keyExtractor={(item) => item.id}
-				renderItem={({ item }) => <MeaningCard item={item} />}
+				data={data}
+				keyExtractor={(item) => item.meaning.id}
+				renderItem={({ item }) => (
+					<MeaningCard meaning={item.meaning} goals={item.goals} />
+				)}
 				contentContainerStyle={styles.list}
 				showsVerticalScrollIndicator={false}
+				ListEmptyComponent={
+					isMeaningsLoaded ? (
+						<Typography
+							color={colors.muted}
+							align="center"
+							style={{ marginTop: spacing.xl }}
+						>
+							No meanings found.{"\n"}Start by defining what matters.
+						</Typography>
+					) : null
+				}
 			/>
 		</SafeAreaView>
 	);

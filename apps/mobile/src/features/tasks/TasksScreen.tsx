@@ -1,9 +1,13 @@
-import { useAtom } from "jotai";
+import type { Task } from "@liverubber/shared";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { useEffect, useState } from "react";
 import {
 	ActivityIndicator,
 	FlatList,
+	Modal,
 	StatusBar,
 	StyleSheet,
+	TextInput,
 	View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -11,11 +15,13 @@ import { Button } from "@/components/atoms/Button";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
 import type { TasksScreenProps } from "@/navigation/types";
-import { useTasks } from "@/services/tasksService";
 import {
-	type Task,
+	createTaskAction,
+	isTasksLoadedAtom,
+	loadTasksAction,
 	type TaskFilter,
 	taskFilterAtom,
+	tasksAtom,
 } from "@/stores/tasksStore";
 import { colors, radius, spacing } from "@/theme";
 
@@ -26,7 +32,7 @@ const FILTERS: { key: TaskFilter; label: string }[] = [
 	{ key: "done", label: "Done" },
 ];
 
-function statusColor(status: Task["status"]) {
+function statusColor(status: string | null) {
 	switch (status) {
 		case "done":
 			return colors.success;
@@ -61,7 +67,7 @@ function TaskItem({ task }: { task: Task }) {
 				</Typography>
 			) : null}
 			<Typography variant="caption" style={styles.taskStatus}>
-				{task.status.replace("_", " ").toUpperCase()}
+				{(task.status ?? "todo").replace("_", " ").toUpperCase()}
 			</Typography>
 		</Card>
 	);
@@ -69,12 +75,36 @@ function TaskItem({ task }: { task: Task }) {
 
 export function TasksScreen(_props: TasksScreenProps) {
 	const [filter, setFilter] = useAtom(taskFilterAtom);
-	const { data: tasks, isLoading, isError, refetch } = useTasks();
+	const tasks = useAtomValue(tasksAtom);
+	const isTasksLoaded = useAtomValue(isTasksLoadedAtom);
+	const loadTasks = useSetAtom(loadTasksAction);
+	const createTask = useSetAtom(createTaskAction);
+
+	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [newTitle, setNewTitle] = useState("");
+	const [newDesc, setNewDesc] = useState("");
+
+	useEffect(() => {
+		if (!isTasksLoaded) {
+			loadTasks();
+		}
+	}, [isTasksLoaded, loadTasks]);
+
+	const handleCreate = async () => {
+		if (!newTitle.trim()) return;
+		await createTask({
+			title: newTitle,
+			description: newDesc,
+			status: "todo",
+			priority: "medium",
+		});
+		setNewTitle("");
+		setNewDesc("");
+		setIsModalVisible(false);
+	};
 
 	const filtered =
-		filter === "all"
-			? (tasks ?? [])
-			: (tasks ?? []).filter((t) => t.status === filter);
+		filter === "all" ? tasks : tasks.filter((t) => t.status === filter);
 
 	return (
 		<SafeAreaView style={styles.safe}>
@@ -82,7 +112,14 @@ export function TasksScreen(_props: TasksScreenProps) {
 
 			{/* Header */}
 			<View style={styles.header}>
-				<Typography variant="h2">Tasks</Typography>
+				<View style={styles.headerRow}>
+					<Typography variant="h2">Tasks</Typography>
+					<Button
+						label="+"
+						onPress={() => setIsModalVisible(true)}
+						style={styles.addBtn}
+					/>
+				</View>
 			</View>
 
 			{/* Filter Pills */}
@@ -99,27 +136,25 @@ export function TasksScreen(_props: TasksScreenProps) {
 			</View>
 
 			{/* Content */}
-			{isLoading ? (
+			{!isTasksLoaded ? (
 				<View style={styles.center}>
 					<ActivityIndicator color={colors.primary} size="large" />
-				</View>
-			) : isError ? (
-				<View style={styles.center}>
-					<Typography color={colors.error} align="center">
-						Failed to load tasks.
-					</Typography>
-					<Button
-						label="Retry"
-						variant="ghost"
-						onPress={() => refetch()}
-						style={{ marginTop: spacing.md }}
-					/>
 				</View>
 			) : filtered.length === 0 ? (
 				<View style={styles.center}>
 					<Typography color={colors.muted} align="center">
-						No tasks yet.{"\n"}Start by creating one!
+						{filter === "all"
+							? "No tasks yet.\nStart by creating one!"
+							: `No tasks with status "${filter}".`}
 					</Typography>
+					{filter === "all" && (
+						<Button
+							label="Create Task"
+							variant="ghost"
+							onPress={() => setIsModalVisible(true)}
+							style={{ marginTop: spacing.md }}
+						/>
+					)}
 				</View>
 			) : (
 				<FlatList
@@ -130,6 +165,38 @@ export function TasksScreen(_props: TasksScreenProps) {
 					showsVerticalScrollIndicator={false}
 				/>
 			)}
+
+			<Modal visible={isModalVisible} animationType="slide" transparent>
+				<View style={styles.modalOverlay}>
+					<Card style={styles.modalCard}>
+						<Typography variant="h3">New Task</Typography>
+						<TextInput
+							placeholder="Title"
+							placeholderTextColor={colors.muted}
+							value={newTitle}
+							onChangeText={setNewTitle}
+							style={styles.input}
+						/>
+						<TextInput
+							placeholder="Description"
+							placeholderTextColor={colors.muted}
+							value={newDesc}
+							onChangeText={setNewDesc}
+							multiline
+							style={[styles.input, styles.textArea]}
+						/>
+						<View style={styles.modalActions}>
+							<Button
+								label="Cancel"
+								variant="outline"
+								onPress={() => setIsModalVisible(false)}
+								style={{ flex: 1 }}
+							/>
+							<Button label="Save" onPress={handleCreate} style={{ flex: 1 }} />
+						</View>
+					</Card>
+				</View>
+			</Modal>
 		</SafeAreaView>
 	);
 }
@@ -143,6 +210,16 @@ const styles = StyleSheet.create({
 		paddingHorizontal: spacing.xl,
 		paddingTop: spacing.xl,
 		paddingBottom: spacing.sm,
+	},
+	headerRow: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+	},
+	addBtn: {
+		width: 44,
+		height: 44,
+		borderRadius: radius.full,
 	},
 	filterRow: {
 		flexDirection: "row",
@@ -189,5 +266,30 @@ const styles = StyleSheet.create({
 	taskStatus: {
 		marginLeft: spacing.lg,
 		letterSpacing: 0.5,
+	},
+	modalOverlay: {
+		flex: 1,
+		backgroundColor: "rgba(0,0,0,0.5)",
+		justifyContent: "center",
+		padding: spacing.xl,
+	},
+	modalCard: {
+		gap: spacing.md,
+	},
+	input: {
+		backgroundColor: colors.surface,
+		borderWidth: 1,
+		borderColor: colors.border,
+		borderRadius: radius.md,
+		padding: spacing.md,
+		color: colors.onBackground,
+	},
+	textArea: {
+		height: 100,
+		textAlignVertical: "top",
+	},
+	modalActions: {
+		flexDirection: "row",
+		gap: spacing.sm,
 	},
 });
