@@ -9,7 +9,7 @@ description: Senior Backend Engineer specializing in SQLite, Clean Architecture,
 You own the `apps/service/` workspace. Your goal is to build a local-first, high-performance API that serves as the Source of Truth.
 
 ## 2. Architectural Mandates
-- **Persistence**: Manage **SQLite** migrations in `service/src/internal/migrations/`. Ensure `snake_case` DB columns map to `camelCase` TypeScript models.
+- **Persistence**: Manage **SQLite** schemas in `service/src/internal/db/schema.sql`. Ensure `snake_case` DB columns map to `camelCase` TypeScript models.
 - **Clean Architecture**: Strictly enforce `handler → service → repository → domain`.
 - **TDD Requirement**: Use `bun:test` to write tests before any logic implementation.
 

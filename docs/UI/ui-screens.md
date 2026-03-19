@@ -52,3 +52,17 @@
 4. **Transition:** User enters **Focus Mode** (The "Now" Screen).
 5. **Completion:** User logs **Mood (1-5)**.
 6. **Reward:** The app shows the **Meaning Anchor** ("You just moved closer to: [Meaning Name]").
+
+---
+
+## 📋 Screen Implementation Status
+
+| Screen | Status | Role |
+| --- | --- | --- |
+| **Meaning Dashboard** | ✅ Done | Strategy & Big Picture |
+| **Action Hub** | 🔄 In Progress | Operational (Needs Habits/Rewards) |
+| **Now Screen** | ✅ Done | Execution (Focus Mode) |
+| **Reflection Log** | ✅ Done | Audit & Celebration |
+| **Resources** | ✅ Done | Asset Management |
+| **Habits Manager** | ⏳ Missing | Recurrence & Consistency |
+| **Rewards Gallery** | ⏳ Missing | Dopamine Hub |

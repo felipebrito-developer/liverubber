@@ -34,15 +34,14 @@ src/
 └── App.tsx              # Root component
 ```
 
-### Road Map
-- [ ] Define component structure and templates.
-- [ ] Use a simple design for the app screens.
-- [ ] Create a simple Welcome page.
-- [ ] Create a simple Login page.
-- [ ] Create a simple Register page.
-- [ ] Create a simple Home page.
-- [ ] Create a simple Tasks page.
-- [ ] Create a simple Tasks page.
-- [ ] Integrate TanStack Query with `ai-bridge` endpoints.
+### 🛣️ UI CRUD Roadmap
+To fulfill the MVP, we are completing the cycle for all entities:
+
+- **Meanings**: [x] Create [x] Read [ ] Update [ ] Remove
+- **Goals**: [x] Create [x] Read [ ] Update [ ] Remove
+- **Tasks**: [x] Create [x] Read [ ] Update [ ] Remove
+- **Resources**: [x] Create [x] Read [x] Adjust [ ] Update [ ] Remove
+- **Habits**: [ ] Create [x] Read [ ] Update [ ] Remove
+- **Rewards**: [ ] Create [ ] Read [ ] Update [ ] Remove
 
 

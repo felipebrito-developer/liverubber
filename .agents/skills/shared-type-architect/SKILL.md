@@ -17,6 +17,8 @@ When defining new entities (Meanings, Goals, Tasks, etc.), you must follow the *
 - **Meanings**: Must include `title`, `intrinsic_motivation`, and `color_tag`.
 - **Goals**: Must include `status`, `deadline`, and a `parent_id` linking to a Meaning.
 - **Tasks**: Must support **Recursion** via `parent_id` for infinite subtask nesting.
+- **Habits**: Must include `frequency` (daily/weekly), `streak_count`, and `last_performed`.
+- **Rewards**: Must include `milestone_id` and `reward_type` (celebration/break/item).
 - **Activity Logs**: Must include `mood_score` (1-5) to track mental health correlation.
 
 ## 3. Structural Rules

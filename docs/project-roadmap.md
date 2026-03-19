@@ -3,22 +3,26 @@
 ## Incomplete Steps
 
 ### AI & PRIVACY (Priority)
-- [ ] Configure `ai-bridge` service with Vercel AI SDK.
-- [ ] Implement Privacy Router (Local vs Cloud decision logic).
-- [ ] Setup MCP Server in `service/` to expose SQLite safely.
-- [ ] Implement data anonymization utility in `packages/security`.
+- [ ] Integrate MCP Tools into the LLM streaming responses in `ai-bridge`.
+- [ ] Refine Privacy Router logic for more complex sensitivity cases.
+- [ ] Implement E2E integration tests for AI-to-Service tool calling.
 
 ### BACKEND
-- [ ] Create database migrations for `meaning`, `goal`, `task`.
-- [ ] Implement CRUD for entities.
-- [ ] Create repository layer for database access.
+- [ ] Implement remaining Repositories: `habit`, `activity`, `activity_log`, `resource`.
+- [ ] Expose all repositories as MCP Tools.
 
 ### FRONTEND
-- [x] Define component structure and templates.
-- [x] Create tasks view and welcome page.
-- [ ] Integrate TanStack Query with `ai-bridge` endpoints.
+- [ ] Polish UI animations and gesture handling with Reanimated.
+- [ ] Implement low-energy filter UI in Action Hub.
 
 ## Complete Steps
+- [x] Configure `ai-bridge` service with Vercel AI SDK (Ollama + Gemini).
+- [x] Implement Privacy Router (Local vs Cloud decision logic).
+- [x] Implement PII Scrubbing in `packages/security`.
+- [x] Setup MCP Server in `service/` to expose SQLite safely.
+- [x] Implement core repository layer (Goal, Meaning, Task).
+- [x] Define component structure and Neuro-UI templates.
+- [x] Implement all core mobile screens and creation flows.
 - [x] Activate CUDA (GPU) in WSL2 for local inference.
 - [x] Clean/Remove legacy Antigravity installations in WSL.
 - [x] Configure Antigravity Windows-to-WSL remote connection.

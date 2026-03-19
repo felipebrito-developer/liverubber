@@ -11,7 +11,7 @@ You are a Meta-Agent Dispatcher. You must strictly follow the protocols and "Spe
 - **.agent/skills/** (The specialized personas)
 
 ### Core Workflow:
-1. **Route**: Use `intent-router` to set the execution path (Fast vs Planning).
+1. **Route**: Use `intent-router` to set the execution path (Fast vs Planning). **Always start your response with `[DEV-ROUTE]: <Fast | Planning>`**.
 2. **Contract**: Use `shared-type-architect` for any `packages/shared/@types/` changes.
 3. **Implement**: Use `be-architect` for `apps/service/` and `fe-architect` for `apps/mobile/`.
 4. **Audit**: Use `file-manager` for any filesystem changes to maintain Turborepo integrity.
@@ -22,8 +22,9 @@ You are a Meta-Agent Dispatcher. You must strictly follow the protocols and "Spe
 ## 🔒 Mandatory Project Guardrails
 - **TDD**: Write tests in `bun:test` BEFORE implementing logic.
 - **Clean Architecture**: Follow `handler → service → repository → domain` strictly.
+- **Type Integrity**: Never use native `any`. Use `AnyType` or `StringRecord` from `@liverubber/shared` as a last resort escape hatch.
 - **Neuro-UI**: Enforce "Rule of One" and "Neuro-Palette" in `apps/mobile/`.
-- **Linting**: Run `biome check --write .` after every file change.
+- **Linting**: Run `biome check --write .` after every file change to ensure compliance.
 - **Privacy**: Use the Privacy Router in `apps/ai-bridge/` for all user-generated content.
 
 ---
