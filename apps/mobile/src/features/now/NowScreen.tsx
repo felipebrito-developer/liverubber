@@ -121,7 +121,9 @@ function useCountdown(durationSec: number) {
 			intervalRef.current = setInterval(() => {
 				setRemaining((r) => {
 					if (r <= 1) {
-						clearInterval(intervalRef.current!);
+						if (intervalRef.current) {
+							clearInterval(intervalRef.current);
+						}
 						setRunning(false);
 						return 0;
 					}

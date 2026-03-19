@@ -24,6 +24,19 @@ export const createHabitAction = atom(
 	},
 );
 
+export const updateHabitAction = atom(
+	null,
+	async (_get, set, { id, data }: { id: string; data: Partial<NewHabit> }) => {
+		await habitsRepository.update(id, data);
+		set(loadHabitsAndRewardsAction);
+	},
+);
+
+export const deleteHabitAction = atom(null, async (_get, set, id: string) => {
+	await habitsRepository.delete(id);
+	set(loadHabitsAndRewardsAction);
+});
+
 export const createRewardAction = atom(
 	null,
 	async (_get, set, payload: Omit<NewReward, "id">) => {
@@ -32,3 +45,16 @@ export const createRewardAction = atom(
 		set(loadHabitsAndRewardsAction);
 	},
 );
+
+export const updateRewardAction = atom(
+	null,
+	async (_get, set, { id, data }: { id: string; data: Partial<NewReward> }) => {
+		await rewardsRepository.update(id, data);
+		set(loadHabitsAndRewardsAction);
+	},
+);
+
+export const deleteRewardAction = atom(null, async (_get, set, id: string) => {
+	await rewardsRepository.delete(id);
+	set(loadHabitsAndRewardsAction);
+});

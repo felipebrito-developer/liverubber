@@ -3,11 +3,13 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import {
 	ActivityIndicator,
+	Alert,
 	FlatList,
 	Modal,
 	StatusBar,
 	StyleSheet,
 	TextInput,
+	TouchableOpacity,
 	View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -17,11 +19,13 @@ import { Card } from "@/components/molecules/Card";
 import type { TasksScreenProps } from "@/navigation/types";
 import {
 	createTaskAction,
+	deleteTaskAction,
 	isTasksLoadedAtom,
 	loadTasksAction,
 	type TaskFilter,
 	taskFilterAtom,
 	tasksAtom,
+	updateTaskAction,
 } from "@/stores/tasksStore";
 import { colors, radius, spacing } from "@/theme";
 
@@ -43,33 +47,41 @@ function statusColor(status: string | null) {
 	}
 }
 
-function TaskItem({ task }: { task: Task }) {
+function TaskItem({
+	task,
+	onLongPress,
+}: {
+	task: Task;
+	onLongPress: (task: Task) => void;
+}) {
 	return (
-		<Card elevated style={styles.taskCard}>
-			<View style={styles.taskHeader}>
-				<View
-					style={[
-						styles.statusDot,
-						{ backgroundColor: statusColor(task.status) },
-					]}
-				/>
-				<Typography variant="label" style={styles.taskTitle}>
-					{task.title}
+		<TouchableOpacity activeOpacity={0.7} onLongPress={() => onLongPress(task)}>
+			<Card elevated style={styles.taskCard}>
+				<View style={styles.taskHeader}>
+					<View
+						style={[
+							styles.statusDot,
+							{ backgroundColor: statusColor(task.status) },
+						]}
+					/>
+					<Typography variant="label" style={styles.taskTitle}>
+						{task.title}
+					</Typography>
+				</View>
+				{task.description ? (
+					<Typography
+						variant="bodySmall"
+						color={colors.muted}
+						style={styles.taskDesc}
+					>
+						{task.description}
+					</Typography>
+				) : null}
+				<Typography variant="caption" style={styles.taskStatus}>
+					{(task.status ?? "todo").replace("_", " ").toUpperCase()}
 				</Typography>
-			</View>
-			{task.description ? (
-				<Typography
-					variant="bodySmall"
-					color={colors.muted}
-					style={styles.taskDesc}
-				>
-					{task.description}
-				</Typography>
-			) : null}
-			<Typography variant="caption" style={styles.taskStatus}>
-				{(task.status ?? "todo").replace("_", " ").toUpperCase()}
-			</Typography>
-		</Card>
+			</Card>
+		</TouchableOpacity>
 	);
 }
 
@@ -79,10 +91,13 @@ export function TasksScreen(_props: TasksScreenProps) {
 	const isTasksLoaded = useAtomValue(isTasksLoadedAtom);
 	const loadTasks = useSetAtom(loadTasksAction);
 	const createTask = useSetAtom(createTaskAction);
+	const updateTask = useSetAtom(updateTaskAction);
+	const deleteTask = useSetAtom(deleteTaskAction);
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
-	const [newTitle, setNewTitle] = useState("");
-	const [newDesc, setNewDesc] = useState("");
+	const [editingTask, setEditingTask] = useState<Task | null>(null);
+	const [title, setTitle] = useState("");
+	const [desc, setDesc] = useState("");
 
 	useEffect(() => {
 		if (!isTasksLoaded) {
@@ -90,17 +105,67 @@ export function TasksScreen(_props: TasksScreenProps) {
 		}
 	}, [isTasksLoaded, loadTasks]);
 
-	const handleCreate = async () => {
-		if (!newTitle.trim()) return;
-		await createTask({
-			title: newTitle,
-			description: newDesc,
-			status: "todo",
-			priority: "medium",
-		});
-		setNewTitle("");
-		setNewDesc("");
+	const handleSave = async () => {
+		if (!title.trim()) return;
+
+		if (editingTask) {
+			await updateTask({
+				id: editingTask.id,
+				data: { title, description: desc },
+			});
+		} else {
+			await createTask({
+				title,
+				description: desc,
+				status: "todo",
+				priority: "medium",
+			});
+		}
+
+		handleCloseModal();
+	};
+
+	const handleEditPress = (task: Task) => {
+		setEditingTask(task);
+		setTitle(task.title);
+		setDesc(task.description || "");
+		setIsModalVisible(true);
+	};
+
+	const handleDeletePress = (task: Task) => {
+		Alert.alert(
+			"Prune Task",
+			"Are you sure you want to remove this? (You can always add it later if it's still important.)",
+			[
+				{ text: "Keep it", style: "cancel" },
+				{
+					text: "Remove",
+					style: "destructive",
+					onPress: async () => {
+						await deleteTask(task.id);
+					},
+				},
+			],
+		);
+	};
+
+	const handleOptionsPress = (task: Task) => {
+		Alert.alert(
+			"Task Options",
+			`What would you like to do with "${task.title}"?`,
+			[
+				{ text: "Edit", onPress: () => handleEditPress(task) },
+				{ text: "Remove / Prune", onPress: () => handleDeletePress(task) },
+				{ text: "Cancel", style: "cancel" },
+			],
+		);
+	};
+
+	const handleCloseModal = () => {
 		setIsModalVisible(false);
+		setEditingTask(null);
+		setTitle("");
+		setDesc("");
 	};
 
 	const filtered =
@@ -160,7 +225,9 @@ export function TasksScreen(_props: TasksScreenProps) {
 				<FlatList
 					data={filtered}
 					keyExtractor={(item) => item.id}
-					renderItem={({ item }) => <TaskItem task={item} />}
+					renderItem={({ item }) => (
+						<TaskItem task={item} onLongPress={handleOptionsPress} />
+					)}
 					contentContainerStyle={styles.list}
 					showsVerticalScrollIndicator={false}
 				/>
@@ -169,19 +236,21 @@ export function TasksScreen(_props: TasksScreenProps) {
 			<Modal visible={isModalVisible} animationType="slide" transparent>
 				<View style={styles.modalOverlay}>
 					<Card style={styles.modalCard}>
-						<Typography variant="h3">New Task</Typography>
+						<Typography variant="h3">
+							{editingTask ? "Edit Task" : "New Task"}
+						</Typography>
 						<TextInput
 							placeholder="Title"
 							placeholderTextColor={colors.muted}
-							value={newTitle}
-							onChangeText={setNewTitle}
+							value={title}
+							onChangeText={setTitle}
 							style={styles.input}
 						/>
 						<TextInput
 							placeholder="Description"
 							placeholderTextColor={colors.muted}
-							value={newDesc}
-							onChangeText={setNewDesc}
+							value={desc}
+							onChangeText={setDesc}
 							multiline
 							style={[styles.input, styles.textArea]}
 						/>
@@ -189,10 +258,10 @@ export function TasksScreen(_props: TasksScreenProps) {
 							<Button
 								label="Cancel"
 								variant="outline"
-								onPress={() => setIsModalVisible(false)}
+								onPress={handleCloseModal}
 								style={{ flex: 1 }}
 							/>
-							<Button label="Save" onPress={handleCreate} style={{ flex: 1 }} />
+							<Button label="Save" onPress={handleSave} style={{ flex: 1 }} />
 						</View>
 					</Card>
 				</View>

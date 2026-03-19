@@ -17,7 +17,7 @@ const QueryGoalsInputSchema = z.object({
 });
 
 interface GoalRow {
-	goal_id: string;
+	id: string;
 	meaning_id: string | null;
 	name: string;
 	description: string;
@@ -25,6 +25,8 @@ interface GoalRow {
 	due_date: string | null;
 	progress: number;
 	cover_image_id: string | null;
+	is_synced: number | null;
+	last_synced_at: string | null;
 }
 
 /**

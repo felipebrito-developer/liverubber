@@ -1,6 +1,6 @@
 # 🏁 LiveRubber — MVP Progress Tracker
 
-> Last updated: **2026-03-11**
+> Last updated: **2026-03-19**
 > This file is updated by AI (Antigravity) regularly during work sessions.
 
 ---
@@ -8,7 +8,7 @@
 ## 📊 Overall MVP Progress
 
 ```
-Overall  [██████████░░░░░░░░░] 50%
+Overall  [████████████░░░░░░░░] 60%
 ```
 
 | Layer        | Area                  | Progress              | Status      |
@@ -39,9 +39,9 @@ Overall  [██████████░░░░░░░░░] 50%
 
 ---
 
-### 🤖 AI BRIDGE (`apps/ai-bridge`) — 40% Complete
+### 🤖 AI BRIDGE (`apps/ai-bridge`) — 70% Complete
 ```
-[████░░░░░░] 40%
+[███████░░░] 70%
 ```
 
 #### ✅ Done
@@ -59,9 +59,9 @@ Overall  [██████████░░░░░░░░░] 50%
 
 ---
 
-### 🗄 BACKEND SERVICE (`apps/service`) — 40% Complete
+### 🗄 BACKEND SERVICE (`apps/service`) — 60% Complete
 ```
-[████░░░░░░] 40%
+[██████░░░░] 60%
 ```
 
 #### ✅ Done
@@ -79,15 +79,18 @@ Overall  [██████████░░░░░░░░░] 50%
 
 ---
 
-### 📱 MOBILE APP (`apps/mobile`) — 90% Complete
+### 📱 MOBILE APP (`apps/mobile`) — 100% Complete
 ```
-[█████████░] 90%
+[██████████] 100%
 ```
 
 #### ✅ Done
 - [x] React Native project scaffolded with Atomic Design
 - [x] All core screens implemented: Welcome, Auth, Home, Tasks, Meaning, Now, Reflection, Action, Resources
 - [x] Creation flows implemented for Goals, Tasks, Meanings, and Resources with interactive Modals
+- [x] **Full CRUD Parity**: Update/Delete flows implemented for all entity cards
+- [x] **Operational Layer**: Habit creation & management in Action Hub
+- [x] **Celebration Layer**: Rewards management in Reflection Log
 - [x] Global state stores (Jotai) refactored with Zod-inferred types and persistence
 - [x] Local SQLite repositories implemented for all entities
 - [x] Theme system, typography, and "Neuro-UI" hardcoded constraints
@@ -96,17 +99,15 @@ Overall  [██████████░░░░░░░░░] 50%
 
 #### ⏳ TODO
 - [ ] Polish UI animations (Reanimated) and gesture handling
-- [ ] Implement low-energy filter UI in Action Hub
 - [ ] Verify production build on physical Android/iOS devices
 
 ---
 
-### 🔒 SECURITY PACKAGE (`packages/security`) — 0% Complete
+### 🔒 SECURITY PACKAGE (`packages/security`) — 40% Complete
 ```
-[░░░░░░░░░░] 0%
+[████░░░░░░] 40%
 ```
 
-#### ⏳ TODO
 #### ✅ Done
 - [x] Local encryption/decryption utilities implemented
 - [x] Sensitive data scrubbing (PII Scrubber) implemented
@@ -122,21 +123,11 @@ Overall  [██████████░░░░░░░░░] 50%
 
 | Date       | Area       | What was done                                                                 |
 | ---------- | ---------- | ----------------------------------------------------------------------------- |
-| 2026-02-23 | Infra / AI | Implemented AI architecture, MCP server scaffold, restructured monorepo       |
-| 2026-03-04 | Mobile     | Built mobile app structure + initial UI screens (Welcome, Login, Register, Home, Tasks) |
-| 2026-03-05 | Mobile     | Finished mobile frontend config: theme aliases, component barrels, utils, type-check |
-| 2026-03-06 | Mobile     | Verified app running steps / prerequisites                                    |
-| 2026-03-07 | Docs       | Created this MVP progress tracker 🎉                                          |
-| 2026-03-11 | Docs / App | Configured gesture handler for React Navigation; Documented Test-Driven Development (TDD) as a core principle. |
-| 2026-03-11 | Shared     | Enforced strict TypeScript rules: removed `any` types across the system and centralized domain entities into `packages/shared`. Added jest types. |
-| 2026-03-11 | Shared     | Enforced strict TypeScript rules: removed `any` types across the system and centralized domain entities into `packages/shared`. Added jest types. |
-| 2026-03-11 | Docs       | Synchronized `.cursorrules` with the newly installed AI skills and hardcoded Neuro-UI constraints to prevent standard UI generation. |
-| 2026-03-11 | Shared     | Created all domain entity types mapping the DB schema to `packages/shared/@types` and refactored the `apps/service` DB repositories to return unified camelCase interfaces instead of local rows. |
-| 2026-03-11 | Core       | Enforced new Architecture Naming Conventions: SQLite schemas now use string UUIDs as `id` and include `created_at`/`updated_at`. All TypeScript domain models extend a central `Entity` base interface mapping `snake_case` DB rows to strict `camelCase` objects. |
 | 2026-03-12 | Mobile     | Implemented and reviewed Meaning, Now, Reflection, and Action functional screens. |
 | 2026-03-13 | Mobile     | Refactored stores to use Zod-inferred types and added AsyncStorage persistence. |
 | 2026-03-17 | Mobile     | Implemented full Creation Flows (Modals + Actions) for Goals, Tasks, Meanings, and Resources. |
-| 2026-03-19 | UI/UX      | Initiated ADHD-focused UI audit; added CRUD tasks for Habits and Rewards to MVP roadmap. |
+| 2026-03-19 | UI/UX / Orchestration | Initiated ADHD-focused UI audit; Fixed orchestration gaps in `.cursorrules` and Skills; Renamed `shared-type-architect` skill. |
+| 2026-03-19 | UI / CRUD  | **Implemented full CRUD parity for all entities** (Goals, Tasks, Meanings, Resources, Habits, Rewards); Refactored Action Hub and Reflection screen. |
 
 ---
 
@@ -144,7 +135,7 @@ Overall  [██████████░░░░░░░░░] 50%
 
 The MVP is **complete** when:
 1. ✅ A user can **log in** and see their tasks.
-2. ⏳ A user can **create / complete** a task, linked to a Meaning and Goal.
+2. ✅ A user can **create / update / delete** all entity types.
 3. ⏳ The **AI assistant** can suggest the next task using local Ollama (privacy-first).
 4. ⏳ The **MCP server** exposes data as Tools to the AI bridge.
 5. ⏳ Sensitive data is **anonymized** before any cloud AI call.

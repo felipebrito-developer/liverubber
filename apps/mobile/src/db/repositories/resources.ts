@@ -44,4 +44,14 @@ export const resourcesRepository = {
 			.where(eq(schema.resourceStore.id, id))
 			.returning();
 	},
+	async updateType(
+		id: string,
+		data: Partial<typeof schema.resourceType.$inferInsert>,
+	) {
+		return await db
+			.update(schema.resourceType)
+			.set(data)
+			.where(eq(schema.resourceType.id, id))
+			.returning();
+	},
 };

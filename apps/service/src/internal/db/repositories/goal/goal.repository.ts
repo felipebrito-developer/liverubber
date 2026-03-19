@@ -11,8 +11,10 @@ interface GoalRow {
 	due_date: string | null;
 	progress: number;
 	cover_image_id: string | null;
-	created_at: string;
-	updated_at: string;
+	created_at: string | null;
+	updated_at: string | null;
+	is_synced: number | null;
+	last_synced_at: string | null;
 }
 
 const mapGoal = (row: GoalRow): Goal => ({
@@ -26,6 +28,8 @@ const mapGoal = (row: GoalRow): Goal => ({
 	coverImageId: row.cover_image_id,
 	createdAt: row.created_at,
 	updatedAt: row.updated_at,
+	isSynced: row.is_synced === 1,
+	lastSyncedAt: row.last_synced_at,
 });
 
 export interface GoalInsert {
@@ -66,8 +70,8 @@ export const GoalRepository = {
 	createGoal(data: GoalInsert): Goal {
 		const db = getDB();
 		const stmt = db.query(`
-			INSERT INTO goal (id, meaning_id, name, description, status, due_date, progress, cover_image_id, created_at, updated_at)
-			VALUES ($id, $meaning_id, $name, $description, $status, $due_date, $progress, $cover_image_id, $now, $now)
+			INSERT INTO goal (id, meaning_id, name, description, status, due_date, progress, cover_image_id, created_at, updated_at, is_synced)
+			VALUES ($id, $meaning_id, $name, $description, $status, $due_date, $progress, $cover_image_id, $now, $now, 1)
 			RETURNING *
 		`);
 		const now = new Date().toISOString();

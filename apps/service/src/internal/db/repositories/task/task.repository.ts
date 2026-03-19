@@ -11,8 +11,10 @@ interface TaskRow {
 	status: string | null;
 	due_date: string | null;
 	priority: string | null;
-	created_at: string;
-	updated_at: string;
+	created_at: string | null;
+	updated_at: string | null;
+	is_synced: number | null;
+	last_synced_at: string | null;
 }
 
 const mapTask = (row: TaskRow): TaskDefinition => ({
@@ -26,6 +28,8 @@ const mapTask = (row: TaskRow): TaskDefinition => ({
 	priority: row.priority as TaskDefinition["priority"],
 	createdAt: row.created_at,
 	updatedAt: row.updated_at,
+	isSynced: row.is_synced === 1,
+	lastSyncedAt: row.last_synced_at,
 });
 
 export interface TaskInsert {
@@ -66,8 +70,8 @@ export const TaskRepository = {
 	createTask(data: TaskInsert): TaskDefinition {
 		const db = getDB();
 		const stmt = db.query(`
-			INSERT INTO task (id, goal_id, parent_task_id, title, description, status, due_date, priority, created_at, updated_at)
-			VALUES ($id, $goal_id, $parent_task_id, $title, $description, $status, $due_date, $priority, $now, $now)
+			INSERT INTO task (id, goal_id, parent_task_id, title, description, status, due_date, priority, created_at, updated_at, is_synced)
+			VALUES ($id, $goal_id, $parent_task_id, $title, $description, $status, $due_date, $priority, $now, $now, 1)
 			RETURNING *
 		`);
 		const now = new Date().toISOString();

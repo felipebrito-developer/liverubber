@@ -8,8 +8,10 @@ interface MeaningRow {
 	name: string;
 	description: string;
 	external_link: string | null;
-	created_at: string;
-	updated_at: string;
+	created_at: string | null;
+	updated_at: string | null;
+	is_synced: number | null;
+	last_synced_at: string | null;
 }
 
 const mapMeaning = (row: MeaningRow): Meaning => ({
@@ -20,6 +22,8 @@ const mapMeaning = (row: MeaningRow): Meaning => ({
 	externalLink: row.external_link,
 	createdAt: row.created_at,
 	updatedAt: row.updated_at,
+	isSynced: row.is_synced === 1,
+	lastSyncedAt: row.last_synced_at,
 });
 
 export interface MeaningInsert {
@@ -54,8 +58,8 @@ export const MeaningRepository = {
 	createMeaning(data: MeaningInsert): Meaning {
 		const db = getDB();
 		const stmt = db.query(`
-			INSERT INTO meaning (id, category_id, name, description, external_link, created_at, updated_at)
-			VALUES ($id, $category_id, $name, $description, $external_link, $now, $now)
+			INSERT INTO meaning (id, category_id, name, description, external_link, created_at, updated_at, is_synced)
+			VALUES ($id, $category_id, $name, $description, $external_link, $now, $now, 1)
 			RETURNING *
 		`);
 		const now = new Date().toISOString();

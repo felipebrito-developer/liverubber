@@ -2,6 +2,7 @@ import type { Goal, Meaning } from "@liverubber/shared";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import {
+	Alert,
 	FlatList,
 	Modal,
 	StatusBar,
@@ -16,43 +17,55 @@ import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
 import {
 	createGoalAction,
+	deleteGoalAction,
 	goalsAtom,
 	isGoalsLoadedAtom,
 	loadGoalsAction,
+	updateGoalAction,
 } from "@/stores/goalsStore";
 import {
 	createMeaningAction,
+	deleteMeaningAction,
 	isMeaningsLoadedAtom,
 	loadMeaningsAction,
 	meaningsAtom,
+	updateMeaningAction,
 } from "@/stores/meaningsStore";
 import { colors, radius, spacing } from "@/theme";
 
-function GoalRow({ goal }: { goal: Goal }) {
+function GoalRow({
+	goal,
+	onLongPress,
+}: {
+	goal: Goal;
+	onLongPress: (goal: Goal) => void;
+}) {
 	return (
-		<View style={styles.goalRow}>
-			<View style={styles.goalHeader}>
-				<View
-					style={[
-						styles.goalDot,
-						{
-							backgroundColor:
-								goal.status === "active" ? colors.success : colors.muted,
-						},
-					]}
-				/>
-				<Typography variant="bodySmall" style={styles.goalName}>
-					{goal.name}
-				</Typography>
-				<Typography variant="caption" color={colors.muted}>
-					{goal.progress}%
-				</Typography>
+		<TouchableOpacity activeOpacity={0.7} onLongPress={() => onLongPress(goal)}>
+			<View style={styles.goalRow}>
+				<View style={styles.goalHeader}>
+					<View
+						style={[
+							styles.goalDot,
+							{
+								backgroundColor:
+									goal.status === "active" ? colors.success : colors.muted,
+							},
+						]}
+					/>
+					<Typography variant="bodySmall" style={styles.goalName}>
+						{goal.name}
+					</Typography>
+					<Typography variant="caption" color={colors.muted}>
+						{goal.progress}%
+					</Typography>
+				</View>
+				{/* Progress bar */}
+				<View style={styles.progressTrack}>
+					<View style={[styles.progressFill, { width: `${goal.progress}%` }]} />
+				</View>
 			</View>
-			{/* Progress bar */}
-			<View style={styles.progressTrack}>
-				<View style={[styles.progressFill, { width: `${goal.progress}%` }]} />
-			</View>
-		</View>
+		</TouchableOpacity>
 	);
 }
 
@@ -60,10 +73,14 @@ function MeaningCard({
 	meaning,
 	goals,
 	onAddGoal,
+	onLongPress,
+	onGoalLongPress,
 }: {
 	meaning: Meaning;
 	goals: Goal[];
 	onAddGoal: (meaningId: string) => void;
+	onLongPress: (meaning: Meaning) => void;
+	onGoalLongPress: (goal: Goal) => void;
 }) {
 	const [expanded, setExpanded] = useState(false);
 
@@ -72,6 +89,7 @@ function MeaningCard({
 			<TouchableOpacity
 				activeOpacity={0.85}
 				onPress={() => setExpanded((v) => !v)}
+				onLongPress={() => onLongPress(meaning)}
 				accessibilityRole="button"
 				accessibilityLabel={`${meaning.name} — ${expanded ? "collapse" : "expand"} goals`}
 			>
@@ -121,7 +139,9 @@ function MeaningCard({
 									No goals attached yet.
 								</Typography>
 							) : (
-								goals.map((g) => <GoalRow key={g.id} goal={g} />)
+								goals.map((g) => (
+									<GoalRow key={g.id} goal={g} onLongPress={onGoalLongPress} />
+								))
 							)}
 						</View>
 					)}
@@ -136,58 +156,172 @@ export function MeaningDashboardScreen() {
 	const isMeaningsLoaded = useAtomValue(isMeaningsLoadedAtom);
 	const loadMeanings = useSetAtom(loadMeaningsAction);
 	const createMeaning = useSetAtom(createMeaningAction);
+	const updateMeaning = useSetAtom(updateMeaningAction);
+	const deleteMeaning = useSetAtom(deleteMeaningAction);
 
 	const goals = useAtomValue(goalsAtom);
 	const isGoalsLoaded = useAtomValue(isGoalsLoadedAtom);
 	const loadGoals = useSetAtom(loadGoalsAction);
 	const createGoal = useSetAtom(createGoalAction);
+	const updateGoal = useSetAtom(updateGoalAction);
+	const deleteGoal = useSetAtom(deleteGoalAction);
 
 	const [isMeaningModalVisible, setIsMeaningModalVisible] = useState(false);
-	const [newMeaningName, setNewMeaningName] = useState("");
-	const [newMeaningDesc, setNewMeaningDesc] = useState("");
+	const [editingMeaning, setEditingMeaning] = useState<Meaning | null>(null);
+	const [meaningName, setMeaningName] = useState("");
+	const [meaningDesc, setMeaningDesc] = useState("");
 
 	const [isGoalModalVisible, setIsGoalModalVisible] = useState(false);
+	const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
 	const [selectedMeaningId, setSelectedMeaningId] = useState<string | null>(
 		null,
 	);
-	const [newGoalName, setNewGoalName] = useState("");
-	const [newGoalDesc, setNewGoalDesc] = useState("");
+	const [goalName, setGoalName] = useState("");
+	const [goalDesc, setGoalDesc] = useState("");
 
 	useEffect(() => {
 		if (!isMeaningsLoaded) loadMeanings();
 		if (!isGoalsLoaded) loadGoals();
 	}, [isMeaningsLoaded, loadMeanings, isGoalsLoaded, loadGoals]);
 
-	const handleCreateMeaning = async () => {
-		if (!newMeaningName.trim()) return;
-		await createMeaning({
-			name: newMeaningName,
-			description: newMeaningDesc,
-			categoryId: null,
-		});
-		setNewMeaningName("");
-		setNewMeaningDesc("");
+	const handleSaveMeaning = async () => {
+		if (!meaningName.trim()) return;
+
+		if (editingMeaning) {
+			await updateMeaning({
+				id: editingMeaning.id,
+				data: { name: meaningName, description: meaningDesc },
+			});
+		} else {
+			await createMeaning({
+				name: meaningName,
+				description: meaningDesc,
+				categoryId: null,
+			});
+		}
+
+		handleCloseMeaningModal();
+	};
+
+	const handleEditMeaningPress = (meaning: Meaning) => {
+		setEditingMeaning(meaning);
+		setMeaningName(meaning.name);
+		setMeaningDesc(meaning.description || "");
+		setIsMeaningModalVisible(true);
+	};
+
+	const handleDeleteMeaningPress = (meaning: Meaning) => {
+		Alert.alert(
+			"Prune Meaning",
+			"Are you sure? Removing this will also un-anchor its attached Goals.",
+			[
+				{ text: "Keep it", style: "cancel" },
+				{
+					text: "Remove",
+					style: "destructive",
+					onPress: async () => {
+						await deleteMeaning(meaning.id);
+					},
+				},
+			],
+		);
+	};
+
+	const handleMeaningLongPress = (meaning: Meaning) => {
+		Alert.alert("Meaning Options", `How should we handle "${meaning.name}"?`, [
+			{ text: "Edit Details", onPress: () => handleEditMeaningPress(meaning) },
+			{
+				text: "Remove from Plan",
+				style: "destructive",
+				onPress: () => handleDeleteMeaningPress(meaning),
+			},
+			{ text: "Cancel", style: "cancel" },
+		]);
+	};
+
+	const handleCloseMeaningModal = () => {
 		setIsMeaningModalVisible(false);
+		setEditingMeaning(null);
+		setMeaningName("");
+		setMeaningDesc("");
 	};
 
 	const handleAddGoalPress = (meaningId: string) => {
 		setSelectedMeaningId(meaningId);
+		setEditingGoal(null);
+		setGoalName("");
+		setGoalDesc("");
 		setIsGoalModalVisible(true);
 	};
 
-	const handleCreateGoal = async () => {
-		if (!newGoalName.trim() || !selectedMeaningId) return;
-		await createGoal({
-			name: newGoalName,
-			description: newGoalDesc,
-			meaningId: selectedMeaningId,
-			status: "active",
-			progress: 0,
-		});
-		setNewGoalName("");
-		setNewGoalDesc("");
+	const handleSaveGoal = async () => {
+		if (!goalName.trim() || !selectedMeaningId) return;
+
+		if (editingGoal) {
+			await updateGoal({
+				id: editingGoal.id,
+				data: { name: goalName, description: goalDesc },
+			});
+		} else {
+			await createGoal({
+				name: goalName,
+				description: goalDesc,
+				meaningId: selectedMeaningId,
+				status: "active",
+				progress: 0,
+			});
+		}
+
+		handleCloseGoalModal();
+	};
+
+	const handleEditGoalPress = (goal: Goal) => {
+		setEditingGoal(goal);
+		setSelectedMeaningId(goal.meaningId);
+		setGoalName(goal.name);
+		setGoalDesc(goal.description || "");
+		setIsGoalModalVisible(true);
+	};
+
+	const handleDeleteGoalPress = (goal: Goal) => {
+		Alert.alert(
+			"Prune Goal",
+			"Are you sure you want to let this goal go for now?",
+			[
+				{ text: "Keep it", style: "cancel" },
+				{
+					text: "Remove",
+					style: "destructive",
+					onPress: async () => {
+						await deleteGoal(goal.id);
+					},
+				},
+			],
+		);
+	};
+
+	const handleGoalLongPress = (goal: Goal) => {
+		Alert.alert(
+			"Goal Options",
+			`What would you like to do with "${goal.name}"?`,
+			[
+				{ text: "Edit Goal", onPress: () => handleEditGoalPress(goal) },
+				{
+					text: "Remove / Prune",
+					style: "destructive",
+					onPress: () => handleDeleteGoalPress(goal),
+				},
+				{ text: "Cancel", style: "cancel" },
+			],
+		);
+	};
+
+	const handleCloseGoalModal = () => {
 		setIsGoalModalVisible(false);
+		setEditingGoal(null);
 		setSelectedMeaningId(null);
+		setGoalName("");
+		setGoalDesc("");
 	};
 
 	const data = meanings.map((m) => ({
@@ -222,6 +356,8 @@ export function MeaningDashboardScreen() {
 						meaning={item.meaning}
 						goals={item.goals}
 						onAddGoal={handleAddGoalPress}
+						onLongPress={handleMeaningLongPress}
+						onGoalLongPress={handleGoalLongPress}
 					/>
 				)}
 				contentContainerStyle={styles.list}
@@ -247,19 +383,21 @@ export function MeaningDashboardScreen() {
 			<Modal visible={isMeaningModalVisible} animationType="slide" transparent>
 				<View style={styles.modalOverlay}>
 					<Card style={styles.modalCard}>
-						<Typography variant="h3">New Meaning</Typography>
+						<Typography variant="h3">
+							{editingMeaning ? "Edit Meaning" : "New Meaning"}
+						</Typography>
 						<TextInput
 							placeholder="What matters? (e.g. Health, Growth)"
 							placeholderTextColor={colors.muted}
-							value={newMeaningName}
-							onChangeText={setNewMeaningName}
+							value={meaningName}
+							onChangeText={setMeaningName}
 							style={styles.input}
 						/>
 						<TextInput
 							placeholder="Description"
 							placeholderTextColor={colors.muted}
-							value={newMeaningDesc}
-							onChangeText={setNewMeaningDesc}
+							value={meaningDesc}
+							onChangeText={setMeaningDesc}
 							multiline
 							style={[styles.input, styles.textArea]}
 						/>
@@ -267,12 +405,12 @@ export function MeaningDashboardScreen() {
 							<Button
 								label="Cancel"
 								variant="outline"
-								onPress={() => setIsMeaningModalVisible(false)}
+								onPress={handleCloseMeaningModal}
 								style={{ flex: 1 }}
 							/>
 							<Button
 								label="Save"
-								onPress={handleCreateMeaning}
+								onPress={handleSaveMeaning}
 								style={{ flex: 1 }}
 							/>
 						</View>
@@ -284,22 +422,24 @@ export function MeaningDashboardScreen() {
 			<Modal visible={isGoalModalVisible} animationType="slide" transparent>
 				<View style={styles.modalOverlay}>
 					<Card style={styles.modalCard}>
-						<Typography variant="h3">New Goal</Typography>
+						<Typography variant="h3">
+							{editingGoal ? "Edit Goal" : "New Goal"}
+						</Typography>
 						<Typography variant="bodySmall" color={colors.muted}>
 							Attach a measurable goal to this meaning.
 						</Typography>
 						<TextInput
 							placeholder="Goal name"
 							placeholderTextColor={colors.muted}
-							value={newGoalName}
-							onChangeText={setNewGoalName}
+							value={goalName}
+							onChangeText={setGoalName}
 							style={styles.input}
 						/>
 						<TextInput
 							placeholder="Description"
 							placeholderTextColor={colors.muted}
-							value={newGoalDesc}
-							onChangeText={setNewGoalDesc}
+							value={goalDesc}
+							onChangeText={setGoalDesc}
 							multiline
 							style={[styles.input, styles.textArea]}
 						/>
@@ -307,12 +447,12 @@ export function MeaningDashboardScreen() {
 							<Button
 								label="Cancel"
 								variant="outline"
-								onPress={() => setIsGoalModalVisible(false)}
+								onPress={handleCloseGoalModal}
 								style={{ flex: 1 }}
 							/>
 							<Button
 								label="Save"
-								onPress={handleCreateGoal}
+								onPress={handleSaveGoal}
 								style={{ flex: 1 }}
 							/>
 						</View>

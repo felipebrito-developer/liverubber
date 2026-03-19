@@ -88,3 +88,38 @@ export const logResourceChangeAction = atom(
 		set(loadResourcesAction);
 	},
 );
+
+export const updateResourceAction = atom(
+	null,
+	async (
+		_get,
+		set,
+		{
+			id,
+			name,
+			initialAmount,
+		}: { id: string; name: string; initialAmount: number },
+	) => {
+		const stores = await resourcesRepository.getAllStores();
+		const store = stores.find((s) => s.id === id);
+		if (!store) return;
+
+		// 1. Update TYPE (for name)
+		if (store.resourceTypeId) {
+			await resourcesRepository.updateType(store.resourceTypeId, { name });
+		}
+
+		// 2. Update STORE (for amount)
+		await resourcesRepository.updateStore(id, { amount: initialAmount });
+
+		set(loadResourcesAction);
+	},
+);
+
+export const deleteResourceAction = atom(
+	null,
+	async (_get, set, id: string) => {
+		await resourcesRepository.deleteStore(id);
+		set(loadResourcesAction);
+	},
+);

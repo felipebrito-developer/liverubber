@@ -1,11 +1,13 @@
 import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import {
+	Alert,
 	FlatList,
 	Modal,
 	StatusBar,
 	StyleSheet,
 	TextInput,
+	TouchableOpacity,
 	View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -14,79 +16,158 @@ import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
 import {
 	createResourceAction,
+	deleteResourceAction,
 	loadResourcesAction,
 	logResourceChangeAction,
 	resourceStoresAtom,
 	type UIResourceStore,
+	updateResourceAction,
 } from "@/stores/resourcesStore";
 import { colors, radius, spacing } from "@/theme";
 
 function ResourceCard({
 	store,
 	onAdjust,
+	onLongPress,
 }: {
 	store: UIResourceStore;
 	onAdjust: (amount: number) => void;
+	onLongPress: (store: UIResourceStore) => void;
 }) {
 	return (
-		<Card elevated style={styles.storeCard}>
-			<View style={styles.storeHeader}>
-				<View style={styles.storeInfo}>
-					<Typography variant="h3">{store.name}</Typography>
+		<TouchableOpacity
+			activeOpacity={0.8}
+			onLongPress={() => onLongPress(store)}
+		>
+			<Card elevated style={styles.storeCard}>
+				<View style={styles.storeHeader}>
+					<View style={styles.storeInfo}>
+						<Typography variant="h3">{store.name}</Typography>
+					</View>
+					<Typography variant="h2" color={colors.primary}>
+						{store.amount}
+					</Typography>
 				</View>
-				<Typography variant="h2" color={colors.primary}>
-					{store.amount}
-				</Typography>
-			</View>
 
-			<View style={styles.adjustRow}>
-				<Button
-					label="- 1"
-					variant="outline"
-					onPress={() => onAdjust(-1)}
-					style={styles.adjustBtn}
-				/>
-				<Button
-					label="+ 1"
-					variant="primary"
-					onPress={() => onAdjust(1)}
-					style={styles.adjustBtn}
-				/>
-			</View>
-		</Card>
+				<View style={styles.adjustRow}>
+					<Button
+						label="- 1"
+						variant="outline"
+						onPress={() => onAdjust(-1)}
+						style={styles.adjustBtn}
+					/>
+					<Button
+						label="+ 1"
+						variant="primary"
+						onPress={() => onAdjust(1)}
+						style={styles.adjustBtn}
+					/>
+				</View>
+			</Card>
+		</TouchableOpacity>
 	);
 }
 
 export function ResourcesScreen() {
 	const stores = useAtomValue(resourceStoresAtom);
-	const loadResources = useSetAtom(loadResourcesAction);
-	const logChange = useSetAtom(logResourceChangeAction);
+	const _loadResources = useSetAtom(loadResourcesAction);
+	const _logChange = useSetAtom(logResourceChangeAction);
 	const createResource = useSetAtom(createResourceAction);
+	const updateResource = useSetAtom(updateResourceAction);
+	const deleteResource = useSetAtom(deleteResourceAction);
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
-	const [newName, setNewName] = useState("");
-	const [initialAmount, setInitialAmount] = useState("0");
+	const [editingStore, setEditingStore] = useState<UIResourceStore | null>(
+		null,
+	);
+	const [name, setName] = useState("");
+	const [amountStr, setAmountStr] = useState("0");
 
 	useEffect(() => {
-		loadResources();
-	}, [loadResources]);
+		_loadResources();
+	}, [_loadResources]);
+
+	const handleSave = async () => {
+		if (!name.trim()) return;
+		const amount = Number.parseFloat(amountStr) || 0;
+
+		if (editingStore) {
+			await updateResource({
+				id: editingStore.id,
+				name,
+				initialAmount: amount,
+			});
+		} else {
+			await createResource({ name, initialAmount: amount });
+		}
+
+		handleCloseModal();
+	};
+
+	const handleEditPress = (store: UIResourceStore) => {
+		setEditingStore(store);
+		setName(store.name || "");
+		setAmountStr(store.amount.toString());
+		setIsModalVisible(true);
+	};
 
 	const handleAdjust = async (store: UIResourceStore, delta: number) => {
-		await logChange({
+		const newAmount = store.amount + delta;
+		await updateResource({
+			id: store.id,
+			name: store.name || "",
+			initialAmount: newAmount,
+		});
+		// Log the change
+		await _logChange({
 			resourceId: store.id,
 			amountChange: delta,
-			changeType: "manual",
+			changeType: delta > 0 ? "manual_increase" : "manual_decrease",
 			logDate: new Date().toISOString(),
 		});
 	};
 
-	const handleCreate = async () => {
-		if (!newName.trim()) return;
-		const amount = Number.parseFloat(initialAmount) || 0;
-		await createResource({ name: newName, initialAmount: amount });
-		setNewName("");
-		setInitialAmount("0");
+	const handleDeletePress = (store: UIResourceStore) => {
+		Alert.alert(
+			"Shelve Resource",
+			`Are you sure you want to stop tracking "${store.name}"?`,
+			[
+				{ text: "Keep it", style: "cancel" },
+				{
+					text: "Shelve / Remove",
+					style: "destructive",
+					onPress: async () => {
+						await deleteResource(store.id);
+					},
+				},
+			],
+		);
+	};
+
+	const handleLongPress = (store: UIResourceStore) => {
+		Alert.alert("Resource Options", `Manage "${store.name}"`, [
+			{ text: "Edit Details", onPress: () => handleEditPress(store) },
+			{
+				text: "Archive / Delete",
+				style: "destructive",
+				onPress: () => handleDeletePress(store),
+			},
+			{ text: "Cancel", style: "cancel" },
+		]);
+	};
+
+	const handleCloseModal = () => {
 		setIsModalVisible(false);
+		setEditingStore(null);
+		setName("");
+		setAmountStr("0");
+	};
+
+	const handleAddPress = () => {
+		setEditingStore(null);
+		setName("");
+		setAmountStr("0");
+		setIsModalVisible(true);
 	};
 
 	return (
@@ -101,11 +182,7 @@ export function ResourcesScreen() {
 							Track your internal and external reserves.
 						</Typography>
 					</View>
-					<Button
-						label="+"
-						onPress={() => setIsModalVisible(true)}
-						style={styles.addBtn}
-					/>
+					<Button label="+" onPress={handleAddPress} style={styles.addBtn} />
 				</View>
 			</View>
 
@@ -116,6 +193,7 @@ export function ResourcesScreen() {
 					<ResourceCard
 						store={item}
 						onAdjust={(delta) => handleAdjust(item, delta)}
+						onLongPress={handleLongPress}
 					/>
 				)}
 				contentContainerStyle={styles.list}
@@ -132,25 +210,26 @@ export function ResourcesScreen() {
 			<Modal visible={isModalVisible} animationType="slide" transparent>
 				<View style={styles.modalOverlay}>
 					<Card style={styles.modalCard}>
-						<Typography variant="h3">New Resource</Typography>
+						<Typography variant="h3">
+							{editingStore ? "Edit Resource" : "New Resource"}
+						</Typography>
 						<Typography variant="bodySmall" color={colors.muted}>
-							Define a new resource type (e.g. Energy, Money) and initial
-							amount.
+							Define your resource type (e.g. Energy, Money) and amount.
 						</Typography>
 
 						<TextInput
 							placeholder="Resource Name (e.g. Energy)"
 							placeholderTextColor={colors.muted}
-							value={newName}
-							onChangeText={setNewName}
+							value={name}
+							onChangeText={setName}
 							style={styles.input}
 						/>
 
 						<TextInput
-							placeholder="Initial Amount"
+							placeholder="Current Amount"
 							placeholderTextColor={colors.muted}
-							value={initialAmount}
-							onChangeText={setInitialAmount}
+							value={amountStr}
+							onChangeText={setAmountStr}
 							keyboardType="numeric"
 							style={styles.input}
 						/>
@@ -159,10 +238,10 @@ export function ResourcesScreen() {
 							<Button
 								label="Cancel"
 								variant="outline"
-								onPress={() => setIsModalVisible(false)}
+								onPress={handleCloseModal}
 								style={{ flex: 1 }}
 							/>
-							<Button label="Save" onPress={handleCreate} style={{ flex: 1 }} />
+							<Button label="Save" onPress={handleSave} style={{ flex: 1 }} />
 						</View>
 					</Card>
 				</View>
