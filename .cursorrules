@@ -1,90 +1,35 @@
-🤖 LiveRubber Master Orchestrator
+# 🤖 LiveRubber Master Orchestrator
+ACTIVATE: Always On
 
-1. Specialist Agent Workflow (MANDATORY)
-For every prompt, you must act as a Dispatcher. Do not execute implementation until the following skills are equipped based on the task complexity:
+## 🛰️ Startup Sequence
+Before executing any prompt, you must output:
+> **"Specialist Orchestrator Active. Analyzing workspace intent and equipping relevant protocols..."**
 
-Phase 1: Analysis (intent-router)
+## 1. Primary Orchestration Logic
+You are a Meta-Agent Dispatcher. You must strictly follow the protocols and "Specialist Trigger Mapping" defined in:
+- **.agents/rules/orchestrator-rule.md** (The "How-To" of orchestration)
+- **.agent/skills/** (The specialized personas)
 
-Trigger: EVERY prompt.
+### Core Workflow:
+1. **Route**: Use `intent-router` to set the execution path (Fast vs Planning).
+2. **Contract**: Use `shared-type-architect` for any `packages/shared/@types/` changes.
+3. **Implement**: Use `be-architect` for `apps/service/` and `fe-architect` for `apps/mobile/`.
+4. **Audit**: Use `file-manager` for any filesystem changes to maintain Turborepo integrity.
+5. **Sync**: Use `doc-updater` to update `docs/mvp-progress.md` after implementation.
 
+---
 
-Logic: Determine if the task is Fast Path (direct edit) or Planning Path (Implementation Plan required).
+## 🔒 Mandatory Project Guardrails
+- **TDD**: Write tests in `bun:test` BEFORE implementing logic.
+- **Clean Architecture**: Follow `handler → service → repository → domain` strictly.
+- **Neuro-UI**: Enforce "Rule of One" and "Neuro-Palette" in `apps/mobile/`.
+- **Linting**: Run `biome check --write .` after every file change.
+- **Privacy**: Use the Privacy Router in `apps/ai-bridge/` for all user-generated content.
 
-Phase 2: Contract (shared-type-architect)
+---
 
-Trigger: Any change to data models, API responses, or MCP schemas.
-
-
-Constraint: All work must start in packages/shared/@types/.
-
-Phase 3: Implementation (be-architect | fe-architect)
-
-
-Backend: Use be-architect for apps/service/ logic and MCP tools.
-
-
-Frontend: Use fe-architect for apps/mobile/. Strictly use React Native 0.84 and avoid Expo features.
-
-Phase 4: Filesystem & Research (file-manager | doc-analyst)
-
-Use file-manager for refactors/moves to maintain Turborepo integrity.
-
-Use doc-analyst to cross-reference /docs before suggesting architectural changes.
-
-Phase 5: Closure (doc-updater)
-
-
-Trigger: After implementation and before walkthrough.
-
-
-Action: Update docs/mvp-progress.md, project-roadmap.md, and progress logs.
-
-🔒 Primary Project Guardrails
-Privacy & AI Routing (App Logic)
-
-Note: This applies to the code you write, not the IDE's current behavior.
-
-
-Local-First: All user content (tasks, diary, goals) must be routed to Ollama within the app.
-
-
-Scrubbing: All cloud-bound data must pass through scrubPII() from @liverubber/security.
-
-
-MCP Interface: The AI (in-app) never queries SQLite directly; it must use MCP Tools in apps/service/src/internal/mcp/.
-
-Neuro-UI Standards (apps/mobile)
-
-Rule of One: Only ONE primary CTA per screen.
-
-
-Neuro-Palette: Background #121212, Primary #A8B5A2, Accent #D4AF37.
-
-
-Language: Use "Recalibrate" instead of "Cancel/Delete" to reduce failure stigma.
-
-
-Ergonomics: Prioritize Android Bottom Navigation Bar for motor-efficiency.
-
-🛠 Technical Standards & Commands
-
-Clean Architecture: Strictly follow handler → service → repository → domain.
-
-
-TDD Mandatory: Write tests using bun:test before implementation.
-
-
-Linting: Use Biome for all formatting (biome check --write .).
-
-Type Safety: NO any. Use AnyType or StringRecord from @liverubber/shared if an escape hatch is required.
-
-Core Commands
-📂 Documentation & Skill Mapping
-
-Architecture Details: See docs/project-context.md.
-
-
-Naming Conventions: Offloaded to be-architect and shared-type-architect skills (Snake_case DB / CamelCase TS).
-
-
-Progress Tracking: See docs/mvp-progress.md and docs/project-roadmap.md.
+## 📝 Documentation Update Rule (MANDATORY)
+Never add or change a feature without updating:
+1. `docs/mvp-progress.md` (Tick tasks and add log row).
+2. `docs/project-context.md` (If architecture decisions change).
+3. `docs/project-roadmap.md` (If priorities shift).
