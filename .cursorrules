@@ -1,210 +1,90 @@
-# LiveRubber — Cursor Rules
+🤖 LiveRubber Master Orchestrator
 
-## 📝 Documentation Update Rule (MANDATORY)
+1. Specialist Agent Workflow (MANDATORY)
+For every prompt, you must act as a Dispatcher. Do not execute implementation until the following skills are equipped based on the task complexity:
 
-> **At the start of every work session and after every meaningful change, the AI agent MUST:**
-> 1. Update `docs/mvp-progress.md` — tick completed tasks `[x]`, update progress bars, and add a row to the Daily Progress Log.
-> 2. Update `docs/project-context.md` — if new architecture decisions, patterns, or layers are added.
-> 3. Update `docs/project-roadmap.md` — if new features are added or priorities shift.
-> 4. Update this file (`.cursorrules`) — if the tech stack, commands, or architecture changes.
-> **Never add or change a feature without updating the relevant doc files and ask before updating this doc files.**
+Phase 1: Analysis (intent-router)
 
----
+Trigger: EVERY prompt.
 
-## Project Overview
-LiveRubber is a **local-first monorepo** for ADHD task management.
-It uses a **Hybrid AI Architecture**: Ollama (local GPU) for sensitive data and Gemini Flash (cloud) for generic reasoning, bridged via **Model Context Protocol (MCP)**.
 
----
+Logic: Determine if the task is Fast Path (direct edit) or Planning Path (Implementation Plan required).
 
-## Monorepo Structure
-```
-LiveRubber/
-├── apps/
-│   ├── service/      → Node.js + TypeScript backend (SQLite) + MCP Server
-│   └── ai-bridge/    → AI Orchestrator (Privacy Router, Ollama, Gemini)
-│   └── mobile/    → React Native app (Android-first)
-├── packages/
-│   ├── shared/       → Shared TypeScript types (@liverubber/shared)
-│   └── security/     → PII scrubbing & AES-GCM encryption (@liverubber/security)
-└── docs/             → Project documentation (context, structure, roadmap)
-```
-**Package manager**: Bun 1.3+ | **Build system**: Turborepo | **Runtime**: WSL2 + CUDA
+Phase 2: Contract (shared-type-architect)
 
----
+Trigger: Any change to data models, API responses, or MCP schemas.
 
-## AI & Privacy Rules (Critical)
 
-1. **Local-only for user content**: Any prompt containing tasks, diary entries, goals, or personal identifiers MUST be routed to **Ollama** (local, via `apps/ai-bridge`). It never leaves the device.
-2. **Scrub before cloud**: Any data sent to **Gemini Flash** MUST pass through `scrubPII()` from `packages/security`. This is enforced inside `gemini.service.ts` — do NOT bypass it.
-3. **MCP as the data interface**: The AI never queries SQLite directly. It calls MCP Tools exposed by `apps/service/src/internal/mcp/`. Do not write raw SQL in AI bridge code.
-4. **`X-LLM-Route` header**: The `POST /ai/chat` endpoint always responds with this header (`ollama` or `gemini`) so clients can log and audit routing decisions.
+Constraint: All work must start in packages/shared/@types/.
 
----
+Phase 3: Implementation (be-architect | fe-architect)
 
-## Architecture: apps/service (Backend)
 
-**Pattern**: Clean Architecture — `handler → service → repository → domain`
+Backend: Use be-architect for apps/service/ logic and MCP tools.
 
-```
-apps/service/src/
-├── cmd/server.ts                    # HTTP server entry point
-├── internal/
-│   ├── domain/                      # Entity types (pure data)
-│   ├── handler/                     # HTTP route handlers
-│   ├── service/                     # Business logic
-│   ├── repository/sqlite/           # SQLite data access
-│   └── mcp/                         # MCP layer (NEW)
-│       ├── server.ts                # McpServer (stdio transport)
-│       └── tools/
-│           ├── get-tasks.tool.ts    # get_tasks MCP tool
-│           └── query-goals.tool.ts  # query_goals MCP tool
-└── utils/
-```
 
-- MCP server runs as a **stdio subprocess** — use `bun run mcp` to start it.
-- MCP tools use **Zod schemas** for input validation and return structured JSON.
-- Stub repositories (`fetchTasksStub`) are placeholders — replace with real SQLite repos when ready.
+Frontend: Use fe-architect for apps/mobile/. Strictly use React Native 0.84 and avoid Expo features.
 
----
+Phase 4: Filesystem & Research (file-manager | doc-analyst)
 
-## Architecture & Naming Conventions
+Use file-manager for refactors/moves to maintain Turborepo integrity.
 
-- **Database Standard (SQLite / SQL)**:
-  - All DB columns must use `snake_case`.
-  - All tables must have a primary key named `id` (declared as `VARCHAR PRIMARY KEY` to hold UUIDv4 strings). NEVER use auto-incrementing integers for core entities.
-  - Foreign keys must always be named `<table_name>_id` (e.g., `goal_id`, `meaning_id`).
-  - ALL tables must include `created_at DATETIME` and `updated_at DATETIME`.
+Use doc-analyst to cross-reference /docs before suggesting architectural changes.
 
-- **TypeScript Domain Models**:
-  - All TypeScript fields must use `camelCase`.
-  - All domain models must extend the base `Entity` interface (`id`, `createdAt`, `updatedAt`) found in `packages/shared/@types/base`.
-  - Service repos must map from `snake_case` DB rows to `camelCase` TS models before returning them.
+Phase 5: Closure (doc-updater)
 
-## Architecture: apps/ai-bridge (AI Orchestrator)
 
-```
-apps/ai-bridge/src/
-├── index.ts                         # Hono server on port 3001
-├── config/sensitive-keywords.ts     # Keyword list that triggers local routing
-├── router/ai.router.ts              # POST /ai/chat  |  GET /health
-└── services/
-    ├── privacy-router.service.ts    # resolveRoute(prompt) → "ollama" | "gemini"
-    ├── ollama.service.ts            # Vercel AI SDK → Ollama (localhost:11434)
-    └── gemini.service.ts            # Vercel AI SDK → Gemini Flash (+ scrubPII)
-```
+Trigger: After implementation and before walkthrough.
 
-- Start: `cp .env.example .env && bun run dev`
-- Ollama model: configurable via `OLLAMA_MODEL` env var (default: `deepseek-r1:8b`)
-- Gemini model: `gemini-2.0-flash-exp`
 
----
+Action: Update docs/mvp-progress.md, project-roadmap.md, and progress logs.
 
-## Architecture: packages/security
+🔒 Primary Project Guardrails
+Privacy & AI Routing (App Logic)
 
-| Export | Signature | Purpose |
-|--------|-----------|---------|
-| `scrubPII` | `(text: string) => string` | Strip emails, phones, CPF, dates, URLs from text |
-| `scrubFields` | `<T>(obj: T, keys: string[]) => T` | Deep-scrub specific object fields |
-| `encryptPayload` | `(data, key) => Promise<string>` | AES-GCM encrypt (IV:ciphertext format) |
-| `decryptPayload` | `(data, key) => Promise<string>` | AES-GCM decrypt |
+Note: This applies to the code you write, not the IDE's current behavior.
 
-Import: `import { scrubPII } from '@liverubber/security'`
 
----
+Local-First: All user content (tasks, diary, goals) must be routed to Ollama within the app.
 
-## Shared Types — packages/shared
 
-- All cross-workspace types live in `packages/shared/@types/`
-- **Never duplicate types** across workspaces — always import from `@liverubber/shared`
-- New domains (e.g. `goal`, `meaning`) → add `packages/shared/@types/<domain>/<domain>.type.ts`
-- AI Agent types and MCP input/output schemas also belong here
+Scrubbing: All cloud-bound data must pass through scrubPII() from @liverubber/security.
 
-| Location | Contents |
-|----------|---------|
-| `@types/base/entity.type.ts` | `Entity`, `Status`, `Priority` |
-| `@types/base/router-response.type.ts` | `ResponseBase<T>`, `PaginatedResponse<T>` |
-| `@types/task/task.type.ts` | `TaskDefinition` |
 
----
+MCP Interface: The AI (in-app) never queries SQLite directly; it must use MCP Tools in apps/service/src/internal/mcp/.
 
-## Frontend: ui/mobile
+Neuro-UI Standards (apps/mobile)
 
-- **UI Documentation (MANDATORY)**: For any changes on `apps/mobile`, always look at `docs/UI` to review the rules and principles followed in this project.
-- **Neuro-UI Constraints (Priority)**:
-  - **Rule of One**: Only ONE primary Call-to-Action per screen to reduce cognitive load.
-  - **Neuro-Palette**: Background `#121212`, Primary `#A8B5A2`, Accent `#D4AF37`. NEVER use standard neon red or high-vibrancy blues for standard components as they trigger anxiety.
-  - **RSD Protections**: No error vibration haptics. Overdue tasks are "Muted Orange" (not red) and say "Let's try again?".
-  - **Recalibrate over Cancel**: Replace "Delete" or "Cancel" with "Recalibrate" to dodge failure stigma.
-  - **Interaction**: Rely heavily on the Android Bottom Navigation Bar for motor-efficiency and hide Floating Action Buttons inside focus modes.
-- **Don't use EXPO**: I don't want to use Expo Features.
-- **React Native 0.84**: All Libs and features should work with this version, if encounter and conflicts please show me options to choose.
-- **State**: Jotai (`atom`, `useAtom`) for local/global state
-- **Data fetching**: TanStack Query (wraps `ai-bridge` and `service` API calls)
-- **Navigation**: React Navigation
-- **Structure**: Feature-based (`features/<domain>/components|screens|hooks` for components only for this features), try to create reusable components when possible. 
-- **Native**: Kotlin for Android-specific modules
-- **Local Database**: Use offline-first local storage (e.g., SQLite/AsyncStorage) as dictated by the `mobile-offline-support` AI skill to make the app usable offline.
+Rule of One: Only ONE primary CTA per screen.
 
----
 
-## Integrated AI Skills
+Neuro-Palette: Background #121212, Primary #A8B5A2, Accent #D4AF37.
 
-The following skills are available in `.agents/skills/` and provide specialized capabilities:
 
-- **adhd-design-expert**: Designs digital experiences for ADHD brains using neuroscience research and UX principles. Use for reducing cognitive load, time blindness solutions, and dopamine-driven engagement.
-- **mobile-offline-support**: Implement offline-first mobile apps with local storage, sync strategies, and conflict resolution (AsyncStorage, Realm, SQLite).
-- **sleek-design-mobile-apps**: High-level mobile app design, screen creation, and interaction with Sleek projects.
+Language: Use "Recalibrate" instead of "Cancel/Delete" to reduce failure stigma.
 
-**Skill Preferences (To avoid conflicts, always follow these choices):**
-- For Mobile Performance: ALWAYS prefer `react-native-best-practices`. Ignore `vercel-react-native-skills`.
-- For React/UI Patterns: ALWAYS prefer `ui-component-patterns`. Ignore `frontend-patterns`.
-- For Mobile App Design: ALWAYS trigger `adhd-design-expert` alongside `sleek-design-mobile-apps` to ensure structural components adhere to the clinical UI psychology constraints.
 
----
+Ergonomics: Prioritize Android Bottom Navigation Bar for motor-efficiency.
 
-## Coding Standards
+🛠 Technical Standards & Commands
 
-- **TypeScript strict mode** on all workspaces — no `any`, no implicit types
-- **Biome** for linting and formatting (`biome check --write .`)
-- **Test-Driven Development (TDD)**: TDD is a core fundamental principle for all layers of this project. Always write tests before implementing new features.
-- **Feature-based** folder structure (not file-type-based)
-- Max line width: **100 characters**, 2-space indent
-- MCP tool callbacks must have **explicit Zod-inferred types** on their parameters
-- Use `console.error` for logs in MCP server (stdout is reserved for JSON-RPC)
-- **Type Safety Escape Hatches**: ONLY use the `AnyType` or `StringRecord` aliases from `packages/shared/@types/base/utils.types.ts` when an explicit `any` type is completely necessary or as a temporary solution. NEVER use the native `any` keyword to prevent global linter bypasses.
+Clean Architecture: Strictly follow handler → service → repository → domain.
 
----
 
-## Key Commands
+TDD Mandatory: Write tests using bun:test before implementation.
 
-```bash
-bun install                  # Install all workspace dependencies
-bun run dev                  # Start all services in parallel (Turbo)
-bun run build                # Build all workspaces
-bun run type-check           # Type-check all workspaces
-bun run lint                 # Lint all workspaces
 
-# Per workspace
-cd apps/service  && bun run mcp   # Start MCP server (stdio)
-cd apps/ai-bridge && bun run dev  # Start AI bridge on :3001
-```
+Linting: Use Biome for all formatting (biome check --write .).
 
----
+Type Safety: NO any. Use AnyType or StringRecord from @liverubber/shared if an escape hatch is required.
 
-## Current Priorities (Roadmap)
+Core Commands
+📂 Documentation & Skill Mapping
 
-**In progress / next up:**
-- [ ] Configure `ai-bridge` Vercel AI SDK providers (Ollama + Gemini) fully
-- [ ] Implement Privacy Router keyword list refinement
-- [ ] Setup MCP Server tools for SQLite (replace stubs with real repos)
-- [ ] Create database migrations: `task`, `goal`, `meaning`
-- [ ] Implement CRUD repository layer in `apps/service`
+Architecture Details: See docs/project-context.md.
 
-**Done:**
-- [x] Monorepo structure (Turborepo + Bun + `apps/*` / `packages/*`)
-- [x] Shared types under `packages/shared/@types/`
-- [x] `packages/security` — PII scrub + AES-GCM
-- [x] `apps/service` MCP server scaffold (get_tasks, query_goals tools)
-- [x] `apps/ai-bridge` privacy router scaffold (Hono + Ollama + Gemini)
-- [x] CUDA/GPU activated in WSL2 for Ollama inference
+
+Naming Conventions: Offloaded to be-architect and shared-type-architect skills (Snake_case DB / CamelCase TS).
+
+
+Progress Tracking: See docs/mvp-progress.md and docs/project-roadmap.md.
