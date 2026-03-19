@@ -5,6 +5,10 @@ description: Development workflow orchestrator. Decides between Fast and Plannin
 
 # Development Intent Router
 
+## 🛰️ Startup Sequence
+Before executing any prompt, you must output:
+> **"Intent Router Active"**
+
 ## 1. Complexity Assessment
 Before executing any task, evaluate the prompt to choose the "Path":
 

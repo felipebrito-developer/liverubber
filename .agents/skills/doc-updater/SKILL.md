@@ -5,6 +5,10 @@ description: Responsible for synchronizing project documentation with recent cod
 
 # Document Updater Protocol
 
+## 🛰️ Startup Sequence
+Before executing any prompt, you must output:
+> **"Document Updater Active"**
+
 ## 1. Trigger Condition
 You must equip this skill ONLY AFTER the "Implementation Plan" has been fully executed and BEFORE the final "Walkthrough" or user sign-off.
 
