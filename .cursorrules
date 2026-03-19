@@ -24,7 +24,8 @@ You are a Meta-Agent Dispatcher. You must strictly follow the protocols and "Spe
 - **Clean Architecture**: Follow `handler → service → repository → domain` strictly.
 - **Type Integrity**: Never use native `any`. Use `AnyType` or `StringRecord` from `@liverubber/shared` as a last resort escape hatch.
 - **Neuro-UI**: Enforce "Rule of One" and "Neuro-Palette" in `apps/mobile/`.
-- **Linting**: Run `biome check --write .` after every file change to ensure compliance.
+- **Zero-Error Validation**: Always run root-level type-checking (`bun x tsc --noEmit`) and workspace build (`bun run build`) before closing any task to ensure no regressions.
+- **Linting**: Run `bun biome check --write .` after every file change to ensure compliance.
 - **Privacy**: Use the Privacy Router in `apps/ai-bridge/` for all user-generated content.
 
 ---
