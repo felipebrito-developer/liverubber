@@ -21,6 +21,7 @@ test("MCP Client can connect and call list_tasks", async () => {
 		console.log("Error details:", createResult);
 	}
 	expect(createResult.isError).toBeFalsy();
+	// biome-ignore lint/suspicious/noExplicitAny: <TODO: fix this when have the correct typing>
 	const createdText = (createResult.content as any)[0].text;
 	expect(typeof createdText).toBe("string");
 	const createdTask = JSON.parse(createdText as string);
@@ -33,7 +34,8 @@ test("MCP Client can connect and call list_tasks", async () => {
 	});
 
 	expect(listResult.isError).toBeFalsy();
-	const listText = (listResult.content as any)[0].text;
+	// biome-ignore lint/suspicious/noExplicitAny: <TODO: fix this when have the correct typing>
+	const listText = (listResult.content as Record<string, any>)[0].text;
 	expect(typeof listText).toBe("string");
 	const tasks = JSON.parse(listText as string);
 
