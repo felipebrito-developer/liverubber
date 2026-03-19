@@ -1,80 +1,85 @@
 {
-	"version": 1,
-	"skills": {
-		"adhd-design-expert": {
-			"source": "erichowens/some_claude_skills",
-			"sourceType": "github",
-			"computedHash": "d2bacc39942f1fe51277818eda72a943b0c22b17fea2833d2c3f2793c99b41e4"
-		},
-		"claude-api": {
-			"source": "anthropics/skills",
-			"sourceType": "github",
-			"computedHash": "ae0442705d2ce9338f91fffafa423172abfa85c7c9b85f13dece6cdc9b1681cc"
-		},
-		"context7": {
-			"source": "netresearch/context7-skill",
-			"sourceType": "github",
-			"computedHash": "d6fb0879cbf9f526f55d88d092b4a46a706fbe695d363602e451d4dc9f4261aa"
-		},
-		"frontend-patterns": {
-			"source": "affaan-m/everything-claude-code",
-			"sourceType": "github",
-			"computedHash": "48c9438b32e62679de45e510b34f3e81b1341d4ba9aeae97b92bbd7e3e01986a"
-		},
-		"mcp-builder": {
-			"source": "anthropics/skills",
-			"sourceType": "github",
-			"computedHash": "fc68038c900eb801f73ff96130c9f9dba533cc94212ed8435833242f196dedcf"
-		},
-		"mobile-offline-support": {
-			"source": "aj-geddes/useful-ai-prompts",
-			"sourceType": "github",
-			"computedHash": "630c8fa68927799deaa1b0d77d41addaff4d9dee2dc0ab2e18b8635522fdebaa"
-		},
-		"react-native-best-practices": {
-			"source": "callstackincubator/agent-skills",
-			"sourceType": "github",
-			"computedHash": "cc54bc37531c0221b2bfde241ef18c5f6e22423665955587f6dd63b0454355d8"
-		},
-		"react-native-brownfield-migration": {
-			"source": "callstackincubator/agent-skills",
-			"sourceType": "github",
-			"computedHash": "ad7f024fa1adf831f8f9bfdc31da5bb820b8d2dc8f9e55147b558a0ea2b3c555"
-		},
-		"slack-gif-creator": {
-			"source": "anthropics/skills",
-			"sourceType": "github",
-			"computedHash": "146d0f407e3f04aac0378b74bb238833b24bbd5e6387b932e82cfbf228f219b4"
-		},
-		"sleek-design-mobile-apps": {
-			"source": "sleekdotdesign/agent-skills",
-			"sourceType": "github",
-			"computedHash": "58114c00f6fad065388af90270ce9a1c95c327a009889397525c92694afde12d"
-		},
-		"theme-factory": {
-			"source": "anthropics/skills",
-			"sourceType": "github",
-			"computedHash": "93e78aa44f8fa00bb2c0608f400de1e1dcd6494611dd8ea27c867654240c7bcd"
-		},
-		"ui-component-patterns": {
-			"source": "supercent-io/skills-template",
-			"sourceType": "github",
-			"computedHash": "6903616a42c711d7cee7ddc2a34233c8dfda67868dd47905edd3c6374fc49ba9"
-		},
-		"upgrading-react-native": {
-			"source": "callstackincubator/agent-skills",
-			"sourceType": "github",
-			"computedHash": "3a0fba5f03d67fbea03a915e34f2cee1397fb2968e7273dd3a5b4391df4250a6"
-		},
-		"validate-skills": {
-			"source": "callstackincubator/agent-skills",
-			"sourceType": "github",
-			"computedHash": "aff52c5f1470ceedfa83c6bd7936b5bf70d347d72724585e3a2911d6d009caf4"
-		},
-		"vercel-react-native-skills": {
-			"source": "vercel-labs/agent-skills",
-			"sourceType": "github",
-			"computedHash": "2e9088a7333666d8c2833b8ff58bd51b955501c42b4c7244f72b4cbf22dafcc4"
-		}
-	}
+  "version": 1,
+  "skills": {
+    "SQLite Database Expert": {
+      "source": "martinholovsky/claude-skills-generator",
+      "sourceType": "github",
+      "computedHash": "0e75baa1c3159dba4c6db79330634327039c9813410256b73357dcbb0ed9d0ea"
+    },
+    "adhd-design-expert": {
+      "source": "erichowens/some_claude_skills",
+      "sourceType": "github",
+      "computedHash": "d2bacc39942f1fe51277818eda72a943b0c22b17fea2833d2c3f2793c99b41e4"
+    },
+    "claude-api": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "computedHash": "ae0442705d2ce9338f91fffafa423172abfa85c7c9b85f13dece6cdc9b1681cc"
+    },
+    "context7": {
+      "source": "netresearch/context7-skill",
+      "sourceType": "github",
+      "computedHash": "d6fb0879cbf9f526f55d88d092b4a46a706fbe695d363602e451d4dc9f4261aa"
+    },
+    "frontend-patterns": {
+      "source": "affaan-m/everything-claude-code",
+      "sourceType": "github",
+      "computedHash": "48c9438b32e62679de45e510b34f3e81b1341d4ba9aeae97b92bbd7e3e01986a"
+    },
+    "jotai-expert": {
+      "source": "s-hiraoku/skills-factory",
+      "sourceType": "github",
+      "computedHash": "dbacd9d458ce2647f51e98dafa01beb374e8027088d73a439af8089e41e7125e"
+    },
+    "mcp-builder": {
+      "source": "anthropics/skills",
+      "sourceType": "github",
+      "computedHash": "fc68038c900eb801f73ff96130c9f9dba533cc94212ed8435833242f196dedcf"
+    },
+    "mobile-android-design": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "computedHash": "0dfa08663016e0faa2db0611420bd5c17ba2d635a057e17a6b71c2a0c3f2ed79"
+    },
+    "mobile-offline-support": {
+      "source": "aj-geddes/useful-ai-prompts",
+      "sourceType": "github",
+      "computedHash": "630c8fa68927799deaa1b0d77d41addaff4d9dee2dc0ab2e18b8635522fdebaa"
+    },
+    "react-native-best-practices": {
+      "source": "callstackincubator/agent-skills",
+      "sourceType": "github",
+      "computedHash": "cc54bc37531c0221b2bfde241ef18c5f6e22423665955587f6dd63b0454355d8"
+    },
+    "react-native-design": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "computedHash": "f75e8c7bd9ffd77a29b74eece63806ff87f8723c30744c5cb90f8baab388d18e"
+    },
+    "tanstack-start-best-practices": {
+      "source": "deckardger/tanstack-agent-skills",
+      "sourceType": "github",
+      "computedHash": "50c1b6d9b35b05927fa0c81962d560634385c9567b7b1d66396b171965b33105"
+    },
+    "ui-component-patterns": {
+      "source": "supercent-io/skills-template",
+      "sourceType": "github",
+      "computedHash": "6903616a42c711d7cee7ddc2a34233c8dfda67868dd47905edd3c6374fc49ba9"
+    },
+    "upgrading-react-native": {
+      "source": "callstackincubator/agent-skills",
+      "sourceType": "github",
+      "computedHash": "3a0fba5f03d67fbea03a915e34f2cee1397fb2968e7273dd3a5b4391df4250a6"
+    },
+    "validate-skills": {
+      "source": "callstackincubator/agent-skills",
+      "sourceType": "github",
+      "computedHash": "aff52c5f1470ceedfa83c6bd7936b5bf70d347d72724585e3a2911d6d009caf4"
+    },
+    "vercel-react-native-skills": {
+      "source": "vercel-labs/agent-skills",
+      "sourceType": "github",
+      "computedHash": "2e9088a7333666d8c2833b8ff58bd51b955501c42b4c7244f72b4cbf22dafcc4"
+    }
+  }
 }

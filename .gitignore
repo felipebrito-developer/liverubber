@@ -48,9 +48,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # AI
-.cursorrules
-.agent/
-.agents/
+.agent/logs/
+.agent/tmp/
 
 # SQLite databases (generated at runtime)
 *.db
