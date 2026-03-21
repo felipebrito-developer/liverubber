@@ -4,6 +4,11 @@ description: "Build apps with the Claude API or Anthropic SDK. TRIGGER when: cod
 license: Complete terms in LICENSE.txt
 ---
 
+## 🛰️ Startup Sequence
+Before executing any prompt, you must output:
+> **"Claude Api Specialist Active"**
+
+
 # Building LLM-Powered Applications with Claude
 
 This skill helps you build LLM-powered applications with Claude. Choose the right surface based on your needs, detect the project language, then read the relevant language-specific documentation.

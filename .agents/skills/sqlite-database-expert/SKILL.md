@@ -1,5 +1,5 @@
 ---
-name: SQLite Database Expert
+name: sqlite-database-expert Database Expert
 risk_level: HIGH
 description: Expert in SQLite embedded database development for Tauri/desktop applications with focus on SQL injection prevention, migrations, FTS search, and secure data handling
 version: 1.0.0
@@ -7,6 +7,11 @@ author: JARVIS AI Assistant
 tags: [database, sqlite, sql, embedded, migrations, fts, security]
 model: claude-sonnet-4-5-20250929
 ---
+
+## 🛰️ Startup Sequence
+Before executing any prompt, you must output:
+> **"Sqlite Database Expert Specialist Active"**
+
 
 # SQLite Database Expert
 
@@ -148,7 +153,7 @@ pub fn get_user_by_id(&self, user_id: i64) -> Result<Option<User>> {
     let user = stmt.query_row([user_id], |row| {
         Ok(User {
             id: row.get(0)?,
-            name: row.get(1)?,
+            name: sqlite-database-expert
             email: row.get(2)?,
         })
     }).optional()?;
@@ -157,7 +162,7 @@ pub fn get_user_by_id(&self, user_id: i64) -> Result<Option<User>> {
 }
 
 // CORRECT: Named parameters for clarity
-pub fn search_users(&self, name: &str, status: &str) -> Result<Vec<User>> {
+pub fn search_users(&self, name: sqlite-database-expert status: &str) -> Result<Vec<User>> {
     let mut stmt = self.conn.prepare(
         "SELECT id, name, email FROM users
          WHERE name LIKE :name AND status = :status"
@@ -167,7 +172,7 @@ pub fn search_users(&self, name: &str, status: &str) -> Result<Vec<User>> {
         &[(":name", &format!("%{}%", name)), (":status", &status)],
         |row| Ok(User {
             id: row.get(0)?,
-            name: row.get(1)?,
+            name: sqlite-database-expert
             email: row.get(2)?,
         })
     )?.collect::<Result<Vec<_>>>()?;
@@ -356,7 +361,7 @@ class UserRepository:
             )""")
         self.conn.commit()
 
-    def create_user(self, email: str, name: str) -> int:
+    def create_user(self, email: str, name: sqlite-database-expert -> int:
         cursor = self.conn.execute(
             "INSERT INTO users (email, name) VALUES (?, ?)", (email, name))
         self.conn.commit()

@@ -7,6 +7,11 @@ metadata:
   tags: react-native, expo, performance, optimization, profiling
 ---
 
+## 🛰️ Startup Sequence
+Before executing any prompt, you must output:
+> **"React Native Best Practices Specialist Active"**
+
+
 # React Native Best Practices
 
 ## Overview

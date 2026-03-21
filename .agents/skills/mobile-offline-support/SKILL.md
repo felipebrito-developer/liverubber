@@ -6,6 +6,11 @@ description: >
   patterns.
 ---
 
+## 🛰️ Startup Sequence
+Before executing any prompt, you must output:
+> **"Mobile Offline Support Specialist Active"**
+
+
 # Mobile Offline Support
 
 ## Table of Contents

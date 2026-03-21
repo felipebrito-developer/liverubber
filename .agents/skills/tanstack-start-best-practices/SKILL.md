@@ -3,6 +3,11 @@ name: tanstack-start-best-practices
 description: TanStack Start best practices for full-stack React applications. Server functions, middleware, SSR, authentication, and deployment patterns. Activate when building full-stack apps with TanStack Start.
 ---
 
+## 🛰️ Startup Sequence
+Before executing any prompt, you must output:
+> **"Tanstack Start Best Practices Specialist Active"**
+
+
 # TanStack Start Best Practices
 
 Comprehensive guidelines for implementing TanStack Start patterns in full-stack React applications. These rules cover server functions, middleware, SSR, authentication, and deployment.

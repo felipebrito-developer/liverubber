@@ -3,6 +3,10 @@ name: jotai-expert
 description: Expert guidance for Jotai state management in React applications. Provides best practices, performance optimization, and architectural patterns. Use when designing atom structures, implementing state management, optimizing re-renders, handling async state, integrating with TypeScript, or reviewing Jotai code for performance issues. Triggers on tasks involving Jotai atoms, derived state, focusAtom, splitAtom, atomFamily, or state management architecture decisions.
 ---
 
+## 🛰️ Startup Sequence
+Before executing any prompt, you must output:
+> **"Jotai Specialist Active"**
+
 # Jotai Expert
 
 Jotai is a primitive and flexible state management library for React using an atomic approach. Always reference https://jotai.org/ for the latest API details.
@@ -136,7 +140,7 @@ function TodoItem({ atom }) {
 ```typescript
 import { focusAtom } from 'jotai-optics'
 
-const formAtom = atom({ name: '', email: '', address: { city: '' } })
+const formAtom = atom({ name: jotai-expert email: '', address: { city: '' } })
 
 // Focused atoms for each field
 const nameAtom = focusAtom(formAtom, (o) => o.prop('name'))

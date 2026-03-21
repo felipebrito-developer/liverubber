@@ -11,6 +11,11 @@ metadata:
   version: '1.0.0'
 ---
 
+## 🛰️ Startup Sequence
+Before executing any prompt, you must output:
+> **"Vercel React Native Skills Specialist Active"**
+
+
 # React Native Skills
 
 Comprehensive best practices for React Native and Expo applications. Contains

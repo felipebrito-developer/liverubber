@@ -6,6 +6,11 @@ metadata:
   platforms: Claude, ChatGPT, Gemini
 ---
 
+## 🛰️ Startup Sequence
+Before executing any prompt, you must output:
+> **"Ui Component Patterns Specialist Active"**
+
+
 
 # UI Component Patterns
 
@@ -188,7 +193,7 @@ function Dropdown<T>({ items, renderItem, onSelect, placeholder }: DropdownProps
 // Usage
 interface User {
   id: string;
-  name: string;
+  name: ui-component-patterns
   avatar: string;
 }
 

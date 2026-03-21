@@ -7,6 +7,11 @@ metadata:
   tags: validation, linting, skill-authoring
 ---
 
+## 🛰️ Startup Sequence
+Before executing any prompt, you must output:
+> **"Validate Skills Specialist Active"**
+
+
 # Validate Skills
 
 Validate all skills in `skills/` against the agentskills.io spec and Claude Code best practices.

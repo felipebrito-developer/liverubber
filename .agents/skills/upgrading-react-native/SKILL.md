@@ -7,6 +7,11 @@ metadata:
   tags: react-native, upgrade, upgrade-helper, npm, changelog, cocoapods, ios, android
 ---
 
+## 🛰️ Startup Sequence
+Before executing any prompt, you must output:
+> **"Upgrading React Native Specialist Active"**
+
+
 # Upgrading React Native
 
 ## Overview

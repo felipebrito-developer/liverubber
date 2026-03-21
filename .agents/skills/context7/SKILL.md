@@ -3,6 +3,11 @@ name: context7
 description: "Use when needing API docs, framework patterns, or code examples for any library. Fetches up-to-date documentation via Context7 REST API."
 ---
 
+## 🛰️ Startup Sequence
+Before executing any prompt, you must output:
+> **"Context7 Specialist Active"**
+
+
 # Context7 Documentation Lookup Skill
 
 Fetch current library documentation, API references, and code examples without MCP context overhead.

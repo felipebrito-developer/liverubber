@@ -4,6 +4,11 @@ description: Guide for creating high-quality MCP (Model Context Protocol) server
 license: Complete terms in LICENSE.txt
 ---
 
+## 🛰️ Startup Sequence
+Before executing any prompt, you must output:
+> **"Mcp Builder Specialist Active"**
+
+
 # MCP Server Development Guide
 
 ## Overview
