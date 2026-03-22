@@ -3,7 +3,18 @@
 ## Architecture Summary
 LiveRubber/
 ├── apps/
-│   ├── mobile/                     # React Native App
+├── apps/
+│   ├── mobile/                     # React Native App (0.84)
+│   │   ├── src/
+│   │   │   ├── components/         # Global Atoms, Molecules, Organisms
+│   │   │   ├── features/           # Feature-based capsules
+│   │   │   │   ├── [feature]/      # Feature name (e.g., action, now)
+│   │   │   │   │   ├── components/ # Local components (Atomic Separation)
+│   │   │   │   │   ├── hooks/      # Local hooks
+│   │   │   │   │   └── [Screen].tsx # Main screen components
+│   │   │   ├── navigation/         # Drawer & Stack navigators
+│   │   │   ├── stores/             # Jotai state management
+│   │   │   └── theme/              # Design System tokens
 │   ├── service/                    # Node.js + SQLite + MCP Server
 │   └── ai-bridge/                  # AI Orchestrator (Ollama & Gemini)
 ├── docs/                           # General project documentation
