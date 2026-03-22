@@ -6,13 +6,31 @@
 		"baseUrl": ".",
 		"moduleResolution": "bundler",
 		"resolveJsonModule": true,
+		"allowImportingTsExtensions": true,
+		"isolatedModules": true,
+		"noEmit": true,
 		"paths": {
-			"@/*": ["src/*"],
-			"@liverubber/shared/*": ["../../packages/shared/*"]
+			"@/*": [
+				"src/*"
+			],
+			"@liverubber/shared/*": [
+				"../../packages/shared/*"
+			]
 		},
-		"types": ["jest", "node"],
+		"types": [
+			"jest",
+			"node"
+		],
 		"jsx": "react-native"
 	},
-	"include": ["src/**/*.ts", "src/**/*.tsx", "index.js"],
-	"exclude": ["node_modules", ".android", ".ios"]
+	"include": [
+		"src/**/*.ts",
+		"src/**/*.tsx",
+		"index.js"
+	],
+	"exclude": [
+		"node_modules",
+		".android",
+		".ios"
+	]
 }
