@@ -1,4 +1,4 @@
-import type { Habit, Task } from "@liverubber/shared";
+import type { Habit, TagType, Task } from "@liverubber/shared";
 import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
 import {
@@ -23,59 +23,45 @@ import {
 	loadHabitsAndRewardsAction,
 	updateHabitAction,
 } from "@/stores/habitsStore";
-import { meaningsAtom } from "@/stores/meaningsStore";
+import { 
+	meaningsAtom, 
+	loadMeaningsAction, 
+	isMeaningsLoadedAtom 
+} from "@/stores/meaningsStore";
 import {
 	isTasksLoadedAtom,
 	loadTasksAction,
 	tasksAtom,
 } from "@/stores/tasksStore";
+import { tagsAtom, loadTagsAction, isTagsLoadedAtom } from "@/stores/tagsStore";
 import { colors, radius, spacing } from "@/theme";
+import { useEffect } from "react";
 
 // ─── Energy Level ──────────────────────────────────────────────────────────────
 
-export type EnergyLevel = "low" | "balanced" | "hyperfocus";
+export type EnergyLevel = "tag-low-energy" | "tag-balanced-energy" | "tag-high-energy";
 
-export const energyLevelAtom = atom<EnergyLevel>("balanced");
-
-const ENERGY_OPTIONS: {
-	key: EnergyLevel;
-	label: string;
-	description: string;
-	color: string;
-}[] = [
-	{
-		key: "low",
-		label: "Low Energy",
-		description: "Small wins only",
-		color: colors.overdueColor,
-	},
-	{
-		key: "balanced",
-		label: "Balanced",
-		description: "Regular tasks",
-		color: colors.primary,
-	},
-	{
-		key: "hyperfocus",
-		label: "Hyperfocus",
-		description: "Deep work mode",
-		color: colors.secondary,
-	},
-];
+export const energyLevelAtom = atom<EnergyLevel>("tag-balanced-energy");
 
 // ─── Energy Filter logic ───────────────────────────────────────────────────────
 function energyPassesHabit(level: EnergyLevel, _habit: Habit) {
-	// For now, let's assume low energy only shows habits with low effort or specific tag if we had one
-	// Since we don't have a difficulty field in DB yet (it was in the mockup), let's show all or simple ones if name suggests
-	if (level === "low") return true;
 	return true;
 }
 
 function energyPassesTask(level: EnergyLevel, task: Task) {
-	if (level === "low")
+	// 1. Primary: Check if the task has the explicit energy tag
+	if (task.tags && task.tags.some(t => t.id === level)) {
+		return true;
+	}
+
+	// 2. Secondary: If no relevant energy tag is present, fallback to priority heuristic
+	// This helps with legacy tasks or those not specifically tagged.
+	if (level === "tag-low-energy")
 		return task.priority !== "high" && task.priority !== "urgent";
-	if (level === "hyperfocus")
+	if (level === "tag-high-energy")
 		return task.priority === "high" || task.priority === "urgent";
+	
+	// Balanced shows everything unless specifically tagged otherwise
 	return true;
 }
 
@@ -84,37 +70,43 @@ function energyPassesTask(level: EnergyLevel, task: Task) {
 function EnergyToggle({
 	value,
 	onChange,
+	tags,
 }: {
 	value: EnergyLevel;
 	onChange: (v: EnergyLevel) => void;
+	tags: TagType[];
 }) {
+	const energyTags = tags.filter(t => t.id.includes("energy"));
+	
 	return (
 		<View style={styles.energyRow}>
-			{ENERGY_OPTIONS.map((opt) => {
-				const active = value === opt.key;
+			{energyTags.map((tag) => {
+				const active = value === tag.id;
+				const description = tag.id === "tag-low-energy" ? "Small wins only" : 
+				                    tag.id === "tag-balanced-energy" ? "Regular tasks" : "Deep work mode";
 				return (
 					<TouchableOpacity
-						key={opt.key}
-						onPress={() => onChange(opt.key)}
+						key={tag.id}
+						onPress={() => onChange(tag.id as EnergyLevel)}
 						activeOpacity={0.8}
 						style={[
 							styles.energyBtn,
-							active && { backgroundColor: opt.color, borderColor: opt.color },
+							active && { backgroundColor: tag.colorHex, borderColor: tag.colorHex },
 						]}
 						accessibilityRole="button"
-						accessibilityLabel={`${opt.label}: ${opt.description}`}
+						accessibilityLabel={`${tag.name}: ${description}`}
 					>
 						<Typography
 							variant="label"
 							style={{ color: active ? colors.onPrimary : colors.muted }}
 						>
-							{opt.label}
+							{tag.name}
 						</Typography>
 						<Typography
 							variant="caption"
 							style={{ color: active ? colors.onPrimary : colors.muted }}
 						>
-							{opt.description}
+							{description}
 						</Typography>
 					</TouchableOpacity>
 				);
@@ -187,15 +179,21 @@ export function ActionHubScreen() {
 	const [energy, setEnergy] = useAtom(energyLevelAtom);
 
 	const tasks = useAtomValue(tasksAtom);
-	const _isTasksLoaded = useAtomValue(isTasksLoadedAtom);
-	const _loadTasks = useSetAtom(loadTasksAction);
+	const loadTasks = useSetAtom(loadTasksAction);
+	const isTasksLoaded = useAtomValue(isTasksLoadedAtom);
 
 	const habits = useAtomValue(habitsAtom);
-	const _loadHabits = useSetAtom(loadHabitsAndRewardsAction);
+	const loadHabits = useSetAtom(loadHabitsAndRewardsAction);
 	const createHabit = useSetAtom(createHabitAction);
 	const updateHabit = useSetAtom(updateHabitAction);
 	const deleteHabit = useSetAtom(deleteHabitAction);
 	const meanings = useAtomValue(meaningsAtom);
+	const loadMeanings = useSetAtom(loadMeaningsAction);
+	const isMeaningsLoaded = useAtomValue(isMeaningsLoadedAtom);
+	
+	const tags = useAtomValue(tagsAtom);
+	const loadTags = useSetAtom(loadTagsAction);
+	const isTagsLoaded = useAtomValue(isTagsLoadedAtom);
 
 	const logout = useSetAtom(logoutAction);
 
@@ -203,6 +201,13 @@ export function ActionHubScreen() {
 	const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
 	const [name, setName] = useState("");
 	const [meaningId, setMeaningId] = useState<string | null>(null);
+
+	useEffect(() => {
+		if (!isTasksLoaded) loadTasks();
+		if (!isTagsLoaded) loadTags();
+		if (!isMeaningsLoaded) loadMeanings();
+		loadHabits(); // Always refresh habits for streak/status
+	}, [isTasksLoaded, isTagsLoaded, isMeaningsLoaded, loadTasks, loadTags, loadMeanings, loadHabits]);
 
 	const handleSaveHabit = async () => {
 		if (!name.trim()) return;
@@ -299,7 +304,7 @@ export function ActionHubScreen() {
 				</View>
 
 				{/* Energy Filter */}
-				<EnergyToggle value={energy} onChange={setEnergy} />
+				<EnergyToggle value={energy} onChange={setEnergy} tags={tags} />
 
 				{/* Habits Section */}
 				<View style={styles.section}>
@@ -370,8 +375,8 @@ export function ActionHubScreen() {
 											style={[
 												styles.meaningTag,
 												active && {
-													backgroundColor: colors.primary,
-													borderColor: colors.primary,
+													backgroundColor: m.category?.categoryColor || colors.primary,
+													borderColor: m.category?.categoryColor || colors.primary,
 												},
 											]}
 										>

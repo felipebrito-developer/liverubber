@@ -9,7 +9,11 @@ export const isMeaningsLoadedAtom = atom(false);
 
 export const loadMeaningsAction = atom(null, async (_get, set) => {
 	const data = await meaningsRepository.getAll();
-	set(meaningsAtom, data as Meaning[]);
+	const meanings = data.map((row: any) => ({
+		...row.meaning,
+		category: row.category,
+	}));
+	set(meaningsAtom, meanings as Meaning[]);
 	set(isMeaningsLoadedAtom, true);
 });
 

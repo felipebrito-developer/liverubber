@@ -9,7 +9,14 @@ export const isGoalsLoadedAtom = atom(false);
 
 export const loadGoalsAction = atom(null, async (_get, set) => {
 	const data = await goalsRepository.getAll();
-	set(goalsAtom, data as Goal[]);
+	const goals = data.map((row: any) => ({
+		...row.goal,
+		meaning: row.meaning ? {
+			...row.meaning,
+			category: row.category,
+		} : undefined,
+	}));
+	set(goalsAtom, goals as Goal[]);
 	set(isGoalsLoadedAtom, true);
 });
 

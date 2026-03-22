@@ -1,9 +1,9 @@
 import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import {
-	Alert,
 	FlatList,
 	Modal,
+	ScrollView,
 	StatusBar,
 	StyleSheet,
 	TextInput,
@@ -23,6 +23,7 @@ import {
 	type UIResourceStore,
 	updateResourceAction,
 } from "@/stores/resourcesStore";
+import { categoriesAtom, isCategoriesLoadedAtom, loadCategoriesAction } from "@/stores/categoriesStore";
 import { colors, radius, spacing } from "@/theme";
 
 function ResourceCard({
@@ -82,10 +83,17 @@ export function ResourcesScreen() {
 	);
 	const [name, setName] = useState("");
 	const [amountStr, setAmountStr] = useState("0");
+	const [resourceCategoryId, setResourceCategoryId] = useState<string | null>("cat-resources");
+
+	const [filterCategoryId, setFilterCategoryId] = useState<string | null>("cat-resources");
+	const categories = useAtomValue(categoriesAtom);
+	const loadCategories = useSetAtom(loadCategoriesAction);
+	const isCategoriesLoaded = useAtomValue(isCategoriesLoadedAtom);
 
 	useEffect(() => {
 		_loadResources();
-	}, [_loadResources]);
+		if (!isCategoriesLoaded) loadCategories();
+	}, [_loadResources, isCategoriesLoaded, loadCategories]);
 
 	const handleSave = async () => {
 		if (!name.trim()) return;
@@ -96,9 +104,10 @@ export function ResourcesScreen() {
 				id: editingStore.id,
 				name,
 				initialAmount: amount,
+				categoryId: resourceCategoryId,
 			});
 		} else {
-			await createResource({ name, initialAmount: amount });
+			await createResource({ name, initialAmount: amount, categoryId: resourceCategoryId });
 		}
 
 		handleCloseModal();
@@ -108,6 +117,7 @@ export function ResourcesScreen() {
 		setEditingStore(store);
 		setName(store.name || "");
 		setAmountStr(store.amount.toString());
+		setResourceCategoryId(store.categoryId || null);
 		setIsModalVisible(true);
 	};
 
@@ -167,8 +177,13 @@ export function ResourcesScreen() {
 		setEditingStore(null);
 		setName("");
 		setAmountStr("0");
+		setResourceCategoryId("cat-resources");
 		setIsModalVisible(true);
 	};
+
+	const filteredStores = filterCategoryId 
+		? stores.filter(s => s.categoryId === filterCategoryId)
+		: stores;
 
 	return (
 		<SafeAreaView style={styles.safe}>
@@ -184,10 +199,41 @@ export function ResourcesScreen() {
 					</View>
 					<Button label="+" onPress={handleAddPress} style={styles.addBtn} />
 				</View>
+				
+				<View style={styles.filterContainer}>
+					<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+						<View style={styles.filterRow}>
+							<TouchableOpacity
+								onPress={() => setFilterCategoryId(null)}
+								style={[
+									styles.filterPill,
+									!filterCategoryId && styles.filterPillActive
+								]}
+							>
+								<Typography variant="caption" style={!filterCategoryId && { color: colors.onPrimary }}>ALL</Typography>
+							</TouchableOpacity>
+							{categories.map((cat) => {
+								const active = filterCategoryId === cat.id;
+								return (
+									<TouchableOpacity
+										key={cat.id}
+										onPress={() => setFilterCategoryId(cat.id)}
+										style={[
+											styles.filterPill,
+											active && { backgroundColor: cat.categoryColor, borderColor: cat.categoryColor }
+										]}
+									>
+										<Typography variant="caption" style={active && { color: colors.onPrimary }}>{cat.name.toUpperCase()}</Typography>
+									</TouchableOpacity>
+								);
+							})}
+						</View>
+					</ScrollView>
+				</View>
 			</View>
 
 			<FlatList
-				data={stores}
+				data={filteredStores}
 				keyExtractor={(item) => item.id}
 				renderItem={({ item }) => (
 					<ResourceCard
@@ -233,6 +279,31 @@ export function ResourcesScreen() {
 							keyboardType="numeric"
 							style={styles.input}
 						/>
+
+						<View>
+							<Typography variant="label" style={{ marginBottom: spacing.xs }}>
+								Category
+							</Typography>
+							<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+								<View style={styles.filterRow}>
+									{categories.map((cat) => {
+										const active = resourceCategoryId === cat.id;
+										return (
+											<TouchableOpacity
+												key={cat.id}
+												onPress={() => setResourceCategoryId(cat.id)}
+												style={[
+													styles.filterPill,
+													active && { backgroundColor: cat.categoryColor, borderColor: cat.categoryColor }
+												]}
+											>
+												<Typography variant="caption" style={active && { color: colors.onPrimary }}>{cat.name}</Typography>
+											</TouchableOpacity>
+										);
+									})}
+								</View>
+							</ScrollView>
+						</View>
 
 						<View style={styles.modalActions}>
 							<Button
@@ -321,5 +392,24 @@ const styles = StyleSheet.create({
 	modalActions: {
 		flexDirection: "row",
 		gap: spacing.sm,
+	},
+	filterContainer: {
+		marginTop: spacing.md,
+	},
+	filterRow: {
+		flexDirection: "row",
+		gap: spacing.sm,
+	},
+	filterPill: {
+		paddingHorizontal: spacing.md,
+		paddingVertical: 6,
+		borderRadius: radius.md,
+		borderWidth: 1,
+		borderColor: colors.border,
+		backgroundColor: colors.surface,
+	},
+	filterPillActive: {
+		backgroundColor: colors.primary,
+		borderColor: colors.primary,
 	},
 });

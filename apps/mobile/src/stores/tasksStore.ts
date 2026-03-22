@@ -17,17 +17,17 @@ export const loadTasksAction = atom(null, async (_get, set) => {
 
 export const createTaskAction = atom(
 	null,
-	async (_get, set, payload: Omit<NewTask, "id">) => {
+	async (_get, set, { payload, tagIds }: { payload: Omit<NewTask, "id">; tagIds: string[] }) => {
 		const id = uuidv4();
-		await tasksRepository.create({ ...payload, id } as NewTask);
+		await tasksRepository.create({ ...payload, id } as NewTask, tagIds);
 		set(loadTasksAction);
 	},
 );
 
 export const updateTaskAction = atom(
 	null,
-	async (_get, set, { id, data }: { id: string; data: Partial<NewTask> }) => {
-		await tasksRepository.update(id, data);
+	async (_get, set, { id, data, tagIds }: { id: string; data: Partial<NewTask>; tagIds?: string[] }) => {
+		await tasksRepository.update(id, data, tagIds);
 		set(loadTasksAction);
 	},
 );

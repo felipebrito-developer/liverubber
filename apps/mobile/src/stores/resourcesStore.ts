@@ -12,7 +12,10 @@ import { resourcesRepository } from "../db/repositories/resources";
 import "react-native-get-random-values";
 import { v4 as uuidv4 } from "uuid";
 
-export type UIResourceStore = ResourceStore & { name: string | null };
+export type UIResourceStore = ResourceStore & { 
+	name: string | null;
+	categoryId: string | null;
+};
 
 export const resourceStoresAtom = atom<UIResourceStore[]>([]);
 export const resourceTypesAtom = atom<ResourceType[]>([]);
@@ -53,7 +56,7 @@ export const createResourceAction = atom(
 	async (
 		_get,
 		set,
-		{ name, initialAmount }: { name: string; initialAmount: number },
+		{ name, initialAmount, categoryId = "cat-resources" }: { name: string; initialAmount: number; categoryId?: string | null },
 	) => {
 		const typeId = uuidv4();
 		const storeId = uuidv4();
@@ -61,6 +64,7 @@ export const createResourceAction = atom(
 		// 1. Create Type
 		await resourcesRepository.createType({
 			id: typeId,
+			categoryId,
 			name,
 			amountType: "numerical",
 			description: `Store for ${name}`,
@@ -98,15 +102,16 @@ export const updateResourceAction = atom(
 			id,
 			name,
 			initialAmount,
-		}: { id: string; name: string; initialAmount: number },
+			categoryId,
+		}: { id: string; name: string; initialAmount: number; categoryId?: string | null },
 	) => {
 		const stores = await resourcesRepository.getAllStores();
 		const store = stores.find((s) => s.id === id);
 		if (!store) return;
 
-		// 1. Update TYPE (for name)
+		// 1. Update TYPE (for name and category)
 		if (store.resourceTypeId) {
-			await resourcesRepository.updateType(store.resourceTypeId, { name });
+			await resourcesRepository.updateType(store.resourceTypeId, { name, categoryId });
 		}
 
 		// 2. Update STORE (for amount)

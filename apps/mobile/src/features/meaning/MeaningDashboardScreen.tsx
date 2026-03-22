@@ -1,19 +1,17 @@
-import type { Goal, Meaning } from "@liverubber/shared";
+import type { Goal, Meaning, NewGoal, NewMeaning } from "@liverubber/shared";
+import { GoalCreationModal, MeaningCreationModal } from "@/components/organisms";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import {
 	Alert,
 	FlatList,
-	Modal,
 	StatusBar,
 	StyleSheet,
-	TextInput,
 	TouchableOpacity,
 	View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button } from "@/components/atoms/Button";
-import { Typography } from "@/components/atoms/Typography";
+import { Button, Typography } from "@/components/atoms";
 import { Card } from "@/components/molecules/Card";
 import {
 	createGoalAction,
@@ -99,7 +97,7 @@ function MeaningCard({
 						<View
 							style={[
 								styles.categoryDot,
-								{ backgroundColor: colors.primary }, // Default to primary until category color is fetched
+								{ backgroundColor: meaning.category?.categoryColor || colors.primary },
 							]}
 						/>
 						<View style={styles.meaningText}>
@@ -168,36 +166,26 @@ export function MeaningDashboardScreen() {
 
 	const [isMeaningModalVisible, setIsMeaningModalVisible] = useState(false);
 	const [editingMeaning, setEditingMeaning] = useState<Meaning | null>(null);
-	const [meaningName, setMeaningName] = useState("");
-	const [meaningDesc, setMeaningDesc] = useState("");
 
 	const [isGoalModalVisible, setIsGoalModalVisible] = useState(false);
 	const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
 	const [selectedMeaningId, setSelectedMeaningId] = useState<string | null>(
 		null,
 	);
-	const [goalName, setGoalName] = useState("");
-	const [goalDesc, setGoalDesc] = useState("");
 
 	useEffect(() => {
 		if (!isMeaningsLoaded) loadMeanings();
 		if (!isGoalsLoaded) loadGoals();
 	}, [isMeaningsLoaded, loadMeanings, isGoalsLoaded, loadGoals]);
 
-	const handleSaveMeaning = async () => {
-		if (!meaningName.trim()) return;
-
+	const handleSaveMeaning = async (payload: Omit<NewMeaning, "id">) => {
 		if (editingMeaning) {
 			await updateMeaning({
 				id: editingMeaning.id,
-				data: { name: meaningName, description: meaningDesc },
+				data: payload,
 			});
 		} else {
-			await createMeaning({
-				name: meaningName,
-				description: meaningDesc,
-				categoryId: null,
-			});
+			await createMeaning(payload);
 		}
 
 		handleCloseMeaningModal();
@@ -205,8 +193,6 @@ export function MeaningDashboardScreen() {
 
 	const handleEditMeaningPress = (meaning: Meaning) => {
 		setEditingMeaning(meaning);
-		setMeaningName(meaning.name);
-		setMeaningDesc(meaning.description || "");
 		setIsMeaningModalVisible(true);
 	};
 
@@ -242,34 +228,22 @@ export function MeaningDashboardScreen() {
 	const handleCloseMeaningModal = () => {
 		setIsMeaningModalVisible(false);
 		setEditingMeaning(null);
-		setMeaningName("");
-		setMeaningDesc("");
 	};
 
 	const handleAddGoalPress = (meaningId: string) => {
 		setSelectedMeaningId(meaningId);
 		setEditingGoal(null);
-		setGoalName("");
-		setGoalDesc("");
 		setIsGoalModalVisible(true);
 	};
 
-	const handleSaveGoal = async () => {
-		if (!goalName.trim() || !selectedMeaningId) return;
-
+	const handleSaveGoal = async (payload: Omit<NewGoal, "id">) => {
 		if (editingGoal) {
 			await updateGoal({
 				id: editingGoal.id,
-				data: { name: goalName, description: goalDesc },
+				data: payload,
 			});
 		} else {
-			await createGoal({
-				name: goalName,
-				description: goalDesc,
-				meaningId: selectedMeaningId,
-				status: "active",
-				progress: 0,
-			});
+			await createGoal(payload);
 		}
 
 		handleCloseGoalModal();
@@ -278,8 +252,6 @@ export function MeaningDashboardScreen() {
 	const handleEditGoalPress = (goal: Goal) => {
 		setEditingGoal(goal);
 		setSelectedMeaningId(goal.meaningId);
-		setGoalName(goal.name);
-		setGoalDesc(goal.description || "");
 		setIsGoalModalVisible(true);
 	};
 
@@ -320,8 +292,6 @@ export function MeaningDashboardScreen() {
 		setIsGoalModalVisible(false);
 		setEditingGoal(null);
 		setSelectedMeaningId(null);
-		setGoalName("");
-		setGoalDesc("");
 	};
 
 	const data = meanings.map((m) => ({
@@ -380,85 +350,21 @@ export function MeaningDashboardScreen() {
 			/>
 
 			{/* Meaning Modal */}
-			<Modal visible={isMeaningModalVisible} animationType="slide" transparent>
-				<View style={styles.modalOverlay}>
-					<Card style={styles.modalCard}>
-						<Typography variant="h3">
-							{editingMeaning ? "Edit Meaning" : "New Meaning"}
-						</Typography>
-						<TextInput
-							placeholder="What matters? (e.g. Health, Growth)"
-							placeholderTextColor={colors.muted}
-							value={meaningName}
-							onChangeText={setMeaningName}
-							style={styles.input}
-						/>
-						<TextInput
-							placeholder="Description"
-							placeholderTextColor={colors.muted}
-							value={meaningDesc}
-							onChangeText={setMeaningDesc}
-							multiline
-							style={[styles.input, styles.textArea]}
-						/>
-						<View style={styles.modalActions}>
-							<Button
-								label="Cancel"
-								variant="outline"
-								onPress={handleCloseMeaningModal}
-								style={{ flex: 1 }}
-							/>
-							<Button
-								label="Save"
-								onPress={handleSaveMeaning}
-								style={{ flex: 1 }}
-							/>
-						</View>
-					</Card>
-				</View>
-			</Modal>
+			<MeaningCreationModal
+				visible={isMeaningModalVisible}
+				onClose={handleCloseMeaningModal}
+				onSave={handleSaveMeaning}
+				editingMeaning={editingMeaning}
+			/>
 
 			{/* Goal Modal */}
-			<Modal visible={isGoalModalVisible} animationType="slide" transparent>
-				<View style={styles.modalOverlay}>
-					<Card style={styles.modalCard}>
-						<Typography variant="h3">
-							{editingGoal ? "Edit Goal" : "New Goal"}
-						</Typography>
-						<Typography variant="bodySmall" color={colors.muted}>
-							Attach a measurable goal to this meaning.
-						</Typography>
-						<TextInput
-							placeholder="Goal name"
-							placeholderTextColor={colors.muted}
-							value={goalName}
-							onChangeText={setGoalName}
-							style={styles.input}
-						/>
-						<TextInput
-							placeholder="Description"
-							placeholderTextColor={colors.muted}
-							value={goalDesc}
-							onChangeText={setGoalDesc}
-							multiline
-							style={[styles.input, styles.textArea]}
-						/>
-						<View style={styles.modalActions}>
-							<Button
-								label="Cancel"
-								variant="outline"
-								onPress={handleCloseGoalModal}
-								style={{ flex: 1 }}
-							/>
-							<Button
-								label="Save"
-								onPress={handleSaveGoal}
-								style={{ flex: 1 }}
-							/>
-						</View>
-					</Card>
-				</View>
-			</Modal>
+			<GoalCreationModal
+				visible={isGoalModalVisible}
+				onClose={handleCloseGoalModal}
+				onSave={handleSaveGoal}
+				editingGoal={editingGoal}
+				preselectedMeaningId={selectedMeaningId}
+			/>
 		</SafeAreaView>
 	);
 }

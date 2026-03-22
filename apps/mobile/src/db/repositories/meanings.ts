@@ -4,7 +4,16 @@ import { db } from "../client";
 
 export const meaningsRepository = {
 	async getAll() {
-		return await db.select().from(schema.meaning);
+		return await db
+			.select({
+				meaning: schema.meaning,
+				category: schema.categoryType,
+			})
+			.from(schema.meaning)
+			.leftJoin(
+				schema.categoryType,
+				eq(schema.meaning.categoryId, schema.categoryType.id),
+			);
 	},
 	async getById(id: string) {
 		const results = await db

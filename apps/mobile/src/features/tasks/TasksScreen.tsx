@@ -1,4 +1,5 @@
-import type { Task } from "@liverubber/shared";
+import type { Task, NewTask } from "@liverubber/shared";
+import { TaskCreationModal } from "../../components/organisms/TaskCreationModal";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import {
@@ -13,8 +14,7 @@ import {
 	View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button } from "@/components/atoms/Button";
-import { Typography } from "@/components/atoms/Typography";
+import { Button, FloatingActionButton, Typography } from "@/components/atoms";
 import { Card } from "@/components/molecules/Card";
 import type { TasksScreenProps } from "@/navigation/types";
 import {
@@ -96,8 +96,6 @@ export function TasksScreen(_props: TasksScreenProps) {
 
 	const [isModalVisible, setIsModalVisible] = useState(false);
 	const [editingTask, setEditingTask] = useState<Task | null>(null);
-	const [title, setTitle] = useState("");
-	const [desc, setDesc] = useState("");
 
 	useEffect(() => {
 		if (!isTasksLoaded) {
@@ -105,21 +103,15 @@ export function TasksScreen(_props: TasksScreenProps) {
 		}
 	}, [isTasksLoaded, loadTasks]);
 
-	const handleSave = async () => {
-		if (!title.trim()) return;
-
+	const handleSave = async (payload: Omit<NewTask, "id">, tagIds: string[]) => {
 		if (editingTask) {
 			await updateTask({
 				id: editingTask.id,
-				data: { title, description: desc },
+				data: payload,
+				tagIds,
 			});
 		} else {
-			await createTask({
-				title,
-				description: desc,
-				status: "todo",
-				priority: "medium",
-			});
+			await createTask({ payload, tagIds });
 		}
 
 		handleCloseModal();
@@ -127,8 +119,6 @@ export function TasksScreen(_props: TasksScreenProps) {
 
 	const handleEditPress = (task: Task) => {
 		setEditingTask(task);
-		setTitle(task.title);
-		setDesc(task.description || "");
 		setIsModalVisible(true);
 	};
 
@@ -164,8 +154,6 @@ export function TasksScreen(_props: TasksScreenProps) {
 	const handleCloseModal = () => {
 		setIsModalVisible(false);
 		setEditingTask(null);
-		setTitle("");
-		setDesc("");
 	};
 
 	const filtered =
@@ -233,50 +221,15 @@ export function TasksScreen(_props: TasksScreenProps) {
 				/>
 			)}
 
-			<Modal visible={isModalVisible} animationType="slide" transparent>
-				<View style={styles.modalOverlay}>
-					<Card style={styles.modalCard}>
-						<Typography variant="h3">
-							{editingTask ? "Edit Task" : "New Task"}
-						</Typography>
-						<TextInput
-							placeholder="Title"
-							placeholderTextColor={colors.muted}
-							value={title}
-							onChangeText={setTitle}
-							style={styles.input}
-						/>
-						<TextInput
-							placeholder="Description"
-							placeholderTextColor={colors.muted}
-							value={desc}
-							onChangeText={setDesc}
-							multiline
-							style={[styles.input, styles.textArea]}
-						/>
-						<View style={styles.modalActions}>
-							<Button
-								label="Cancel"
-								variant="outline"
-								onPress={handleCloseModal}
-								style={{ flex: 1 }}
-							/>
-							<Button label="Save" onPress={handleSave} style={{ flex: 1 }} />
-						</View>
-					</Card>
-				</View>
-			</Modal>
+			<TaskCreationModal
+				visible={isModalVisible}
+				onClose={handleCloseModal}
+				onSave={handleSave}
+				editingTask={editingTask}
+			/>
 
 			{/* Floating Action Button */}
-			<TouchableOpacity
-				style={styles.fab}
-				onPress={() => setIsModalVisible(true)}
-				activeOpacity={0.8}
-			>
-				<Typography variant="h2" style={styles.fabText}>
-					+
-				</Typography>
-			</TouchableOpacity>
+			<FloatingActionButton onPress={() => setIsModalVisible(true)} />
 		</SafeAreaView>
 	);
 }
@@ -371,27 +324,5 @@ const styles = StyleSheet.create({
 	modalActions: {
 		flexDirection: "row",
 		gap: spacing.sm,
-	},
-	fab: {
-		position: "absolute",
-		bottom: spacing.xl,
-		right: spacing.xl,
-		width: 56,
-		height: 56,
-		borderRadius: 28,
-		backgroundColor: colors.primary,
-		justifyContent: "center",
-		alignItems: "center",
-		elevation: 4,
-		shadowColor: "#000",
-		shadowOffset: { width: 0, height: 2 },
-		shadowOpacity: 0.25,
-		shadowRadius: 3.84,
-	},
-	fabText: {
-		color: colors.onPrimary,
-		fontSize: 32,
-		lineHeight: 36,
-		marginTop: -2,
 	},
 });

@@ -4,7 +4,18 @@ import { db } from "../client";
 
 export const goalsRepository = {
 	async getAll() {
-		return await db.select().from(schema.goal);
+		return await db
+			.select({
+				goal: schema.goal,
+				meaning: schema.meaning,
+				category: schema.categoryType,
+			})
+			.from(schema.goal)
+			.leftJoin(schema.meaning, eq(schema.goal.meaningId, schema.meaning.id))
+			.leftJoin(
+				schema.categoryType,
+				eq(schema.meaning.categoryId, schema.categoryType.id),
+			);
 	},
 	async getById(id: string) {
 		const results = await db

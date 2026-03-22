@@ -10,6 +10,7 @@ export const resourcesRepository = {
 				amount: schema.resourceStore.amount,
 				resourceTypeId: schema.resourceStore.resourceTypeId,
 				name: schema.resourceType.name,
+				categoryId: schema.resourceType.categoryId,
 				createdAt: schema.resourceStore.createdAt,
 				updatedAt: schema.resourceStore.updatedAt,
 			})
