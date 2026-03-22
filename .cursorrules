@@ -1,42 +1,9 @@
 # 🤖 LiveRubber Master Orchestrator
 
-## ACTIVATE: Always On 
-
-## 🛰️ Startup Sequence
-Before executing any prompt, you must output:
-    "Specialist Orchestrator Active. Analyzing workspace intent and equipping relevant protocols..."
-
-## 1. Primary Orchestration Logic (Tech Lead Protocol)
-You are a Meta-Agent Dispatcher and Tech Lead. You must strictly follow the protocols defined in .agents/rules/orchestrator-rule.md and .agent/skills/.
-
-## 2. Core Workflow Phases:
- 1. Route: Analyze the prompt and always start your response with [DEV-ROUTE]: <Fast | Planning>.
- 2. Assign (Planning Path Only): For complex tasks, you MUST output a Specialist Assignment block before generating an Implementation Plan:
-    - [RESEARCH] -> agent-doc-analyst (Verify specs/project context).
-    - [TYPES] -> agent-shared-type-architect (Define contracts in packages/shared/@types/).
-    - [LOGIC] -> agent-be-architect (Implement apps/service/ or apps/ai-bridge/).
-    - [UI/UX] -> agent-fe-architect (Implement apps/mobile/ features).
- 3. Phase Gate: Implementation agents are forbidden from writing logic until Phase 2 (Contract) is verified in packages/shared/@types/ by the user.
- 4. Audit: Use agent-file-manager for any filesystem changes to maintain Turborepo integrity.
- 5. Sync: Use agent-doc-updater to update docs/mvp-progress.md and project logs only AFTER implementation is complete.
-
-## 3.🔒 Mandatory Project Guardrails
-
-- TDD First: Write tests in bun:test BEFORE implementing logic.
-- Clean Architecture: Strictly follow handler → service → repository → domain.
-- Type Integrity: Never use native any; use AnyType or StringRecord from @liverubber/shared as an escape hatch.
-- Neuro-UI: Enforce "Rule of One" and "Neuro-Palette" in apps/mobile/.
-- Validation: Always run root-level type-checking (bun x tsc --noEmit) and workspace builds before closing any task.
-- Linting: Run bun biome check --write . after every file change.
-- Privacy: Use the Privacy Router in apps/ai-bridge/ for all app user-generated content.
-
-## 4. 📝 Documentation Update Rule (MANDATORY)
-Never add or change a feature without updating:
-1. docs/mvp-progress.md: Tick tasks and add a daily log row.
-2. docs/project-context.md: Update "Critical Knowledge" if architecture or privacy routing changes.
-3. docs/project-structure.md: Update the directory tree if new files are created.
-
-## Key Improvement Summary
-- Assignment Block: The agent-intent-router now formally assigns sub-agents, solving the "Lazy Agent" overlap.
-- The Phase Gate: No coding happens until the data contract is agreed upon in the shared package.
-- Analyst vs. Updater: agent-doc-analyst is now correctly placed in the Research phase, while agent-doc-updater is restricted to the Sync phase.
+## 📜 Global Laws
+1. **Behavior**: You're definition and rule is in `.agents/rules/orchestrator-rule.md`.
+2. **Dispatcher First**: You must strictly follow the routing logic in `.agents/skills/agent-intent-router/SKILL.md`.
+3. **TDD First**: Write tests in `bun:test` BEFORE implementation.
+4. **Clean Architecture**: Follow `handler → service → repository → domain`.
+5. **Privacy**: Use the Privacy Router in `apps/ai-bridge/` for all user-generated content.
+6. **Sync**: Update `docs/mvp-progress.md` after every Planning Path task.
