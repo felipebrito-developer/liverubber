@@ -213,3 +213,30 @@ CREATE TABLE IF NOT EXISTS resource_log (
   updated_at DATETIME,
   FOREIGN KEY(resource_id) REFERENCES resource_store(id)
 );
+-- Seed Data for categories, frequencies, and tags
+INSERT OR IGNORE INTO frequency_type (id, type, name, frequency_period, amount, repeat, created_at, updated_at) VALUES
+('freq-daily', 'repeat', 'Daily', 'day', 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('freq-workdays', 'repeat', 'Work Days', 'day', 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('freq-weekend', 'repeat', 'Weekend', 'day', 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('freq-oneshot', 'once', 'One shot', 'once', 1, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('freq-hourly', 'repeat', 'Hourly', 'hour', 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT OR IGNORE INTO category_type (id, name, category_color, description, created_at, updated_at) VALUES
+('cat-fitness', 'Fitness', '#FF5722', 'Physical health and training', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('cat-home-cleaning', 'Home Cleaning', '#2196F3', 'Maintenance and cleaning tasks', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('cat-home-organization', 'Home Organization', '#9C27B0', 'Decluttering and organizing spaces', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('cat-resources', 'Resources Management', '#4CAF50', 'Inventory and supplies', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('cat-health', 'Health Activities', '#E91E63', 'Wellbeing and medical', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('cat-meals', 'Meals', '#FFC107', 'Cooking and eating', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('cat-hobbies', 'Hobbies', '#00BCD4', 'Leisure and interest', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('cat-studies', 'Studies', '#3F51B5', 'Education and learning', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('cat-professional', 'Professional', '#607D8B', 'Work and career', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+INSERT OR IGNORE INTO tag_type (id, color_hex, name, created_at, updated_at) VALUES
+('tag-urgent', '#D32F2F', 'Urgent Priority', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('tag-critical', '#B71C1C', 'Critical Priority', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('tag-low-priority', '#8BC34A', 'Low Priority', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('tag-low-energy', '#FFEB3B', 'Low Energy', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('tag-balanced-energy', '#FF9800', 'Balanced Energy', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('tag-high-energy', '#F44336', 'High Energy', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('tag-preparation', '#9E9E9E', 'Preparation', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);

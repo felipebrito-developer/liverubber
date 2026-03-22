@@ -17,3 +17,4 @@ export * from "./@types/reward/reward.type";
 export * from "./@types/tag/tag.type";
 export * from "./@types/task/task.type";
 export * from "./@types/user/user.type";
+export * from "./db/initial-data";

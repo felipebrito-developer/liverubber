@@ -1,8 +1,11 @@
 import { integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
+import { categoryType } from "./core";
+
 export const resourceType = sqliteTable("resource_type", {
 	id: text("id").primaryKey().notNull(),
+	categoryId: text("category_id").references(() => categoryType.id),
 	amountType: text("amount_type").notNull(),
 	name: text("name").notNull(),
 	description: text("description").notNull(),

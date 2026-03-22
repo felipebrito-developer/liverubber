@@ -60,3 +60,27 @@ export const selectTagTypeSchema = createSelectSchema(tagType);
 
 export const insertActivitySchema = createInsertSchema(activity);
 export const selectActivitySchema = createSelectSchema(activity);
+
+export const taskTag = sqliteTable("task_tag", {
+	taskId: text("task_id")
+		.notNull()
+		.references(() => (require("./tasks").task.id)),
+	tagId: text("tag_id")
+		.notNull()
+		.references(() => tagType.id),
+});
+
+export const habitTag = sqliteTable("habit_tag", {
+	habitId: text("habit_id")
+		.notNull()
+		.references(() => (require("./habits_events").habit.id)),
+	tagId: text("tag_id")
+		.notNull()
+		.references(() => tagType.id),
+});
+
+export const insertTaskTagSchema = createInsertSchema(taskTag);
+export const selectTaskTagSchema = createSelectSchema(taskTag);
+
+export const insertHabitTagSchema = createInsertSchema(habitTag);
+export const selectHabitTagSchema = createSelectSchema(habitTag);
