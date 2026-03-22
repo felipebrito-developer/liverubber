@@ -1,6 +1,7 @@
 import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import {
+	Alert,
 	FlatList,
 	Modal,
 	ScrollView,
@@ -14,6 +15,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/atoms/Button";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
+import type { LogisticsTabScreenProps } from "@/navigation/types";
+import {
+	categoriesAtom,
+	isCategoriesLoadedAtom,
+	loadCategoriesAction,
+} from "@/stores/categoriesStore";
 import {
 	createResourceAction,
 	deleteResourceAction,
@@ -23,53 +30,12 @@ import {
 	type UIResourceStore,
 	updateResourceAction,
 } from "@/stores/resourcesStore";
-import { categoriesAtom, isCategoriesLoadedAtom, loadCategoriesAction } from "@/stores/categoriesStore";
 import { colors, radius, spacing } from "@/theme";
+import { ResourceCard } from "./components/ResourceCard";
 
-function ResourceCard({
-	store,
-	onAdjust,
-	onLongPress,
-}: {
-	store: UIResourceStore;
-	onAdjust: (amount: number) => void;
-	onLongPress: (store: UIResourceStore) => void;
-}) {
-	return (
-		<TouchableOpacity
-			activeOpacity={0.8}
-			onLongPress={() => onLongPress(store)}
-		>
-			<Card elevated style={styles.storeCard}>
-				<View style={styles.storeHeader}>
-					<View style={styles.storeInfo}>
-						<Typography variant="h3">{store.name}</Typography>
-					</View>
-					<Typography variant="h2" color={colors.primary}>
-						{store.amount}
-					</Typography>
-				</View>
-
-				<View style={styles.adjustRow}>
-					<Button
-						label="- 1"
-						variant="outline"
-						onPress={() => onAdjust(-1)}
-						style={styles.adjustBtn}
-					/>
-					<Button
-						label="+ 1"
-						variant="primary"
-						onPress={() => onAdjust(1)}
-						style={styles.adjustBtn}
-					/>
-				</View>
-			</Card>
-		</TouchableOpacity>
-	);
-}
-
-export function ResourcesScreen() {
+export function ResourcesScreen({
+	navigation,
+}: LogisticsTabScreenProps<"StoreManagement">) {
 	const stores = useAtomValue(resourceStoresAtom);
 	const _loadResources = useSetAtom(loadResourcesAction);
 	const _logChange = useSetAtom(logResourceChangeAction);
@@ -83,9 +49,13 @@ export function ResourcesScreen() {
 	);
 	const [name, setName] = useState("");
 	const [amountStr, setAmountStr] = useState("0");
-	const [resourceCategoryId, setResourceCategoryId] = useState<string | null>("cat-resources");
+	const [resourceCategoryId, setResourceCategoryId] = useState<string | null>(
+		"cat-resources",
+	);
 
-	const [filterCategoryId, setFilterCategoryId] = useState<string | null>("cat-resources");
+	const [filterCategoryId, setFilterCategoryId] = useState<string | null>(
+		"cat-resources",
+	);
 	const categories = useAtomValue(categoriesAtom);
 	const loadCategories = useSetAtom(loadCategoriesAction);
 	const isCategoriesLoaded = useAtomValue(isCategoriesLoadedAtom);
@@ -107,7 +77,11 @@ export function ResourcesScreen() {
 				categoryId: resourceCategoryId,
 			});
 		} else {
-			await createResource({ name, initialAmount: amount, categoryId: resourceCategoryId });
+			await createResource({
+				name,
+				initialAmount: amount,
+				categoryId: resourceCategoryId,
+			});
 		}
 
 		handleCloseModal();
@@ -181,8 +155,8 @@ export function ResourcesScreen() {
 		setIsModalVisible(true);
 	};
 
-	const filteredStores = filterCategoryId 
-		? stores.filter(s => s.categoryId === filterCategoryId)
+	const filteredStores = filterCategoryId
+		? stores.filter((s) => s.categoryId === filterCategoryId)
 		: stores;
 
 	return (
@@ -197,9 +171,16 @@ export function ResourcesScreen() {
 							Track your internal and external reserves.
 						</Typography>
 					</View>
+					<TouchableOpacity
+						onPress={() => navigation.openDrawer()}
+						style={styles.drawerBtn}
+					>
+						<Typography variant="h3">≡</Typography>
+					</TouchableOpacity>
+
 					<Button label="+" onPress={handleAddPress} style={styles.addBtn} />
 				</View>
-				
+
 				<View style={styles.filterContainer}>
 					<ScrollView horizontal showsHorizontalScrollIndicator={false}>
 						<View style={styles.filterRow}>
@@ -207,10 +188,15 @@ export function ResourcesScreen() {
 								onPress={() => setFilterCategoryId(null)}
 								style={[
 									styles.filterPill,
-									!filterCategoryId && styles.filterPillActive
+									!filterCategoryId && styles.filterPillActive,
 								]}
 							>
-								<Typography variant="caption" style={!filterCategoryId && { color: colors.onPrimary }}>ALL</Typography>
+								<Typography
+									variant="caption"
+									style={!filterCategoryId && { color: colors.onPrimary }}
+								>
+									ALL
+								</Typography>
 							</TouchableOpacity>
 							{categories.map((cat) => {
 								const active = filterCategoryId === cat.id;
@@ -220,10 +206,18 @@ export function ResourcesScreen() {
 										onPress={() => setFilterCategoryId(cat.id)}
 										style={[
 											styles.filterPill,
-											active && { backgroundColor: cat.categoryColor, borderColor: cat.categoryColor }
+											active && {
+												backgroundColor: cat.categoryColor,
+												borderColor: cat.categoryColor,
+											},
 										]}
 									>
-										<Typography variant="caption" style={active && { color: colors.onPrimary }}>{cat.name.toUpperCase()}</Typography>
+										<Typography
+											variant="caption"
+											style={active && { color: colors.onPrimary }}
+										>
+											{cat.name.toUpperCase()}
+										</Typography>
 									</TouchableOpacity>
 								);
 							})}
@@ -294,10 +288,18 @@ export function ResourcesScreen() {
 												onPress={() => setResourceCategoryId(cat.id)}
 												style={[
 													styles.filterPill,
-													active && { backgroundColor: cat.categoryColor, borderColor: cat.categoryColor }
+													active && {
+														backgroundColor: cat.categoryColor,
+														borderColor: cat.categoryColor,
+													},
 												]}
 											>
-												<Typography variant="caption" style={active && { color: colors.onPrimary }}>{cat.name}</Typography>
+												<Typography
+													variant="caption"
+													style={active && { color: colors.onPrimary }}
+												>
+													{cat.name}
+												</Typography>
 											</TouchableOpacity>
 										);
 									})}
@@ -344,29 +346,22 @@ const styles = StyleSheet.create({
 		width: 44,
 		height: 44,
 		borderRadius: radius.full,
+		marginLeft: spacing.sm,
+	},
+	drawerBtn: {
+		width: 44,
+		height: 44,
+		borderRadius: radius.sm,
+		backgroundColor: colors.surface,
+		borderWidth: 1,
+		borderColor: colors.border,
+		alignItems: "center",
+		justifyContent: "center",
 	},
 	list: {
 		paddingHorizontal: spacing.xl,
 		paddingBottom: spacing.xl,
 		gap: spacing.md,
-	},
-	storeCard: {
-		gap: spacing.md,
-	},
-	storeHeader: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-	},
-	storeInfo: {
-		flex: 1,
-	},
-	adjustRow: {
-		flexDirection: "row",
-		gap: spacing.sm,
-	},
-	adjustBtn: {
-		flex: 1,
 	},
 	empty: {
 		marginTop: spacing.xxl,

@@ -42,11 +42,12 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
 				id: `mock_${Date.now()}`,
 				email,
 				name: email.split("@")[0],
+				age: 0,
 				token: `mock_token_${Math.random().toString(36).substring(7)}`,
 			};
 
 			await saveSession(mockUser);
-			// navigation.navigate("MainTab") is now handled by the navigator guard
+			navigation.navigate("AppDrawer");
 		} catch {
 			setErrors({ email: "Login failed. Please check your credentials." });
 		} finally {

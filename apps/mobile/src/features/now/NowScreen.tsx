@@ -1,8 +1,7 @@
 import { useAtomValue, useSetAtom } from "jotai";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	Alert,
-	Modal,
 	StatusBar,
 	StyleSheet,
 	TouchableOpacity,
@@ -12,6 +11,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/atoms/Button";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
+import type { FocusTabScreenProps } from "@/navigation/types";
 import { logActivityAction } from "@/stores/logsStore";
 import {
 	isTasksLoadedAtom,
@@ -20,143 +20,12 @@ import {
 	tasksAtom,
 } from "@/stores/tasksStore";
 import { colors, radius, spacing } from "@/theme";
+import { PreflightModal } from "./components/PreflightModal";
+import { useCountdown } from "./hooks/useCountdown";
 
-// ─── Preflight checklist items ─────────────────────────────────────────────────
-
-const PREFLIGHT_ITEMS = [
-	"Do you have a quiet space to focus?",
-	"Do you have water or a drink nearby?",
-	"Have you silenced notifications?",
-];
-
-// ─── Preflight Modal ────────────────────────────────────────────────────────────
-
-function PreflightModal({
-	visible,
-	onConfirm,
-}: {
-	visible: boolean;
-	onConfirm: () => void;
-}) {
-	const [checked, setChecked] = useState<boolean[]>(
-		PREFLIGHT_ITEMS.map(() => false),
-	);
-	const allChecked = checked.every(Boolean);
-
-	function toggle(i: number) {
-		setChecked((prev) => prev.map((v, idx) => (idx === i ? !v : v)));
-	}
-
-	return (
-		<Modal visible={visible} transparent animationType="fade">
-			<View style={styles.overlay}>
-				<Card style={styles.preflightCard}>
-					<Typography variant="h3" align="center">
-						Pre-flight Check ✈️
-					</Typography>
-					<Typography
-						variant="bodySmall"
-						color={colors.muted}
-						align="center"
-						style={styles.preflightSub}
-					>
-						A moment of preparation prevents flow interruptions.
-					</Typography>
-
-					<View style={styles.checkList}>
-						{PREFLIGHT_ITEMS.map((item, i) => (
-							<TouchableOpacity
-								key={item}
-								onPress={() => toggle(i)}
-								style={styles.checkRow}
-								activeOpacity={0.8}
-								accessibilityRole="checkbox"
-								accessibilityState={{ checked: checked[i] }}
-							>
-								<View
-									style={[styles.checkbox, checked[i] && styles.checkboxDone]}
-								>
-									{checked[i] && (
-										<Typography
-											variant="caption"
-											style={{ color: colors.onPrimary }}
-										>
-											✓
-										</Typography>
-									)}
-								</View>
-								<Typography variant="bodySmall" style={styles.checkLabel}>
-									{item}
-								</Typography>
-							</TouchableOpacity>
-						))}
-					</View>
-
-					<Button
-						label={allChecked ? "Let's go!" : "Check all items first"}
-						fullWidth
-						disabled={!allChecked}
-						onPress={onConfirm}
-						style={styles.goBtn}
-					/>
-				</Card>
-			</View>
-		</Modal>
-	);
-}
-
-// ─── Timer ─────────────────────────────────────────────────────────────────────
-
-function useCountdown(durationSec: number) {
-	const [remaining, setRemaining] = useState(durationSec);
-	const [running, setRunning] = useState(false);
-	const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-	useEffect(() => {
-		setRemaining(durationSec);
-	}, [durationSec]);
-
-	useEffect(() => {
-		if (running && intervalRef.current) {
-			intervalRef.current = setInterval(() => {
-				setRemaining((r) => {
-					if (r <= 1) {
-						if (intervalRef.current) {
-							clearInterval(intervalRef.current);
-						}
-						setRunning(false);
-						return 0;
-					}
-					return r - 1;
-				});
-			}, 1000);
-		}
-		return () => {
-			if (intervalRef.current) clearInterval(intervalRef.current);
-		};
-	}, [running]);
-
-	function toggle() {
-		setRunning((v) => !v);
-	}
-
-	function reset() {
-		setRunning(false);
-		setRemaining(durationSec);
-	}
-
-	const minutes = Math.floor(remaining / 60);
-	const seconds = remaining % 60;
-	const progress = 1 - remaining / durationSec;
-	const display = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-
-	return { display, running, toggle, reset, progress };
-}
-
-// ─── Screen ────────────────────────────────────────────────────────────────────
-
-export function NowScreen() {
+export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 	const selectedTaskId = useAtomValue(selectedTaskIdAtom);
+
 	const tasks = useAtomValue(tasksAtom);
 	const isTasksLoaded = useAtomValue(isTasksLoadedAtom);
 	const loadTasks = useSetAtom(loadTasksAction);
@@ -297,6 +166,24 @@ export function NowScreen() {
 			/>
 
 			<View style={styles.nowContainer}>
+				{/* Header */}
+				<View style={styles.header}>
+					<View style={styles.headerRow}>
+						<View style={{ flex: 1 }}>
+							<Typography variant="h2">Now</Typography>
+							<Typography variant="bodySmall" color={colors.muted}>
+								Focus on the present moment.
+							</Typography>
+						</View>
+						<TouchableOpacity
+							onPress={() => navigation.openDrawer()}
+							style={styles.drawerBtn}
+						>
+							<Typography variant="h3">≡</Typography>
+						</TouchableOpacity>
+					</View>
+				</View>
+
 				{/* Task info */}
 				<View style={styles.taskInfo}>
 					<Typography variant="h1" align="center" style={styles.taskTitle}>
@@ -352,59 +239,34 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: colors.background,
 	},
-	// Pre-flight
-	overlay: {
-		flex: 1,
-		backgroundColor: "rgba(0,0,0,0.7)",
-		justifyContent: "center",
-		alignItems: "center",
-		padding: spacing.xl,
-	},
-	preflightCard: {
-		width: "100%",
-		gap: spacing.md,
-	},
-	preflightSub: {
-		marginTop: spacing.xs,
-	},
-	checkList: {
-		gap: spacing.md,
-	},
-	checkRow: {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: spacing.md,
-	},
-	checkbox: {
-		width: 24,
-		height: 24,
-		borderRadius: radius.sm,
-		borderWidth: 1.5,
-		borderColor: colors.border,
-		justifyContent: "center",
-		alignItems: "center",
-	},
-	checkboxDone: {
-		backgroundColor: colors.primary,
-		borderColor: colors.primary,
-	},
-	checkLabel: {
-		flex: 1,
-	},
-	goBtn: {
-		marginTop: spacing.sm,
-	},
-	// Focus mode
 	nowContainer: {
 		flex: 1,
-		paddingHorizontal: spacing.xl,
-		paddingVertical: spacing.xxl,
-		justifyContent: "space-between",
+		paddingVertical: spacing.xl,
 		gap: spacing.xl,
+	},
+	header: {
+		paddingHorizontal: spacing.xl,
+		paddingTop: spacing.xs,
+	},
+	headerRow: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+	},
+	drawerBtn: {
+		width: 44,
+		height: 44,
+		borderRadius: radius.sm,
+		backgroundColor: colors.surface,
+		borderWidth: 1,
+		borderColor: colors.border,
+		alignItems: "center",
+		justifyContent: "center",
 	},
 	taskInfo: {
 		gap: spacing.xs,
 		alignItems: "center",
+		paddingHorizontal: spacing.xl,
 	},
 	taskTitle: {
 		marginTop: spacing.sm,
@@ -436,7 +298,6 @@ const styles = StyleSheet.create({
 	recalibrateBtn: {
 		borderColor: colors.muted,
 	},
-	// Completion
 	completedContainer: {
 		flex: 1,
 		paddingHorizontal: spacing.xl,

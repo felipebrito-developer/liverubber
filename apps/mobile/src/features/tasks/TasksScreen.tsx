@@ -1,22 +1,19 @@
-import type { Task, NewTask } from "@liverubber/shared";
-import { TaskCreationModal } from "../../components/organisms/TaskCreationModal";
+import type { NewTask, Task } from "@liverubber/shared";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import {
 	ActivityIndicator,
 	Alert,
 	FlatList,
-	Modal,
 	StatusBar,
 	StyleSheet,
-	TextInput,
 	TouchableOpacity,
 	View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, FloatingActionButton, Typography } from "@/components/atoms";
+import { Button, FAB, Typography } from "@/components/atoms";
 import { Card } from "@/components/molecules/Card";
-import type { TasksScreenProps } from "@/navigation/types";
+import type { StrategicTabScreenProps } from "@/navigation/types";
 import {
 	createTaskAction,
 	deleteTaskAction,
@@ -28,6 +25,7 @@ import {
 	updateTaskAction,
 } from "@/stores/tasksStore";
 import { colors, radius, spacing } from "@/theme";
+import { TaskCreationModal } from "../../components/organisms/TaskCreationModal";
 
 const FILTERS: { key: TaskFilter; label: string }[] = [
 	{ key: "all", label: "All" },
@@ -85,7 +83,9 @@ function TaskItem({
 	);
 }
 
-export function TasksScreen(_props: TasksScreenProps) {
+export function TasksScreen({
+	navigation,
+}: StrategicTabScreenProps<"TasksBacklog">) {
 	const [filter, setFilter] = useAtom(taskFilterAtom);
 	const tasks = useAtomValue(tasksAtom);
 	const isTasksLoaded = useAtomValue(isTasksLoadedAtom);
@@ -166,7 +166,18 @@ export function TasksScreen(_props: TasksScreenProps) {
 			{/* Header */}
 			<View style={styles.header}>
 				<View style={styles.headerRow}>
-					<Typography variant="h2">Tasks</Typography>
+					<View style={{ flex: 1 }}>
+						<Typography variant="h2">Backlog</Typography>
+						<Typography variant="bodySmall" color={colors.muted}>
+							Strategic task decomposition.
+						</Typography>
+					</View>
+					<TouchableOpacity
+						onPress={() => navigation.openDrawer()}
+						style={styles.drawerBtn}
+					>
+						<Typography variant="h3">≡</Typography>
+					</TouchableOpacity>
 					<Button
 						label="+"
 						onPress={() => setIsModalVisible(true)}
@@ -229,7 +240,7 @@ export function TasksScreen(_props: TasksScreenProps) {
 			/>
 
 			{/* Floating Action Button */}
-			<FloatingActionButton onPress={() => setIsModalVisible(true)} />
+			<FAB onPress={() => setIsModalVisible(true)} />
 		</SafeAreaView>
 	);
 }
@@ -253,6 +264,17 @@ const styles = StyleSheet.create({
 		width: 44,
 		height: 44,
 		borderRadius: radius.full,
+	},
+	drawerBtn: {
+		width: 44,
+		height: 44,
+		borderRadius: radius.sm,
+		backgroundColor: colors.surface,
+		borderWidth: 1,
+		borderColor: colors.border,
+		alignItems: "center",
+		justifyContent: "center",
+		marginRight: spacing.sm,
 	},
 	filterRow: {
 		flexDirection: "row",

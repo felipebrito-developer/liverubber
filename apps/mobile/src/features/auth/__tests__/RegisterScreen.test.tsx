@@ -89,7 +89,7 @@ describe("RegisterScreen", () => {
 				email: "jane@test.com",
 				password: "securepass",
 			});
-			expect(mockNavigation.navigate).toHaveBeenCalledWith("MainTab");
+			expect(mockNavigation.navigate).toHaveBeenCalledWith("AppDrawer");
 		});
 	});
 });

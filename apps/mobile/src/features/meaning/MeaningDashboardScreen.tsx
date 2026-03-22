@@ -1,5 +1,4 @@
 import type { Goal, Meaning, NewGoal, NewMeaning } from "@liverubber/shared";
-import { GoalCreationModal, MeaningCreationModal } from "@/components/organisms";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import {
@@ -12,7 +11,11 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button, Typography } from "@/components/atoms";
-import { Card } from "@/components/molecules/Card";
+import {
+	GoalCreationModal,
+	MeaningCreationModal,
+} from "@/components/organisms";
+import type { StrategicTabScreenProps } from "@/navigation/types";
 import {
 	createGoalAction,
 	deleteGoalAction,
@@ -30,126 +33,11 @@ import {
 	updateMeaningAction,
 } from "@/stores/meaningsStore";
 import { colors, radius, spacing } from "@/theme";
+import { MeaningCard } from "./components/MeaningCard";
 
-function GoalRow({
-	goal,
-	onLongPress,
-}: {
-	goal: Goal;
-	onLongPress: (goal: Goal) => void;
-}) {
-	return (
-		<TouchableOpacity activeOpacity={0.7} onLongPress={() => onLongPress(goal)}>
-			<View style={styles.goalRow}>
-				<View style={styles.goalHeader}>
-					<View
-						style={[
-							styles.goalDot,
-							{
-								backgroundColor:
-									goal.status === "active" ? colors.success : colors.muted,
-							},
-						]}
-					/>
-					<Typography variant="bodySmall" style={styles.goalName}>
-						{goal.name}
-					</Typography>
-					<Typography variant="caption" color={colors.muted}>
-						{goal.progress}%
-					</Typography>
-				</View>
-				{/* Progress bar */}
-				<View style={styles.progressTrack}>
-					<View style={[styles.progressFill, { width: `${goal.progress}%` }]} />
-				</View>
-			</View>
-		</TouchableOpacity>
-	);
-}
-
-function MeaningCard({
-	meaning,
-	goals,
-	onAddGoal,
-	onLongPress,
-	onGoalLongPress,
-}: {
-	meaning: Meaning;
-	goals: Goal[];
-	onAddGoal: (meaningId: string) => void;
-	onLongPress: (meaning: Meaning) => void;
-	onGoalLongPress: (goal: Goal) => void;
-}) {
-	const [expanded, setExpanded] = useState(false);
-
-	return (
-		<View>
-			<TouchableOpacity
-				activeOpacity={0.85}
-				onPress={() => setExpanded((v) => !v)}
-				onLongPress={() => onLongPress(meaning)}
-				accessibilityRole="button"
-				accessibilityLabel={`${meaning.name} — ${expanded ? "collapse" : "expand"} goals`}
-			>
-				<Card elevated style={styles.meaningCard}>
-					{/* Header */}
-					<View style={styles.meaningHeader}>
-						<View
-							style={[
-								styles.categoryDot,
-								{ backgroundColor: meaning.category?.categoryColor || colors.primary },
-							]}
-						/>
-						<View style={styles.meaningText}>
-							<Typography variant="h3">{meaning.name}</Typography>
-							<Typography
-								variant="bodySmall"
-								color={colors.muted}
-								style={styles.meaningDesc}
-							>
-								{meaning.description}
-							</Typography>
-						</View>
-						<Typography variant="caption" color={colors.muted}>
-							{expanded ? "▲" : "▼"}
-						</Typography>
-					</View>
-
-					{/* Accordion — Goals */}
-					{expanded && (
-						<View style={styles.goalsContainer}>
-							<View style={styles.divider} />
-							<View style={styles.goalsHeaderRow}>
-								<Typography variant="meaning" style={styles.goalsLabel}>
-									Goals attached to this meaning
-								</Typography>
-								<TouchableOpacity
-									onPress={() => onAddGoal(meaning.id)}
-									style={styles.inlineAddBtn}
-								>
-									<Typography variant="label" color={colors.primary}>
-										+ Add Goal
-									</Typography>
-								</TouchableOpacity>
-							</View>
-							{goals.length === 0 ? (
-								<Typography variant="caption" color={colors.muted}>
-									No goals attached yet.
-								</Typography>
-							) : (
-								goals.map((g) => (
-									<GoalRow key={g.id} goal={g} onLongPress={onGoalLongPress} />
-								))
-							)}
-						</View>
-					)}
-				</Card>
-			</TouchableOpacity>
-		</View>
-	);
-}
-
-export function MeaningDashboardScreen() {
+export function MeaningDashboardScreen({
+	navigation,
+}: StrategicTabScreenProps<"GoalsDashboard">) {
 	const meanings = useAtomValue(meaningsAtom);
 	const isMeaningsLoaded = useAtomValue(isMeaningsLoadedAtom);
 	const loadMeanings = useSetAtom(loadMeaningsAction);
@@ -310,6 +198,13 @@ export function MeaningDashboardScreen() {
 							Define what truly matters to you.
 						</Typography>
 					</View>
+					<TouchableOpacity
+						onPress={() => navigation.openDrawer()}
+						style={styles.drawerBtn}
+					>
+						<Typography variant="h3">≡</Typography>
+					</TouchableOpacity>
+
 					<Button
 						label="+"
 						onPress={() => setIsMeaningModalVisible(true)}
@@ -349,7 +244,6 @@ export function MeaningDashboardScreen() {
 				}
 			/>
 
-			{/* Meaning Modal */}
 			<MeaningCreationModal
 				visible={isMeaningModalVisible}
 				onClose={handleCloseMeaningModal}
@@ -357,7 +251,6 @@ export function MeaningDashboardScreen() {
 				editingMeaning={editingMeaning}
 			/>
 
-			{/* Goal Modal */}
 			<GoalCreationModal
 				visible={isGoalModalVisible}
 				onClose={handleCloseGoalModal}
@@ -392,113 +285,25 @@ const styles = StyleSheet.create({
 		width: 44,
 		height: 44,
 		borderRadius: radius.full,
+		marginLeft: spacing.sm,
 	},
-	subtitle: {
-		marginTop: spacing.xs,
+	drawerBtn: {
+		width: 44,
+		height: 44,
+		borderRadius: radius.sm,
+		backgroundColor: colors.surface,
+		borderWidth: 1,
+		borderColor: colors.border,
+		alignItems: "center",
+		justifyContent: "center",
 	},
 	list: {
 		paddingHorizontal: spacing.xl,
 		paddingBottom: spacing.xl,
 		gap: spacing.md,
 	},
-	meaningCard: {
-		gap: spacing.sm,
-	},
-	meaningHeader: {
-		flexDirection: "row",
-		alignItems: "flex-start",
-		gap: spacing.md,
-	},
-	categoryDot: {
-		width: 14,
-		height: 14,
-		borderRadius: radius.full,
-		marginTop: 4,
-		flexShrink: 0,
-	},
-	meaningText: {
-		flex: 1,
-		gap: spacing.xs,
-	},
-	meaningDesc: {
-		lineHeight: 20,
-	},
-	goalsContainer: {
-		gap: spacing.sm,
-	},
-	goalsHeaderRow: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-		marginBottom: spacing.xs,
-	},
-	inlineAddBtn: {
-		paddingVertical: 4,
-		paddingHorizontal: 8,
-	},
-	divider: {
-		height: 1,
-		backgroundColor: colors.border,
-		marginVertical: spacing.xs,
-	},
-	goalsLabel: {
-		marginBottom: spacing.xs,
-	},
-	goalRow: {
-		gap: spacing.xs,
-	},
-	goalHeader: {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: spacing.sm,
-	},
-	goalDot: {
-		width: 7,
-		height: 7,
-		borderRadius: radius.full,
-	},
-	goalName: {
-		flex: 1,
-	},
-	progressTrack: {
-		height: 4,
-		backgroundColor: colors.border,
-		borderRadius: radius.full,
-		marginLeft: spacing.lg,
-		overflow: "hidden",
-	},
-	progressFill: {
-		height: "100%",
-		backgroundColor: colors.primary,
-		borderRadius: radius.full,
-	},
 	empty: {
 		marginTop: spacing.xxl,
 		alignItems: "center",
-	},
-	modalOverlay: {
-		flex: 1,
-		backgroundColor: "rgba(0,0,0,0.5)",
-		justifyContent: "center",
-		padding: spacing.xl,
-	},
-	modalCard: {
-		gap: spacing.md,
-	},
-	input: {
-		backgroundColor: colors.surface,
-		borderWidth: 1,
-		borderColor: colors.border,
-		borderRadius: radius.md,
-		padding: spacing.md,
-		color: colors.onBackground,
-	},
-	textArea: {
-		height: 100,
-		textAlignVertical: "top",
-	},
-	modalActions: {
-		flexDirection: "row",
-		gap: spacing.sm,
 	},
 });
