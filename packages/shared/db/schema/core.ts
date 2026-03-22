@@ -64,7 +64,7 @@ export const selectActivitySchema = createSelectSchema(activity);
 export const taskTag = sqliteTable("task_tag", {
 	taskId: text("task_id")
 		.notNull()
-		.references(() => (require("./tasks").task.id)),
+		.references(() => require("./tasks").task.id),
 	tagId: text("tag_id")
 		.notNull()
 		.references(() => tagType.id),
@@ -73,7 +73,7 @@ export const taskTag = sqliteTable("task_tag", {
 export const habitTag = sqliteTable("habit_tag", {
 	habitId: text("habit_id")
 		.notNull()
-		.references(() => (require("./habits_events").habit.id)),
+		.references(() => require("./habits_events").habit.id),
 	tagId: text("tag_id")
 		.notNull()
 		.references(() => tagType.id),

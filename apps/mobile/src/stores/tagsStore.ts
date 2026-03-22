@@ -1,5 +1,5 @@
+import type { TagType } from "@liverubber/shared";
 import { atom } from "jotai";
-import { type TagType } from "@liverubber/shared";
 import { db } from "../db/client";
 
 export const tagsAtom = atom<TagType[]>([]);

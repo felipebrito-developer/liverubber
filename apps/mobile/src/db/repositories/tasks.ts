@@ -1,4 +1,4 @@
-import { schema } from "@liverubber/shared";
+import { type AnyType, schema } from "@liverubber/shared";
 import { eq } from "drizzle-orm";
 import { db } from "../client";
 
@@ -14,7 +14,7 @@ export const tasksRepository = {
 			.leftJoin(schema.tagType, eq(schema.taskTag.tagId, schema.tagType.id));
 
 		// Aggregate rows by task id
-		const tasksMap = new Map<string, any>();
+		const tasksMap = new Map<string, AnyType>();
 		for (const row of rows) {
 			const taskId = row.task.id;
 			if (!tasksMap.has(taskId)) {
@@ -47,7 +47,11 @@ export const tasksRepository = {
 		}
 		return result;
 	},
-	async update(id: string, data: Partial<typeof schema.task.$inferInsert>, tagIds?: string[]) {
+	async update(
+		id: string,
+		data: Partial<typeof schema.task.$inferInsert>,
+		tagIds?: string[],
+	) {
 		const result = await db
 			.update(schema.task)
 			.set(data)

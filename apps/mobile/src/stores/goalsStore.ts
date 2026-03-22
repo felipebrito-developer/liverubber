@@ -1,4 +1,4 @@
-import type { Goal, NewGoal } from "@liverubber/shared";
+import type { AnyType, Goal, NewGoal } from "@liverubber/shared";
 import { atom } from "jotai";
 import { goalsRepository } from "../db/repositories/goals";
 import "react-native-get-random-values";
@@ -9,12 +9,14 @@ export const isGoalsLoadedAtom = atom(false);
 
 export const loadGoalsAction = atom(null, async (_get, set) => {
 	const data = await goalsRepository.getAll();
-	const goals = data.map((row: any) => ({
+	const goals = data.map((row: AnyType) => ({
 		...row.goal,
-		meaning: row.meaning ? {
-			...row.meaning,
-			category: row.category,
-		} : undefined,
+		meaning: row.meaning
+			? {
+					...row.meaning,
+					category: row.category,
+				}
+			: undefined,
 	}));
 	set(goalsAtom, goals as Goal[]);
 	set(isGoalsLoadedAtom, true);

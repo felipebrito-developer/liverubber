@@ -1,4 +1,4 @@
-import type { Meaning, NewMeaning } from "@liverubber/shared";
+import type { AnyType, Meaning, NewMeaning } from "@liverubber/shared";
 import { atom } from "jotai";
 import { meaningsRepository } from "../db/repositories/meanings";
 import "react-native-get-random-values";
@@ -9,7 +9,7 @@ export const isMeaningsLoadedAtom = atom(false);
 
 export const loadMeaningsAction = atom(null, async (_get, set) => {
 	const data = await meaningsRepository.getAll();
-	const meanings = data.map((row: any) => ({
+	const meanings = data.map((row: AnyType) => ({
 		...row.meaning,
 		category: row.category,
 	}));
