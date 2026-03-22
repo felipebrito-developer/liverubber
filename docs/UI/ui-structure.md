@@ -1,47 +1,28 @@
-# UI Structure
+# UI Structure (MVP v2)
 
-## Architecture Summary
- 
- - Only Android App with React Native (first MVP)
- - Lint Libs: TypeScript, Biome
- - Design Patterns: Atomic Design(only for reusable components), Feature-based for the rest.
- - State Management: Jotai (global state), TanStack Query (server state)
- - UI libs: React Native Paper, React Native Reanimated, React Native Gesture Handler
- - Navigation: React Navigation
+## 📁 Feature-Based Folder Structure
 
-## Folder Structure
+src/features/
+├── drawer/              # Drawer & Profile Card
+├── focus/               # Progress, Now Screen, Action Hub
+├── goals/               # Dashboards, Backlogs, Reflection
+├── store/               # Inventory & Audit
+├── fitness/             # Dashboards, Execution, Planning
+└── settings/            # User Profile & Theme
 
-```
-src/
-├── components/          # Reusable UI components (Atomic Design)
-│   ├── atoms/           # Buttons, Inputs, Typography, etc.
-│   ├── molecules/       # Compound components
-│   └── organisms/       # Complex components
-├── features/            # Feature-based modules
-│   ├── auth/
-│   ├── tasks/
-├── navigation/          # Navigation setup
-│   ├── AppNavigator.tsx
-│   └── types.ts
-├── stores/              # Jotai atoms
-│   ├── authStore.ts
-│   └── tasksStore.ts
-├── services/            # API clients and services
-│   ├── api.ts
-│   └── tasksService.ts
-├── utils/               # Utility functions
-├── theme/               # Theme configuration
-└── App.tsx              # Root component
-```
+## 🛣️ UI CRUD & Navigation Roadmap
+... [Previous Roadmap] ...
+- **Navigation Drawer**: [ ] Profile Card [ ] Module List [ ] Footer
+- **Focus Module**: [ ] Progress Graph [ ] Event Summary
+- **Fitness Module**: [ ] Category Filter [ ] Execution View
 
-### 🛣️ UI CRUD Roadmap
-To fulfill the MVP, we are completing the cycle for all entities:
+### 🛠️ Navigation Setup (React Navigation)
+- **Root**: DrawerNavigator
+    - **FocusStack**: BottomTabNavigator
+    - **GoalsStack**: BottomTabNavigator
+    - **StoreStack**: BottomTabNavigator
+    - **FitnessStack**: BottomTabNavigator
+    - **SettingsScreen**: Single View
 
-- **Meanings**: [x] Create [x] Read [ ] Update [ ] Remove
-- **Goals**: [x] Create [x] Read [ ] Update [ ] Remove
-- **Tasks**: [x] Create [x] Read [ ] Update [ ] Remove
-- **Resources**: [x] Create [x] Read [x] Adjust [ ] Update [ ] Remove
-- **Habits**: [ ] Create [x] Read [ ] Update [ ] Remove
-- **Rewards**: [ ] Create [ ] Read [ ] Update [ ] Remove
-
-
+## 🧠 PhD Neuro-Recommendation: Fitness Execution
+For the Fitness Execution Screen, I recommend a "Flow-State Timer" approach. Instead of a complex workout list, use a large, singular visual (like a expanding/contracting circle) that guides the user's breathing and tempo for that specific exercise. This reduces "Executive Gap"—the moment between deciding to move and actually moving.

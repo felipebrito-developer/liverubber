@@ -1,6 +1,6 @@
 # 🏁 LiveRubber — MVP Progress Tracker
 
-> Last updated: **2026-03-19**
+> Last updated: **2026-03-21**
 > This file is updated by AI (Antigravity) regularly during work sessions.
 
 ---
@@ -123,11 +123,13 @@ Overall  [████████████░░░░░░░░] 60%
 
 | Date       | Area       | What was done                                                                 |
 | ---------- | ---------- | ----------------------------------------------------------------------------- |
-| 2026-03-12 | Mobile     | Implemented and reviewed Meaning, Now, Reflection, and Action functional screens. |
-| 2026-03-13 | Mobile     | Refactored stores to use Zod-inferred types and added AsyncStorage persistence. |
-| 2026-03-17 | Mobile     | Implemented full Creation Flows (Modals + Actions) for Goals, Tasks, Meanings, and Resources. |
-| 2026-03-19 | UI/UX / Orchestration | Initiated ADHD-focused UI audit; Fixed orchestration gaps in `.cursorrules` and Skills; Renamed `shared-type-architect` skill. |
-| 2026-03-19 | UI / CRUD  | **Implemented full CRUD parity for all entities** (Goals, Tasks, Meanings, Resources, Habits, Rewards); Refactored Action Hub and Reflection screen. |
+| 2026-03-12 | Mobile | Implemented and reviewed Meaning, Now, Reflection, and Action functional screens. |
+| 2026-03-13 | Mobile | Refactored stores to use Zod-inferred types and added AsyncStorage persistence. |
+| 2026-03-17 | Mobile | Implemented full Creation Flows (Modals + Actions) for Goals, Tasks, Meanings, and Resources. |
+| 2026-03-19 | UI/UX / Orchestration | Initiated ADHD-focused UI audit; Fixed orchestration gaps in `.cursorrules` and Skills; Renamed `agent-shared-type-architect` skill. |
+| 2026-03-19 | UI / CRUD | **Implemented full CRUD parity for all entities** (Goals, Tasks, Meanings, Resources, Habits, Rewards); Refactored Action Hub and Reflection screen. |
+| 2026-03-21 | DB / Schema | **Added initial seed data** for Categories, Tags, and Frequencies to both service and mobile databases. |
+| 2026-03-21 | Persona / Build | - **[UI/UX]** Finalized Phase 1-3 of UI Improvements:  - Externalized `TaskCreationModal`, `MeaningCreationModal`, and `GoalCreationModal`.  - Integrated Multi-Tag and Goal Selection in Tasks.  - Synced Meaning cards with Category colors and dropdowns.  - Implemented Category filtering for Resources (def. Resources Management). - **[Architect]** Established `categoriesStore` and `categoriesRepository` in the mobile app. - **[Build]** Verified cross-package schema updates via monorepo build sync. |
 
 ---
 

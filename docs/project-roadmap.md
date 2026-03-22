@@ -26,6 +26,8 @@
 - [x] Activate CUDA (GPU) in WSL2 for local inference.
 - [x] Clean/Remove legacy Antigravity installations in WSL.
 - [x] Configure Antigravity Windows-to-WSL remote connection.
+- [x] Seed database with initial Categories, Tags, and Frequencies.
+- [x] Refactor Agent personas and unify Skill system with standardized Startup Sequences.
 - [x] Define Shared Type structure under `shared/@types/`.
 - [x] Monorepo structure configuration (Turbo.js + Bun).
 

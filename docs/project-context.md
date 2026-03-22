@@ -5,11 +5,13 @@
 LiveRubber is a local-first monorepo for ADHD task management. It uses a **Hybrid AI Architecture**: local inference (Ollama) for sensitive data and cloud inference (Gemini Flash) for generic reasoning, connected via **Model Context Protocol (MCP)**.
 
 ### Architecture Diagram
-LiveRubber (Turborepo)
-├── shared/       → Shared TS types (Heart of the system)
-├── service/      → Node.js Backend (SQLite) + MCP Server
-├── ai-bridge/    → AI Orchestrator (Ollama/Gemini/Privacy Router)
-└── ui/mobile/    → React Native app (Jotai, TanStack Query)
+├── shared/       → Shared TS types (Heart of the system - packages/shared)
+├── apps/
+│   ├── service/    → Node.js Backend (SQLite) + MCP Server
+│   ├── ai-bridge/  → AI Orchestrator (Ollama/Gemini/Privacy Router)
+│   └── mobile/     → React Native app (Jotai, TanStack Query)
+└── packages/
+    └── security/   → Anonymization & Encryption Logic
 
 
 ## Critical Knowledge
@@ -39,3 +41,11 @@ ai-bridge/src/
 ├── providers/    # Vercel AI SDK Config (Ollama/Google)
 ├── router/       # Privacy-aware prompt routing
 └── tools/        # MCP Client connections to service/
+
+---
+
+### 5. Agent & Skill Personas
+Managed in `.agents/skills/`:
+- **Standardized Naming**: Agent roles are prefixed with `agent-` (e.g., `agent-be-architect`).
+- **Startup Sequences**: Every `SKILL.md` file defines a mandatory "Startup Sequence" message to confirm identity and active protocol upon being equipped.
+- **Rules of Engagement**: Personas are strictly enforced via `.agents/rules/orchestrator-rule.md` and `.cursorrules`.

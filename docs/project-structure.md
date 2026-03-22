@@ -2,13 +2,13 @@
 
 ## Architecture Summary
 LiveRubber/
+├── apps/
+│   ├── mobile/                     # React Native App
+│   ├── service/                    # Node.js + SQLite + MCP Server
+│   └── ai-bridge/                  # AI Orchestrator (Ollama & Gemini)
 ├── docs/                           # General project documentation
-├── service/                        # Node.js + SQLite + MCP Server
-├── ai-bridge/                      # AI Orchestrator (Ollama & Gemini)
-├── ui/
-│   └── mobile/                     # React Native App
-├── shared/                         # Shared TS Types
 ├── packages/
+│   ├── shared/                     # Shared TS Types
 │   └── security/                   # Anonymization & Encryption Logic
 ├── turbo.json
 └── package.json

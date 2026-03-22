@@ -1,68 +1,48 @@
-## 🏗️ The 4-Screen Blueprint
+# 🏗️ Modular Blueprint: Purpose & Action
 
-### 1. Screen: The "Meaning" Dashboard (The Strategy)
+## 🧭 The Global Drawer (Navigation)
+* **Header: User Identity Card**
+    * Avatar Placeholder (Circle) + Name + Age.
+    * *Neuro-Logic:* Reinforces self-identity and age-awareness (combats "time-blindness" regarding life stages).
+* **Navigation List:** Focus, Goals Management, Store, Fitness, Settings.
+* **Footer:** App Version + Logout (Secondary prominence to avoid accidental exits).
 
-* **Purpose:** To combat the "emptiness" of depression. This is the only place you see the "Big Picture."
-* **UI Layout:** A vertical card stack of **Meanings**.
-* **Key Interaction:** Tapping a Meaning Card reveals the **Goals** attached to it via an "Accordion" (Progressive Disclosure).
-* **Why it works:** It keeps the "North Star" visible. If you feel lost, this screen reminds you *why* you are trying.
+## 1. Focus Module (The "Daily Front-End")
+* **Tab 1: User Progress (Entry Screen)**
+    * **Visual:** Pizza Graphs (Pie Charts) for Overall Progress.
+    * **Cards:** One for Goal progress, one for Fitness progress.
+    * **Summary:** Today's events list (minimalist).
+* **Tab 2: Now Screen**
+    * Improved Focus Mode: Zero-distraction UI with the "Meaning Anchor".
+* **Tab 3: Action Hub**
+    * Energy-filtered task selection.
 
-### 2. Screen: The "Action Hub" (The Operational)
+## 2. Goals Management (The "Strategic Layer")
+* **Tab 1: Goals Dashboard**
+    * Pizza Graphs for task completion per Goal.
+* **Tab 2: Task Backlog**
+    * Filterable list. **FAB:** Opens a **Full-Screen Modal** (better for complex input like resources/dates).
+* **Tab 3: Goals Backlog**
+    * Filterable list. **FAB:** Full-Screen Modal for new Goals + Meaning linking.
+* **Tab 4: Reflection Log**
+    * Mood vs. Activity correlation.
 
-* **Purpose:** To solve decision paralysis.
-* **UI Layout:** Divided into two sections: **"Habits for Today"** and **"Next Tasks."**
-* **Energy Filter (Crucial):** At the top, a 3-button toggle: **[Low Energy] [Balanced] [Hyperfocus]**.
-* *Logic:* Clicking "Low Energy" hides all high-difficulty activities and only shows the "Small Wins" (e.g., "5 min stretch").
+## 3. Store (The "Logistical Layer")
+* **Tab 1: Resource Dashboard**
+    * Categorized cards showing "Inventory Health."
+* **Tab 2: Management Store**
+    * Category filter + FAB for adding resources.
+* **Tab 3: Resource Audit**
+    * Log of additions/removals (Transaction history).
 
+## 4. Fitness Module (The "Proprioception Layer")
+* **Tab 1: Fitness Dashboard**
+    * Weekly progress cards + Today's Exercise list.
+* **Tab 2: Execution Screen (Neuro-Possibilities)**
+    * *Option A: The Rhythmic Pacer:* Visual/Audio pulses to help with motor planning and focus.
+    * *Option B: Mirror Mode:* Minimalist gif/video loops to ground the user in their body (Proprioception).
+* **Tab 3: Planning**
+    * Task-tree view for planning body-part-specific sessions.
 
-* **Why it works:** It prevents the "Wall of Awful." It only shows what is relevant to your current capacity.
-
-### 3. Screen: The "Now" View (The Execution)
-
-* **Purpose:** Focus. This is the screen we generated in the mockup.
-* **UI Layout:** Immersive mode. One Task. One Timer.
-* **Inventory Check:** Before this screen opens, a **"Pre-flight Checklist"** modal pops up: *"Do you have [Requirement X] and [Requirement Y]?"*
-* **Why it works:** It stops the "Flow Interruption" (ADHD killer) of starting a task and realizing you don't have the materials.
-
-### 4. Screen: The "Reflection Log" (The Audit)
-
-* **Purpose:** To correlate productivity with mental health.
-* **UI Layout:** A calendar or list view of `Activity_Logs`.
-* **Visual Integration:** A graph showing the correlation between **Tasks Completed** and **Mood Score**.
-* **Why it works:** It provides objective proof that "Action leads to better Mood," which is vital for treating depression.
-
----
-
-## 🚦 Best Placement for Key Features
-
-| Feature | Best Placement | Neuro-Logic |
-| --- | --- | --- |
-| **Energy Filter** | Fixed at the top of the **Action Hub**. | Must be the first thing you decide so the list feels "doable." |
-| **Inventory Alerts** | As a **Blocking Modal** before "Focus Mode" starts. | Prevents the frustration of forgetting items halfway through. |
-| **Meaning Tags** | Small badges on **every** Task card. | Constant dopamine reinforcement of "The Why." |
-| **Subtask Slicing** | Inside the **Task Detail** drawer. | Uses `parent_id` to show only the *next* step, not the whole list. |
-
----
-
-## 🛠️ The "Neuro-Flow" (User Journey)
-
-1. **Entry:** App opens to the **Action Hub**.
-2. **Filter:** User selects **"Low Energy"** because they are feeling depressed.
-3. **Selection:** User picks a task. The app checks **Requirements** (Materials).
-4. **Transition:** User enters **Focus Mode** (The "Now" Screen).
-5. **Completion:** User logs **Mood (1-5)**.
-6. **Reward:** The app shows the **Meaning Anchor** ("You just moved closer to: [Meaning Name]").
-
----
-
-## 📋 Screen Implementation Status
-
-| Screen | Status | Role |
-| --- | --- | --- |
-| **Meaning Dashboard** | ✅ Done | Strategy & Big Picture |
-| **Action Hub** | 🔄 In Progress | Operational (Needs Habits/Rewards) |
-| **Now Screen** | ✅ Done | Execution (Focus Mode) |
-| **Reflection Log** | ✅ Done | Audit & Celebration |
-| **Resources** | ✅ Done | Asset Management |
-| **Habits Manager** | ⏳ Missing | Recurrence & Consistency |
-| **Rewards Gallery** | ⏳ Missing | Dopamine Hub |
+## 5. User Settings
+* Profile CRUD: Avatar, Display Name, Theme (Dark/Light), Game Mode (Classic - locked).
