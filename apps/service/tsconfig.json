@@ -15,7 +15,8 @@
 		"paths": {
 			"@liverubber/shared": ["../../packages/shared/index.ts"],
 			"@liverubber/shared/*": ["../../packages/shared/*"]
-		}
+		},
+		"types": ["bun"]
 	},
 	"include": ["./src/**/*.ts"],
 	"exclude": ["node_modules", "dist"]
