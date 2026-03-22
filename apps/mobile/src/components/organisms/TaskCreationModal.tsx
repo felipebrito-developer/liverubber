@@ -1,6 +1,5 @@
-export { TaskCreationModal } from "./TaskCreationModal";
-import { Task, TagType, NewTask } from "@liverubber/shared";
-import { useAtomValue } from "jotai";
+import type { NewTask, Task } from "@liverubber/shared";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import {
 	Modal,
@@ -10,12 +9,16 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
+import {
+	goalsAtom,
+	isGoalsLoadedAtom,
+	loadGoalsAction,
+} from "@/stores/goalsStore";
+import { tagsAtom } from "@/stores/tagsStore";
+import { colors, radius, spacing } from "../../theme";
 import { Button } from "../atoms/Button";
 import { Typography } from "../atoms/Typography";
 import { Card } from "../molecules/Card";
-import { colors, radius, spacing } from "../../theme";
-import { goalsAtom, isGoalsLoadedAtom, loadGoalsAction } from "@/stores/goalsStore";
-import { tagsAtom } from "@/stores/tagsStore";
 
 interface TaskCreationModalProps {
 	visible: boolean;
@@ -35,7 +38,7 @@ export function TaskCreationModal({
 	const [priority, setPriority] = useState<string>("medium");
 	const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
 	const [goalId, setGoalId] = useState<string | null>(null);
-	
+
 	const tags = useAtomValue(tagsAtom);
 	const goals = useAtomValue(goalsAtom);
 	const loadGoals = useSetAtom(loadGoalsAction);
@@ -53,7 +56,7 @@ export function TaskCreationModal({
 			setDesc(editingTask.description || "");
 			setPriority(editingTask.priority || "medium");
 			setGoalId(editingTask.goalId || null);
-			setSelectedTagIds([]); // TODO: Load tags from relations
+			setSelectedTagIds(editingTask.tags?.map((t) => t.id) || []);
 		} else {
 			setTitle("");
 			setDesc("");
@@ -61,29 +64,32 @@ export function TaskCreationModal({
 			setGoalId(null);
 			setSelectedTagIds([]);
 		}
-	}, [editingTask, visible]);
+	}, [editingTask]);
 
 	const toggleTag = (id: string) => {
-		setSelectedTagIds(prev => 
-			prev.includes(id) ? prev.filter(t => t !== id) : [...prev, id]
+		setSelectedTagIds((prev) =>
+			prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id],
 		);
 	};
 
 	const handleSave = () => {
 		if (!title.trim()) return;
-		onSave({
-			title,
-			description: desc,
-			status: editingTask?.status || "todo",
-			priority,
-			dueDate: editingTask?.dueDate || null,
-			goalId,
-			parentTaskId: editingTask?.parentTaskId || null,
-			createdAt: editingTask?.createdAt || new Date().toISOString(),
-			updatedAt: new Date().toISOString(),
-			isSynced: false,
-			lastSyncedAt: null,
-		}, selectedTagIds);
+		onSave(
+			{
+				title,
+				description: desc,
+				status: editingTask?.status || "todo",
+				priority,
+				dueDate: editingTask?.dueDate || null,
+				goalId,
+				parentTaskId: editingTask?.parentTaskId || null,
+				createdAt: editingTask?.createdAt || new Date().toISOString(),
+				updatedAt: new Date().toISOString(),
+				isSynced: false,
+				lastSyncedAt: null,
+			},
+			selectedTagIds,
+		);
 	};
 
 	return (
@@ -93,7 +99,7 @@ export function TaskCreationModal({
 					<Typography variant="h3">
 						{editingTask ? "Edit Task" : "New Task"}
 					</Typography>
-					
+
 					<TextInput
 						placeholder="What needs attention?"
 						placeholderTextColor={colors.muted}
@@ -101,7 +107,7 @@ export function TaskCreationModal({
 						onChangeText={setTitle}
 						style={styles.input}
 					/>
-					
+
 					<TextInput
 						placeholder="Add details... (Mental note)"
 						placeholderTextColor={colors.muted}
@@ -121,26 +127,45 @@ export function TaskCreationModal({
 									onPress={() => setGoalId(null)}
 									style={[
 										styles.tagPill,
-										!goalId && { backgroundColor: colors.muted, borderColor: colors.muted }
+										!goalId && {
+											backgroundColor: colors.muted,
+											borderColor: colors.muted,
+										},
 									]}
 								>
-									<Typography variant="caption" style={{ color: !goalId ? colors.onPrimary : colors.onBackground }}>
+									<Typography
+										variant="caption"
+										style={{
+											color: !goalId ? colors.onPrimary : colors.onBackground,
+										}}
+									>
 										NONE
 									</Typography>
 								</TouchableOpacity>
 								{goals.map((goal) => {
 									const active = goalId === goal.id;
-									const color = goal.meaning?.category?.categoryColor || colors.primary;
+									const color =
+										goal.meaning?.category?.categoryColor || colors.primary;
 									return (
 										<TouchableOpacity
 											key={goal.id}
 											onPress={() => setGoalId(goal.id)}
 											style={[
 												styles.tagPill,
-												active && { backgroundColor: color, borderColor: color }
+												active && {
+													backgroundColor: color,
+													borderColor: color,
+												},
 											]}
 										>
-											<Typography variant="caption" style={{ color: active ? colors.onPrimary : colors.onBackground }}>
+											<Typography
+												variant="caption"
+												style={{
+													color: active
+														? colors.onPrimary
+														: colors.onBackground,
+												}}
+											>
 												{goal.name}
 											</Typography>
 										</TouchableOpacity>
@@ -164,10 +189,20 @@ export function TaskCreationModal({
 											onPress={() => toggleTag(tag.id)}
 											style={[
 												styles.tagPill,
-												active && { backgroundColor: tag.colorHex, borderColor: tag.colorHex }
+												active && {
+													backgroundColor: tag.colorHex,
+													borderColor: tag.colorHex,
+												},
 											]}
 										>
-											<Typography variant="caption" style={{ color: active ? colors.onPrimary : colors.onBackground }}>
+											<Typography
+												variant="caption"
+												style={{
+													color: active
+														? colors.onPrimary
+														: colors.onBackground,
+												}}
+											>
 												{tag.name}
 											</Typography>
 										</TouchableOpacity>
@@ -190,10 +225,18 @@ export function TaskCreationModal({
 										onPress={() => setPriority(p)}
 										style={[
 											styles.priorityPill,
-											active && { backgroundColor: getPriorityColor(p), borderColor: getPriorityColor(p) }
+											active && {
+												backgroundColor: getPriorityColor(p),
+												borderColor: getPriorityColor(p),
+											},
 										]}
 									>
-										<Typography variant="caption" style={{ color: active ? colors.onPrimary : colors.onBackground }}>
+										<Typography
+											variant="caption"
+											style={{
+												color: active ? colors.onPrimary : colors.onBackground,
+											}}
+										>
 											{p.toUpperCase()}
 										</Typography>
 									</TouchableOpacity>
@@ -209,7 +252,11 @@ export function TaskCreationModal({
 							onPress={onClose}
 							style={{ flex: 1 }}
 						/>
-						<Button label="Save Task" onPress={handleSave} style={{ flex: 1 }} />
+						<Button
+							label="Save Task"
+							onPress={handleSave}
+							style={{ flex: 1 }}
+						/>
 					</View>
 				</Card>
 			</View>

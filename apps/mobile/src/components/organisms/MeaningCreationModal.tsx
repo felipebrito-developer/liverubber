@@ -1,4 +1,4 @@
-import type { Meaning, NewMeaning, CategoryType } from "@liverubber/shared";
+import type { Meaning, NewMeaning } from "@liverubber/shared";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import {
@@ -9,10 +9,14 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
+import {
+	categoriesAtom,
+	isCategoriesLoadedAtom,
+	loadCategoriesAction,
+} from "../../stores/categoriesStore";
+import { colors, radius, spacing } from "../../theme";
 import { Button, Typography } from "../atoms";
 import { Card } from "../molecules/Card";
-import { colors, radius, spacing } from "../../theme";
-import { categoriesAtom, isCategoriesLoadedAtom, loadCategoriesAction } from "../../stores/categoriesStore";
 
 interface MeaningCreationModalProps {
 	visible: boolean;
@@ -51,7 +55,7 @@ export function MeaningCreationModal({
 			setDesc("");
 			setCategoryId(null);
 		}
-	}, [editingMeaning, visible]);
+	}, [editingMeaning]);
 
 	const handleSave = () => {
 		if (!name.trim()) return;
@@ -76,7 +80,7 @@ export function MeaningCreationModal({
 					<Typography variant="bodySmall" color={colors.muted}>
 						What truly matters to you? (e.g. Health, Growth)
 					</Typography>
-					
+
 					<TextInput
 						placeholder="Outcome Name"
 						placeholderTextColor={colors.muted}
@@ -84,7 +88,7 @@ export function MeaningCreationModal({
 						onChangeText={setName}
 						style={styles.input}
 					/>
-					
+
 					<TextInput
 						placeholder="Why does this matter? (Personal legacy)"
 						placeholderTextColor={colors.muted}
@@ -108,10 +112,20 @@ export function MeaningCreationModal({
 											onPress={() => setCategoryId(cat.id)}
 											style={[
 												styles.categoryPill,
-												active && { backgroundColor: cat.categoryColor, borderColor: cat.categoryColor }
+												active && {
+													backgroundColor: cat.categoryColor,
+													borderColor: cat.categoryColor,
+												},
 											]}
 										>
-											<Typography variant="caption" style={{ color: active ? colors.onPrimary : colors.onBackground }}>
+											<Typography
+												variant="caption"
+												style={{
+													color: active
+														? colors.onPrimary
+														: colors.onBackground,
+												}}
+											>
 												{cat.name}
 											</Typography>
 										</TouchableOpacity>
@@ -128,7 +142,11 @@ export function MeaningCreationModal({
 							onPress={onClose}
 							style={{ flex: 1 }}
 						/>
-						<Button label="Solidify Meaning" onPress={handleSave} style={{ flex: 1 }} />
+						<Button
+							label="Solidify Meaning"
+							onPress={handleSave}
+							style={{ flex: 1 }}
+						/>
 					</View>
 				</Card>
 			</View>

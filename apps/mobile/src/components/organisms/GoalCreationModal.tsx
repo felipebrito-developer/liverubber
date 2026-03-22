@@ -1,4 +1,4 @@
-import type { Goal, NewGoal, Meaning } from "@liverubber/shared";
+import type { Goal, NewGoal } from "@liverubber/shared";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import {
@@ -9,10 +9,14 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
+import {
+	isMeaningsLoadedAtom,
+	loadMeaningsAction,
+	meaningsAtom,
+} from "../../stores/meaningsStore";
+import { colors, radius, spacing } from "../../theme";
 import { Button, Typography } from "../atoms";
 import { Card } from "../molecules/Card";
-import { colors, radius, spacing } from "../../theme";
-import { meaningsAtom, isMeaningsLoadedAtom, loadMeaningsAction } from "../../stores/meaningsStore";
 
 interface GoalCreationModalProps {
 	visible: boolean;
@@ -53,7 +57,7 @@ export function GoalCreationModal({
 			setDesc("");
 			setMeaningId(preselectedMeaningId || null);
 		}
-	}, [editingGoal, visible, preselectedMeaningId]);
+	}, [editingGoal, preselectedMeaningId]);
 
 	const handleSave = () => {
 		if (!name.trim()) return;
@@ -82,7 +86,7 @@ export function GoalCreationModal({
 					<Typography variant="bodySmall" color={colors.muted}>
 						Set a concrete, measurable milestone.
 					</Typography>
-					
+
 					<TextInput
 						placeholder="What are we achieving?"
 						placeholderTextColor={colors.muted}
@@ -90,7 +94,7 @@ export function GoalCreationModal({
 						onChangeText={setName}
 						style={styles.input}
 					/>
-					
+
 					<TextInput
 						placeholder="Success criteria or details..."
 						placeholderTextColor={colors.muted}
@@ -115,10 +119,22 @@ export function GoalCreationModal({
 												onPress={() => setMeaningId(m.id)}
 												style={[
 													styles.meaningPill,
-													active && { backgroundColor: m.category?.categoryColor || colors.primary, borderColor: m.category?.categoryColor || colors.primary }
+													active && {
+														backgroundColor:
+															m.category?.categoryColor || colors.primary,
+														borderColor:
+															m.category?.categoryColor || colors.primary,
+													},
 												]}
 											>
-												<Typography variant="caption" style={{ color: active ? colors.onPrimary : colors.onBackground }}>
+												<Typography
+													variant="caption"
+													style={{
+														color: active
+															? colors.onPrimary
+															: colors.onBackground,
+													}}
+												>
 													{m.name}
 												</Typography>
 											</TouchableOpacity>
@@ -136,7 +152,11 @@ export function GoalCreationModal({
 							onPress={onClose}
 							style={{ flex: 1 }}
 						/>
-						<Button label="Save Goal" onPress={handleSave} style={{ flex: 1 }} />
+						<Button
+							label="Save Goal"
+							onPress={handleSave}
+							style={{ flex: 1 }}
+						/>
 					</View>
 				</Card>
 			</View>
