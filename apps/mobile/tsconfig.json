@@ -4,6 +4,8 @@
 		"strict": true,
 		"skipLibCheck": true,
 		"baseUrl": ".",
+		"moduleResolution": "bundler",
+		"resolveJsonModule": true,
 		"paths": {
 			"@/*": ["src/*"],
 			"@liverubber/shared/*": ["../../packages/shared/*"]

@@ -17,7 +17,7 @@
 		"@liverubber/shared": "workspace:*",
 		"@op-engineering/op-sqlite": "^15.2.6",
 		"@react-native-async-storage/async-storage": "^3.0.1",
-		"@tanstack/react-query": "^5.72.2",
+		"@tanstack/react-query": "^5.94.4",
 		"drizzle-orm": "^0.45.1",
 		"jotai": "^2.12.2",
 		"react": "19.2.3",
