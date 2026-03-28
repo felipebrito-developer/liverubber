@@ -1,3 +1,15 @@
+---
+title: "Neuro-Inclusive UI Principles"
+description: "Core design philosophy for ADHD and depression support: executive function blueprint, visual standards, and navigation rules."
+workspace: "apps/mobile"
+tags:
+  - ux
+  - ui-principles
+  - adhd
+  - psychology
+priority: 1
+---
+
 # 🧠 Neuro-Emancipatory UI: Executive Function Blueprint (v2.0)
 
 ## 1. Core Neuro-Principles (The "Why")

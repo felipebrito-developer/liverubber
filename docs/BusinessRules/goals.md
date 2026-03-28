@@ -1,3 +1,15 @@
+---
+title: "Project Goals"
+description: "Foundational objectives for ADHD and Depression support. Strategic, Structural, and Operational layers."
+workspace: "global"
+tags:
+  - mission
+  - adhd
+  - depression
+  - psychology
+priority: 1
+---
+
 ## 🧩 Ecosystem Summary: "Purpose & Action"
 
 The core objective is to **reduce cognitive load** (critical for ADHD) and **reinforce purpose** (critical for depression).

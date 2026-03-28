@@ -1,3 +1,15 @@
+---
+title: "UI Screens Blueprint"
+description: "Visual and structural breakdown of all application screens, from the Global Drawer to the specialized Fitness Module."
+workspace: "apps/mobile"
+tags:
+  - mobile
+  - screens
+  - blueprint
+  - modular-ui
+priority: 1
+---
+
 # 🏗️ Modular Blueprint: Purpose & Action
 
 ## 🧭 The Global Drawer (Navigation)

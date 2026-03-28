@@ -1,5 +1,18 @@
+---
+title: "UI Modules Description"
+description: "Detailed breakdown of the four main navigation modules: Focus, Goals, Store, and Fitness."
+workspace: "apps/mobile"
+tags:
+  - mobile
+  - navigation
+  - modules
+  - ux
+priority: 2
+---
 
-    1. Focus
+# 📱 UI Modules Description
+
+1. Focus
     Description: Where all for today's tasks and a dashboard with overal progress
     Bottom tabs:
         - User Progress Screen (Firs screen when you open the app, after the login):

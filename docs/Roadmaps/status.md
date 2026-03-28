@@ -1,3 +1,15 @@
+---
+title: "MVP Progress Tracker"
+description: "Real-time status of the Minimum Viable Product layers: Infra, AI, Backend, Mobile, and Security."
+workspace: "global"
+tags:
+  - mvp
+  - status
+  - progress
+  - metrics
+priority: 1
+---
+
 # 🏁 LiveRubber — MVP Progress Tracker
 
 > Last updated: **2025-10-24** (Reflecting actual date from session context)

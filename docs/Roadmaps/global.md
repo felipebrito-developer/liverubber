@@ -1,3 +1,14 @@
+---
+title: "Global Roadmap"
+description: "High-level project milestones, completed steps, and upcoming priorities across all workspaces."
+workspace: "global"
+tags:
+  - roadmap
+  - progress
+  - backlog
+priority: 1
+---
+
 # Project Steps
 
 ## Incomplete Steps
@@ -19,7 +30,7 @@
 - [x] Configure `ai-bridge` service with Vercel AI SDK (Ollama + Gemini).
 - [x] Implement Privacy Router (Local vs Cloud decision logic).
 - [x] Implement PII Scrubbing in `packages/security`.
-- [x] Setup MCP Server in `service/` to expose SQLite safely.
+- [x] Setup MCP Server in `apps/service/` to expose SQLite safely.
 - [x] Implement core repository layer (Goal, Meaning, Task).
 - [x] Define component structure and Neuro-UI templates.
 - [x] Implement all core mobile screens and creation flows.
@@ -27,8 +38,8 @@
 - [x] Clean/Remove legacy Antigravity installations in WSL.
 - [x] Configure Antigravity Windows-to-WSL remote connection.
 - [x] Seed database with initial Categories, Tags, and Frequencies.
-- [x] Refactor Agent personas and unify Skill system with standardized Startup Sequences.
-- [x] Define Shared Type structure under `shared/@types/`.
+- [x] **Lean Architecture Migration**: Decoupled Personas/Skills and unified specialist protocols in `.agents/personas/`.
+- [x] Define Shared Type structure under `packages/shared/`.
 - [x] Monorepo structure configuration (Turbo.js + Bun).
 
 ## Future Improvements

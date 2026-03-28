@@ -1,3 +1,15 @@
+---
+title: "UI Folder Structure"
+description: "Feature-based directory organization and React Navigation hierarchy for the mobile app."
+workspace: "apps/mobile"
+tags:
+  - mobile
+  - directory-map
+  - navigation-stack
+  - architecture
+priority: 2
+---
+
 # UI Structure (MVP v2)
 
 ## 📁 Feature-Based Folder Structure

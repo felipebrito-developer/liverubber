@@ -1,3 +1,15 @@
+---
+title: "AI System Architecture"
+description: "Orchestration Engine, Persona Registry, and Mandatory AI Guardrails."
+workspace: "apps/ai-bridge"
+tags:
+  - ai-bridge
+  - personas
+  - orchestrator
+  - lifecycle
+priority: 1
+---
+
 # 🤖 LiveRubber AI System Architecture
 > **Current Version:** Antigravity v1.3.10 (Mar 2026)
 > **Goal:** Provide a comprehensive map of the agentic orchestration protocols for AI-to-AI handoffs and refinement.
@@ -8,23 +20,24 @@ LiveRubber uses a **Meta-Agent Dispatcher** model. Instead of a generic prompt-r
 ### Core Lifecycle (Phase 1-4)
 | Phase           | Agent Role                                  | Primary Tool / Skill   | Output                                      |
 | :-------------- | :------------------------------------------ | :--------------------- | :------------------------------------------ |
-| **1. Intent**   | `agent-intent-router`                       | Intent analysis        | **[DEV-ROUTE]** decision (Fast vs Planning) |
-| **2. Contract** | `agent-shared-type-architect`               | Zod / TS               | Updated `packages/shared/@types/`           |
-| **3. Impl**     | `agent-be-architect` / `agent-fe-architect` | Drizzle / React Native / AI SDK | Workspace code + AI Routing + Bun tests     |
-| **4. Audit**    | `agent-doc-updater` / `agent-file-manager`  | MVP Log Sync           | Updated `docs/mvp-progress.md`              |
+| **1. Intent**   | `intent-router`                             | Intent analysis        | **[DEV-ROUTE]** decision (Fast vs Planning) |
+| **2. Contract** | `shared-type-architect`                     | Zod / TS               | Updated `packages/shared/`                  |
+| **3. Impl**     | `be-architect` / `fe-architect`             | Vercel AI SDK / Bun tests | Clean Architecture + AI Routing            |
+| **4. Audit**    | `doc-updater` / `file-manager`              | MVP Log Sync           | Updated `docs/mvp-progress.md`              |
 
 ---
 
 ## 🧩 2. Agent Persona Registry
-The system equips these specialized personas based on the directory context and phase requirement.
+Specialist profiles are managed in `.agents/personas/` as the single source of truth for identities and protocols. Modular technical skills (e.g., `zod`, `drizzle`) are unversioned dependencies in `.agents/skills/`.
 
-| Agent Persona                     | 🏷️ Associated Skills                                                                                                                  | 🪐 Primary Context (Files/Workspaces)              |
-| :-------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------ |
-| **`agent-intent-router`**         | `agent-intent-router`                                                                                                                | Global (Entry Point for all prompts)              |
-| **`agent-be-architect`**          | `agent-be-architect`, `mcp-builder`, `sqlite-database-expert`, `claude-api`                                                           | `apps/service/`, `apps/ai-bridge/`, Privacy Routing, SQL |
-| **`agent-fe-architect`**          | `agent-fe-architect`, `adhd-design-expert`, `jotai-expert`, `mobile-offline-support`, `react-native-design`, `ui-component-patterns` | `apps/mobile/src/features/`, UI creation          |
-| **`agent-doc-updater`**           | `agent-doc-updater`, `agent-doc-analyst`                                                                                             | `docs/`, `mvp-progress.md`, daily logs            |
-| **`agent-file-manager`**          | (Internal FS Tools)                                                                                                                  | Monorepo filesystem operations (Turborepo)        |
+| Agent Persona                     | 🧪 Associated Skills (Modular)                                                                                                              | 🪐 Workspace Boundary (Locks)                          |
+| :-------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------ |
+| **`intent-router`**               | tech-lead-protocol                                                                                                                         | Project Root `.`                                  |
+| **`be-architect`**                | `nodejs-backend-patterns`, `sqlite-database-expert`, `drizzle-orm`, `claud-api`                                                           | `apps/service/`                                   |
+| **`fe-architect`**                | `adhd-design-expert`, `jotai-expert`, `react-native-design`, `ui-component-patterns`                                                       | `apps/mobile/src/features/`                       |
+| **`ai-bridge-specialist`**        | `mcp-builder`, `scrub-pii`, `vercel-ai-sdk`                                                                                                | `apps/ai-bridge/`                                 |
+| **`doc-updater`**                 | `doc-analyst`                                                                                                                              | `docs/`, Root `.md`, Full Read Access             |
+| **`file-manager`**                | `validate-skills`                                                                                                                          | Project Root `.`                                  |
 
 ---
 

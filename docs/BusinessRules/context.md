@@ -1,3 +1,14 @@
+---
+title: "Project Context"
+description: "Technical philosophy, AI architecture, and core monorepo constraints."
+workspace: "global"
+tags:
+  - architecture
+  - mcp
+  - privacy
+  - tdd
+priority: 1
+---
 
 # LiveRubber AI Coding Agent Instructions
 
@@ -44,8 +55,9 @@ ai-bridge/src/
 
 ---
 
-### 5. Agent & Skill Personas
-Managed in `.agents/skills/`:
-- **Standardized Naming**: Agent roles are prefixed with `agent-` (e.g., `agent-be-architect`).
-- **Startup Sequences**: Every `SKILL.md` file defines a mandatory "Startup Sequence" message to confirm identity and active protocol upon being equipped.
-- **Rules of Engagement**: Personas are strictly enforced via `.agents/rules/orchestrator-rule.md` and `.cursorrules`.
+### 5. Agent Personas & Skills
+Managed in `.agents/`:
+- **Personas (`personas/`)**: Single Source of Truth for specialist identities (e.g., `be-architect.md`). Defines boundaries and protocols.
+- **Skills-as-Dependencies**: Modular technical skills (Zod, Drizzle) are treated as unversioned dependencies and managed via `skills-lock.json` in the project root.
+- **Phase 0 Validation**: Every agent performs a mandatory dependency check against `skills-lock.json` before any task.
+- **Registry Enforcement**: Rules are strictly enforced via `.agents/registry.json` and the `.agents/rules/orchestrator-rule.md`.
