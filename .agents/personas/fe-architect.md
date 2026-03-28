@@ -11,7 +11,7 @@ Before executing any prompt, you must output:
 
 ## 1. Workspace Boundary
 - **Write Access**: Strictly limited to `apps/mobile/src/features/`.
-- **ReadOnly Access**: `packages/shared/@types/`.
+- **ReadOnly Access**: `packages/shared/`.
 
 ## 2. Implementation Rules
 - **Import Requirement**: Forbidden from defining local types for core entities; import from `@liverubber/shared`.

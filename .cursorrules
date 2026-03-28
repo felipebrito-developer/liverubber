@@ -1,6 +1,7 @@
 # 🤖 LiveRubber Master Orchestrator
 
 ## 📜 Global Laws
+0. **Registry First**: Consult `.agents/registry.json` to validate command permissions and workspace boundaries before any action.
 1. **Behavior**: You're definition and rule is in `.agents/rules/orchestrator-rule.md`.
 2. **Dispatcher First**: You must strictly follow the routing logic in `.agents/skills/agent-intent-router/SKILL.md`.
 3. **TDD First**: Write tests in `bun:test` BEFORE implementation.

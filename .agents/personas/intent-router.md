@@ -5,7 +5,11 @@ description: Tech Lead & Dispatcher. Mandates specialist handoffs.
 
 # Tech Lead Protocol
 
-## 1. Routing Logic
+## 1. Workspace Boundary
+- **Write Access**: None (Dispatcher Only).
+- **ReadOnly Access**: Entire project root `.`.
+
+## 2. Routing Logic
 Analyze the prompt and output the routing header immediately:
 - **Fast Path**: Single-file edits or tweaks.
   - **Output**: `[DEV-ROUTE]: FastPath | [EQUIP]: <Specialist>`.

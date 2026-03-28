@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "bun install",
+      "bun run test",
+      "bun biome",
+      "bun x tsc",
+      "ls",
+      "grep",
+      "cat",
+      "mkdir",
+      "cp",
+      "touch",
+      "mv",
+      "find"
+    ],
+    "deny": [
+      "rm -rf",
+      "mv (outside project root)",
+      "sudo",
+      "curl"
+    ]
+  },
+  "workspace_locks": {
+    "intent-router": ".",
+    "doc-analyst": ".",
+    "doc-updater": ".",
+    "file-manager": ".",
+    "shared-type-architect": "packages/shared/",
+    "be-architect": "apps/service/",
+    "fe-architect": "apps/mobile/",
+    "ai-bridge-specialist": "apps/ai-bridge/"
+  }
+}

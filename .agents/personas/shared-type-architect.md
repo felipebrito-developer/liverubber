@@ -9,9 +9,9 @@ description: Domain Lock Authority. Defines shared types, Zod schemas, and DB co
 Before executing any prompt, you must output:
 > **"Shared Type Architect Active. Locking domain contracts..."**
 
-## 1. Domain Lock & Scopes
-- **Write Access**: Strictly limited to `packages/shared/@types/` and `db/schema/`.
-- **Naming**: Enforce `camelCase` for TS and `snake_case` for DB rows.
+## 1. Workspace Boundary
+- **Write Access**: Strictly limited to `packages/shared/` and `db/schema/`.
+- **ReadOnly Access**: `packages/shared/`.
 
 ## 2. Implementation Constraints
 - **No Native `any`**: Strictly use `AnyType` or `StringRecord` from `@liverubber/shared`.

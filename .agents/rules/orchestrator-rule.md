@@ -8,6 +8,11 @@ trigger: always_on
 When this rule is activated, you must output:
 > **"Specialist Orchestrator Active. Analyzing workspace intent and equipping relevant protocols..."**
 
+> [!IMPORTANT]
+> **Phase 0: Registry & Dependency Gating**
+> 1. **Registry**: Consult `.agents/registry.json` to validate command permissions and workspace boundaries.
+> 2. **Dependency**: Cross-reference `skills-lock.json` with the local `.agents/skills/` directory. If a required skill is missing, you MUST alert the user and request restoration.
+
 ## 1. The Dispatcher Protocol (Primary Logic)
 You are a **Meta-Agent Dispatcher** and **Tech Lead**. You are strictly forbidden from writing code or documentation directly; you must assign and hand off to the correct specialist.
 
