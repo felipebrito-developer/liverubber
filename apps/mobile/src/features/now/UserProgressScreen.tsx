@@ -1,22 +1,19 @@
 import { useAtomValue } from "jotai";
-import {
-	ScrollView,
-	StatusBar,
-	StyleSheet,
-	TouchableOpacity,
-	View,
-} from "react-native";
+import { useEffect } from "react";
+import { ScrollView, StatusBar, StyleSheet, View } from "react-native";
 import Animated, {
 	useAnimatedStyle,
+	useSharedValue,
 	withSpring,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
+import { ScreenHeader } from "@/components/molecules/ScreenHeader";
 import type { FocusTabScreenProps } from "@/navigation/types";
 import { goalsAtom } from "@/stores/goalsStore";
 import { tasksAtom } from "@/stores/tasksStore";
-import { colors, radius, spacing } from "@/theme";
+import { colors, spacing } from "@/theme";
 
 function ProgressPizza({
 	percentage,
@@ -27,11 +24,16 @@ function ProgressPizza({
 	label: string;
 	color?: string;
 }) {
-	const animatedStyle = useAnimatedStyle(() => {
-		return {
-			height: withSpring(`${percentage}%`),
-		};
-	});
+	// Animate from 0 → percentage on mount
+	const fillHeight = useSharedValue(0);
+
+	useEffect(() => {
+		fillHeight.value = withSpring(percentage, { damping: 14, stiffness: 120 });
+	}, [fillHeight, percentage]);
+
+	const animatedStyle = useAnimatedStyle(() => ({
+		height: `${fillHeight.value}%` as `${number}%`,
+	}));
 
 	return (
 		<View style={styles.pizzaContainer}>
@@ -94,22 +96,11 @@ export function UserProgressScreen({
 		<SafeAreaView style={styles.safe}>
 			<StatusBar barStyle="light-content" backgroundColor={colors.background} />
 			<ScrollView contentContainerStyle={styles.scroll}>
-				<View style={styles.header}>
-					<View style={styles.headerRow}>
-						<View style={{ flex: 1 }}>
-							<Typography variant="h2">Progress</Typography>
-							<Typography variant="bodySmall" color={colors.muted}>
-								Your neuro-journey at a glance.
-							</Typography>
-						</View>
-						<TouchableOpacity
-							onPress={() => navigation.openDrawer()}
-							style={styles.drawerBtn}
-						>
-							<Typography variant="h3">≡</Typography>
-						</TouchableOpacity>
-					</View>
-				</View>
+				<ScreenHeader
+					title="Progress"
+					subtitle="Your neuro-journey at a glance."
+					onDrawerOpen={() => navigation.openDrawer()}
+				/>
 
 				<View style={styles.pizzasRow}>
 					<ProgressPizza percentage={taskProgress} label="Task Completion" />
@@ -151,25 +142,6 @@ const styles = StyleSheet.create({
 	scroll: {
 		paddingBottom: spacing.xl,
 		gap: spacing.lg,
-	},
-	header: {
-		paddingHorizontal: spacing.xl,
-		paddingTop: spacing.xl,
-	},
-	headerRow: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-	},
-	drawerBtn: {
-		width: 44,
-		height: 44,
-		borderRadius: radius.sm,
-		backgroundColor: colors.surface,
-		borderWidth: 1,
-		borderColor: colors.border,
-		alignItems: "center",
-		justifyContent: "center",
 	},
 	pizzasRow: {
 		flexDirection: "row",

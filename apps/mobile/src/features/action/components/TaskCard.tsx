@@ -1,46 +1,71 @@
 import type { Task } from "@liverubber/shared";
-import { View } from "react-native";
+import { useSetAtom } from "jotai";
+import { Pressable, StyleSheet, View } from "react-native";
+import Animated, {
+	useAnimatedStyle,
+	useSharedValue,
+	withSpring,
+} from "react-native-reanimated";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
+import { selectedTaskIdAtom } from "@/stores/tasksStore";
 import { colors, radius, spacing } from "@/theme";
 
 interface TaskCardProps {
 	task: Task;
 }
 
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
 export function TaskCard({ task }: TaskCardProps) {
+	const setSelectedTask = useSetAtom(selectedTaskIdAtom);
+	const scale = useSharedValue(1);
+
+	const animatedStyle = useAnimatedStyle(() => ({
+		transform: [{ scale: scale.value }],
+	}));
+
 	return (
-		<Card elevated style={{ marginBottom: 4 }}>
-			<View
-				style={{
-					flexDirection: "row",
-					justifyContent: "space-between",
-					alignItems: "center",
-					gap: spacing.md,
-				}}
-			>
-				<View style={{ flex: 1, gap: 2 }}>
-					<Typography variant="label">{task.title}</Typography>
-				</View>
-				<View
-					style={{
-						borderWidth: 1,
-						paddingHorizontal: spacing.xs,
-						borderRadius: radius.sm,
-						minWidth: 60,
-						alignItems: "center",
-						borderColor: priorityColor(task.priority),
-					}}
-				>
+		<AnimatedPressable
+			style={[styles.pressable, animatedStyle]}
+			onPress={() => setSelectedTask(task.id)}
+			onPressIn={() => {
+				scale.value = withSpring(0.97, { damping: 15, stiffness: 400 });
+			}}
+			onPressOut={() => {
+				scale.value = withSpring(1, { damping: 15, stiffness: 400 });
+			}}
+			accessibilityRole="button"
+			accessibilityLabel={`Focus on ${task.title}`}
+		>
+			<Card elevated style={styles.card}>
+				<View style={styles.row}>
+					<View style={styles.textBlock}>
+						<Typography variant="label">{task.title}</Typography>
+					</View>
+					<View
+						style={[
+							styles.priorityBadge,
+							{ borderColor: priorityColor(task.priority) },
+						]}
+					>
+						<Typography
+							variant="caption"
+							style={{ color: priorityColor(task.priority) }}
+						>
+							{(task.priority ?? "medium").toUpperCase()}
+						</Typography>
+					</View>
 					<Typography
 						variant="caption"
-						style={{ color: priorityColor(task.priority) }}
+						color={colors.muted}
+						style={styles.hint}
 					>
-						{(task.priority ?? "medium").toUpperCase()}
+						→ focus
 					</Typography>
 				</View>
-			</View>
-		</Card>
+			</Card>
+		</AnimatedPressable>
 	);
 }
 
@@ -50,3 +75,33 @@ function priorityColor(p: string | null): string {
 	if (p === "medium") return colors.secondary;
 	return colors.muted;
 }
+
+const styles = StyleSheet.create({
+	pressable: {
+		marginBottom: 4,
+	},
+	card: {
+		// no extra margin — handled by pressable wrapper
+	},
+	row: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+		gap: spacing.md,
+	},
+	textBlock: {
+		flex: 1,
+		gap: 2,
+	},
+	priorityBadge: {
+		borderWidth: 1,
+		paddingHorizontal: spacing.xs,
+		borderRadius: radius.sm,
+		minWidth: 60,
+		alignItems: "center",
+	},
+	hint: {
+		opacity: 0.5,
+		fontSize: 11,
+	},
+});

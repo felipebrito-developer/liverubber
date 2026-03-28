@@ -4,6 +4,11 @@ import {
 	TouchableOpacity,
 	type ViewStyle,
 } from "react-native";
+import Animated, {
+	useAnimatedStyle,
+	useSharedValue,
+	withSpring,
+} from "react-native-reanimated";
 import { colors, shadow, spacing } from "../../theme";
 import { Typography } from "./Typography";
 
@@ -15,6 +20,8 @@ interface FABProps {
 	variant?: "primary" | "secondary" | "surface";
 }
 
+const AnimatedTouchable = Animated.createAnimatedComponent(TouchableOpacity);
+
 export function FAB({
 	onPress,
 	icon = "+",
@@ -22,6 +29,12 @@ export function FAB({
 	style,
 	variant = "primary",
 }: FABProps) {
+	const scale = useSharedValue(1);
+
+	const animatedStyle = useAnimatedStyle(() => ({
+		transform: [{ scale: scale.value }],
+	}));
+
 	const backgroundColor =
 		variant === "primary"
 			? colors.primary
@@ -35,10 +48,16 @@ export function FAB({
 			: colors.primary;
 
 	return (
-		<TouchableOpacity
-			style={[styles.fab, { backgroundColor }, style]}
+		<AnimatedTouchable
+			style={[styles.fab, { backgroundColor }, animatedStyle, style]}
 			onPress={onPress}
-			activeOpacity={0.8}
+			activeOpacity={1}
+			onPressIn={() => {
+				scale.value = withSpring(0.92, { damping: 12, stiffness: 350 });
+			}}
+			onPressOut={() => {
+				scale.value = withSpring(1, { damping: 12, stiffness: 350 });
+			}}
 		>
 			<Typography variant="h3" style={{ color: textColor }}>
 				{icon}
@@ -48,15 +67,12 @@ export function FAB({
 					{label}
 				</Typography>
 			)}
-		</TouchableOpacity>
+		</AnimatedTouchable>
 	);
 }
 
 const styles = StyleSheet.create({
 	fab: {
-		position: "absolute",
-		bottom: spacing.xl,
-		right: spacing.xl,
 		minWidth: 56,
 		minHeight: 56,
 		borderRadius: 28,

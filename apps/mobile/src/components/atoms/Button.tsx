@@ -1,21 +1,30 @@
 import {
 	ActivityIndicator,
+	Pressable,
 	StyleSheet,
-	TouchableOpacity,
-	type TouchableOpacityProps,
 	type ViewStyle,
 } from "react-native";
+import Animated, {
+	useAnimatedStyle,
+	useSharedValue,
+	withSpring,
+} from "react-native-reanimated";
 import { colors, radius, spacing } from "@/theme";
 import { Typography } from "./Typography";
 
 export type ButtonVariant = "primary" | "secondary" | "outline" | "ghost";
 
-interface ButtonProps extends TouchableOpacityProps {
+interface ButtonProps {
 	label: string;
 	variant?: ButtonVariant;
 	loading?: boolean;
 	fullWidth?: boolean;
+	disabled?: boolean;
+	style?: ViewStyle;
+	onPress?: () => void;
 }
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export function Button({
 	label,
@@ -24,22 +33,33 @@ export function Button({
 	fullWidth = false,
 	disabled,
 	style,
-	...rest
+	onPress,
 }: ButtonProps) {
 	const isDisabled = disabled || loading;
+	const scale = useSharedValue(1);
+
+	const animatedStyle = useAnimatedStyle(() => ({
+		transform: [{ scale: scale.value }],
+	}));
 
 	return (
-		<TouchableOpacity
-			activeOpacity={0.75}
+		<AnimatedPressable
+			onPress={onPress}
 			disabled={isDisabled}
+			onPressIn={() => {
+				scale.value = withSpring(0.96, { damping: 15, stiffness: 400 });
+			}}
+			onPressOut={() => {
+				scale.value = withSpring(1, { damping: 15, stiffness: 400 });
+			}}
 			style={[
 				styles.base,
 				styles[variant],
 				fullWidth && styles.fullWidth,
 				isDisabled && styles.disabled,
-				style as ViewStyle,
+				style,
+				animatedStyle,
 			]}
-			{...rest}
 		>
 			{loading ? (
 				<ActivityIndicator
@@ -59,7 +79,7 @@ export function Button({
 					{label}
 				</Typography>
 			)}
-		</TouchableOpacity>
+		</AnimatedPressable>
 	);
 }
 

@@ -9,6 +9,12 @@ interface RewardCardProps {
 	onLongPress: (reward: Reward) => void;
 }
 
+function rewardEmoji(type?: string | null): string {
+	if (type === "break") return "☕";
+	if (type === "item") return "🎁";
+	return "🎉"; // celebration (default)
+}
+
 export function RewardCard({ reward, onLongPress }: RewardCardProps) {
 	return (
 		<TouchableOpacity
@@ -16,8 +22,13 @@ export function RewardCard({ reward, onLongPress }: RewardCardProps) {
 			onLongPress={() => onLongPress(reward)}
 		>
 			<Card style={styles.rewardCard}>
-				<Typography variant="label">{reward.name}</Typography>
-				<Typography variant="caption" color={colors.muted}>
+				<Typography variant="h3" align="center">
+					{rewardEmoji(reward.type)}
+				</Typography>
+				<Typography variant="label" align="center" numberOfLines={1}>
+					{reward.name}
+				</Typography>
+				<Typography variant="caption" color={colors.muted} align="center">
 					{reward.type?.toUpperCase() || "REWARD"}
 				</Typography>
 			</Card>
@@ -31,5 +42,6 @@ const styles = StyleSheet.create({
 		paddingVertical: spacing.sm,
 		minWidth: 120,
 		gap: 2,
+		alignItems: "center",
 	},
 });

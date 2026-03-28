@@ -7,10 +7,18 @@ import {
 	TouchableOpacity,
 	View,
 } from "react-native";
+import Animated, {
+	useAnimatedStyle,
+	useSharedValue,
+	withSequence,
+	withSpring,
+	withTiming,
+} from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/atoms/Button";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
+import { ScreenHeader } from "@/components/molecules/ScreenHeader";
 import type { FocusTabScreenProps } from "@/navigation/types";
 import { logActivityAction } from "@/stores/logsStore";
 import {
@@ -25,7 +33,6 @@ import { useCountdown } from "./hooks/useCountdown";
 
 export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 	const selectedTaskId = useAtomValue(selectedTaskIdAtom);
-
 	const tasks = useAtomValue(tasksAtom);
 	const isTasksLoaded = useAtomValue(isTasksLoadedAtom);
 	const loadTasks = useSetAtom(loadTasksAction);
@@ -34,6 +41,12 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 	const [preflightDone, setPreflightDone] = useState(false);
 	const [moodRating, setMoodRating] = useState<number | null>(null);
 	const [completed, setCompleted] = useState(false);
+
+	// Win celebration animation
+	const celebrateScale = useSharedValue(1);
+	const celebrateStyle = useAnimatedStyle(() => ({
+		transform: [{ scale: celebrateScale.value }],
+	}));
 
 	useEffect(() => {
 		if (!isTasksLoaded) loadTasks();
@@ -46,6 +59,10 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 	function handleComplete() {
 		timer.reset();
 		setCompleted(true);
+		celebrateScale.value = withSequence(
+			withSpring(1.08, { damping: 8, stiffness: 300 }),
+			withSpring(1, { damping: 12, stiffness: 200 }),
+		);
 	}
 
 	function handleRecalibrate() {
@@ -61,21 +78,36 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 		);
 	}
 
+	// ── Empty state ───────────────────────────────────────────────────────────
 	if (!task) {
 		return (
 			<SafeAreaView style={styles.safe}>
-				<View style={styles.nowContainer}>
-					<Typography variant="h2" align="center">
-						No active task
+				<ScreenHeader
+					title="Now"
+					subtitle="Focus on the present moment."
+					onDrawerOpen={() => navigation.openDrawer()}
+				/>
+				<View style={styles.centeredContainer}>
+					<Typography variant="h1" align="center" style={{ fontSize: 48 }}>
+						🎯
+					</Typography>
+					<Typography variant="h3" align="center">
+						No task selected yet
 					</Typography>
 					<Typography align="center" color={colors.muted}>
-						Start by selecting or creating a task in the hub.
+						Pick a task from the Action Hub to start your focus session.
 					</Typography>
+					<Button
+						label="Go to Action Hub →"
+						onPress={() => navigation.navigate("ActionHub" as never)}
+						style={styles.emptyStateCta}
+					/>
 				</View>
 			</SafeAreaView>
 		);
 	}
 
+	// ── Completion / win screen ───────────────────────────────────────────────
 	if (completed) {
 		return (
 			<SafeAreaView style={styles.safe}>
@@ -83,7 +115,7 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 					barStyle="light-content"
 					backgroundColor={colors.background}
 				/>
-				<View style={styles.completedContainer}>
+				<Animated.View style={[styles.completedContainer, celebrateStyle]}>
 					<Typography variant="h2" align="center" style={styles.winText}>
 						Your future self is proud. 🌿
 					</Typography>
@@ -139,7 +171,7 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 							fullWidth
 							onPress={() => {
 								logActivity({
-									activityId: "manual_focus", // Placeholder
+									activityId: "manual_focus",
 									taskId: task.id,
 									moodRating: moodRating || 3,
 									amountAchieved: 1.0,
@@ -151,11 +183,12 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 							}}
 						/>
 					)}
-				</View>
+				</Animated.View>
 			</SafeAreaView>
 		);
 	}
 
+	// ── Main focus screen ─────────────────────────────────────────────────────
 	return (
 		<SafeAreaView style={styles.safe}>
 			<StatusBar barStyle="light-content" backgroundColor={colors.background} />
@@ -166,23 +199,11 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 			/>
 
 			<View style={styles.nowContainer}>
-				{/* Header */}
-				<View style={styles.header}>
-					<View style={styles.headerRow}>
-						<View style={{ flex: 1 }}>
-							<Typography variant="h2">Now</Typography>
-							<Typography variant="bodySmall" color={colors.muted}>
-								Focus on the present moment.
-							</Typography>
-						</View>
-						<TouchableOpacity
-							onPress={() => navigation.openDrawer()}
-							style={styles.drawerBtn}
-						>
-							<Typography variant="h3">≡</Typography>
-						</TouchableOpacity>
-					</View>
-				</View>
+				<ScreenHeader
+					title="Now"
+					subtitle="Focus on the present moment."
+					onDrawerOpen={() => navigation.openDrawer()}
+				/>
 
 				{/* Task info */}
 				<View style={styles.taskInfo}>
@@ -200,10 +221,18 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 						{timer.display}
 					</Typography>
 
-					{/* Visual progress bar — combats Time Blindness */}
+					{/* Animated progress track — fights time blindness */}
 					<View style={styles.timerTrack}>
-						<View
-							style={[styles.timerFill, { width: `${timer.progress * 100}%` }]}
+						<Animated.View
+							style={[
+								styles.timerFill,
+								{
+									width: withTiming(
+										`${timer.progress * 100}%` as `${number}%`,
+										{ duration: 500 },
+									),
+								},
+							]}
 						/>
 					</View>
 				</View>
@@ -241,27 +270,17 @@ const styles = StyleSheet.create({
 	},
 	nowContainer: {
 		flex: 1,
-		paddingVertical: spacing.xl,
 		gap: spacing.xl,
 	},
-	header: {
+	centeredContainer: {
+		flex: 1,
 		paddingHorizontal: spacing.xl,
-		paddingTop: spacing.xs,
-	},
-	headerRow: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-	},
-	drawerBtn: {
-		width: 44,
-		height: 44,
-		borderRadius: radius.sm,
-		backgroundColor: colors.surface,
-		borderWidth: 1,
-		borderColor: colors.border,
-		alignItems: "center",
 		justifyContent: "center",
+		alignItems: "center",
+		gap: spacing.md,
+	},
+	emptyStateCta: {
+		marginTop: spacing.sm,
 	},
 	taskInfo: {
 		gap: spacing.xs,
@@ -281,8 +300,8 @@ const styles = StyleSheet.create({
 		color: colors.primary,
 	},
 	timerTrack: {
-		width: "100%",
-		height: 6,
+		width: "85%",
+		height: 12,
 		backgroundColor: colors.border,
 		borderRadius: radius.full,
 		overflow: "hidden",
@@ -294,6 +313,7 @@ const styles = StyleSheet.create({
 	},
 	actions: {
 		gap: spacing.sm,
+		paddingHorizontal: spacing.xl,
 	},
 	recalibrateBtn: {
 		borderColor: colors.muted,

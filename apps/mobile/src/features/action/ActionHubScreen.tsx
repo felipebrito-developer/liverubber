@@ -16,6 +16,8 @@ import { Button } from "@/components/atoms/Button";
 import { FAB } from "@/components/atoms/FAB";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
+import { EmptyState } from "@/components/molecules/EmptyState";
+import { ScreenHeader } from "@/components/molecules/ScreenHeader";
 import { TaskCreationModal } from "@/components/organisms/TaskCreationModal";
 import type { FocusTabScreenProps } from "@/navigation/types";
 import {
@@ -194,22 +196,11 @@ export function ActionHubScreen({
 		<SafeAreaView style={styles.safe}>
 			<StatusBar barStyle="light-content" backgroundColor={colors.background} />
 			<ScrollView contentContainerStyle={styles.scroll}>
-				<View style={styles.header}>
-					<View style={styles.headerRow}>
-						<View style={{ flex: 1 }}>
-							<Typography variant="h2">Action Hub</Typography>
-							<Typography variant="bodySmall" color={colors.muted}>
-								How is your energy right now?
-							</Typography>
-						</View>
-						<TouchableOpacity
-							onPress={() => navigation.openDrawer()}
-							style={styles.drawerBtn}
-						>
-							<Typography variant="h3">≡</Typography>
-						</TouchableOpacity>
-					</View>
-				</View>
+				<ScreenHeader
+					title="Action Hub"
+					subtitle="How is your energy right now?"
+					onDrawerOpen={() => navigation.openDrawer()}
+				/>
 
 				<EnergyToggle value={energy} onChange={setEnergy} tags={tags} />
 
@@ -218,9 +209,15 @@ export function ActionHubScreen({
 						<Typography variant="h3">Habits for Today</Typography>
 					</View>
 					{visibleHabits.length === 0 ? (
-						<Typography color={colors.muted} align="center">
-							No habits match your energy or none created yet.
-						</Typography>
+						<EmptyState
+							emoji="⚡"
+							title="No habits yet"
+							subtitle="Small daily actions compound into big changes."
+							ctaLabel="Add a Habit"
+							onCta={() => {
+								setIsActionMenuVisible(true);
+							}}
+						/>
 					) : (
 						visibleHabits.map((h) => (
 							<HabitCard
@@ -237,9 +234,15 @@ export function ActionHubScreen({
 						Next Tasks
 					</Typography>
 					{visibleTasks.length === 0 ? (
-						<Typography color={colors.muted} align="center">
-							No tasks match your current energy or none created yet.
-						</Typography>
+						<EmptyState
+							emoji="✅"
+							title="No tasks lined up"
+							subtitle="Capture what needs doing — start small."
+							ctaLabel="Add a Task"
+							onCta={() => {
+								setIsActionMenuVisible(true);
+							}}
+						/>
 					) : (
 						visibleTasks.map((t) => <TaskCard key={t.id} task={t} />)
 					)}
@@ -400,27 +403,10 @@ const styles = StyleSheet.create({
 	scroll: {
 		paddingBottom: spacing.xl,
 	},
-	header: {
-		paddingHorizontal: spacing.xl,
-		paddingTop: spacing.xl,
-		paddingBottom: spacing.md,
-		gap: spacing.xs,
-	},
-	headerRow: {
-		flexDirection: "row",
-		alignItems: "flex-start",
-		justifyContent: "space-between",
-	},
-	drawerBtn: {
-		padding: spacing.xs,
-		borderRadius: radius.sm,
-		backgroundColor: colors.surface,
-		borderWidth: 1,
-		borderColor: colors.border,
-		width: 44,
-		height: 44,
-		alignItems: "center",
-		justifyContent: "center",
+	fab: {
+		position: "absolute",
+		bottom: spacing.xl,
+		right: spacing.xl,
 	},
 	section: {
 		paddingHorizontal: spacing.xl,
@@ -434,11 +420,6 @@ const styles = StyleSheet.create({
 	},
 	sectionTitle: {
 		marginBottom: spacing.xs,
-	},
-	fab: {
-		position: "absolute",
-		bottom: spacing.xl,
-		right: spacing.xl,
 	},
 	// Menu styles
 	menuOverlay: {

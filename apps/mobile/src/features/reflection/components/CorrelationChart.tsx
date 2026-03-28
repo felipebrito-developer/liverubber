@@ -1,4 +1,3 @@
-import type { AnyType } from "@liverubber/shared";
 import { StyleSheet, View } from "react-native";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
@@ -11,47 +10,9 @@ interface LogEntry {
 	activities: string[];
 }
 
-const LOG_DATA: LogEntry[] = [
-	{
-		date: "2026-03-05",
-		tasksCompleted: 3,
-		moodScore: 4,
-		activities: ["Morning stretch", "Deep work session"],
-	},
-	{
-		date: "2026-03-04",
-		tasksCompleted: 1,
-		moodScore: 2,
-		activities: ["Gratitude journal"],
-	},
-	{
-		date: "2026-03-03",
-		tasksCompleted: 5,
-		moodScore: 5,
-		activities: ["Cold shower", "Morning stretch", "Deep read"],
-	},
-	{
-		date: "2026-03-02",
-		tasksCompleted: 2,
-		moodScore: 3,
-		activities: ["Morning stretch"],
-	},
-	{
-		date: "2026-03-01",
-		tasksCompleted: 4,
-		moodScore: 4,
-		activities: ["Morning stretch", "30-min deep read"],
-	},
-	{ date: "2026-02-28", tasksCompleted: 0, moodScore: 1, activities: [] },
-	{
-		date: "2026-02-27",
-		tasksCompleted: 3,
-		moodScore: 4,
-		activities: ["Morning stretch", "Gratitude journal"],
-	},
-];
-
-const MAX_TASKS = Math.max(...LOG_DATA.map((d) => d.tasksCompleted), 1);
+interface CorrelationChartProps {
+	data: LogEntry[];
+}
 
 function moodColor(score: number): string {
 	if (score >= 4) return colors.success;
@@ -60,7 +21,9 @@ function moodColor(score: number): string {
 	return colors.overdueColor;
 }
 
-export function CorrelationChart() {
+export function CorrelationChart({ data }: CorrelationChartProps) {
+	const maxTasks = Math.max(...data.map((d) => d.tasksCompleted), 1);
+
 	return (
 		<Card style={styles.chartCard}>
 			<Typography variant="h3">Tasks ↔ Mood Correlation</Typography>
@@ -69,11 +32,12 @@ export function CorrelationChart() {
 				color={colors.muted}
 				style={styles.chartSub}
 			>
-				Each column = one day. Green bar = tasks done, dot = mood.
+				Each column = one day. Bar = tasks done, dot = mood.
 			</Typography>
 
 			<View style={styles.chart}>
-				{LOG_DATA.slice()
+				{data
+					.slice()
 					.reverse()
 					.map((entry) => (
 						<View key={entry.date} style={styles.chartColumn}>
@@ -89,7 +53,7 @@ export function CorrelationChart() {
 										styles.barFill,
 										{
 											height:
-												`${(entry.tasksCompleted / MAX_TASKS) * 100}%` as AnyType,
+												`${(entry.tasksCompleted / maxTasks) * 100}%` as `${number}%`,
 										},
 									]}
 								/>

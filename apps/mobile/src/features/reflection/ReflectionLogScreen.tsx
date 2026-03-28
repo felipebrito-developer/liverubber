@@ -16,6 +16,7 @@ import { Button } from "@/components/atoms/Button";
 import { FAB } from "@/components/atoms/FAB";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
+import { ScreenHeader } from "@/components/molecules/ScreenHeader";
 import {
 	createRewardAction,
 	deleteRewardAction,
@@ -78,6 +79,7 @@ const LOG_DATA: LogEntry[] = [
 ];
 
 export function ReflectionLogScreen(props: AnyType) {
+	const navigation = (props as AnyType).navigation;
 	const [expandedId, setExpandedId] = useState<string | null>(null);
 
 	const rewards = useAtomValue(rewardsAtom);
@@ -172,24 +174,13 @@ export function ReflectionLogScreen(props: AnyType) {
 				contentContainerStyle={styles.scroll}
 				showsVerticalScrollIndicator={false}
 			>
-				<View style={styles.header}>
-					<View style={styles.headerRow}>
-						<View style={{ flex: 1 }}>
-							<Typography variant="h2">Reflection Log</Typography>
-							<Typography variant="bodySmall" color={colors.muted}>
-								Action leads to better mood. This is the proof.
-							</Typography>
-						</View>
-						<TouchableOpacity
-							onPress={() => (props as AnyType).navigation.openDrawer()}
-							style={styles.drawerBtn}
-						>
-							<Typography variant="h3">≡</Typography>
-						</TouchableOpacity>
-					</View>
-				</View>
+				<ScreenHeader
+					title="Reflection Log"
+					subtitle="Action leads to better mood. This is the proof."
+					onDrawerOpen={() => navigation.openDrawer()}
+				/>
 
-				<CorrelationChart />
+				<CorrelationChart data={LOG_DATA} />
 
 				<View style={styles.logSection}>
 					<View style={styles.sectionHeader}>
@@ -229,7 +220,11 @@ export function ReflectionLogScreen(props: AnyType) {
 				</View>
 			</ScrollView>
 
-			<FAB label="New Reward" onPress={() => setIsModalVisible(true)} />
+			<FAB
+				label="New Reward"
+				onPress={() => setIsModalVisible(true)}
+				style={styles.fab}
+			/>
 
 			<Modal visible={isModalVisible} animationType="slide" transparent>
 				<View style={styles.modalOverlay}>
@@ -300,25 +295,10 @@ const styles = StyleSheet.create({
 		paddingBottom: spacing.xl,
 		gap: spacing.lg,
 	},
-	header: {
-		paddingHorizontal: spacing.xl,
-		paddingTop: spacing.xl,
-		gap: spacing.xs,
-	},
-	headerRow: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-	},
-	drawerBtn: {
-		width: 44,
-		height: 44,
-		borderRadius: radius.sm,
-		backgroundColor: colors.surface,
-		borderWidth: 1,
-		borderColor: colors.border,
-		alignItems: "center",
-		justifyContent: "center",
+	fab: {
+		position: "absolute",
+		bottom: spacing.xl,
+		right: spacing.xl,
 	},
 	logSection: {
 		paddingHorizontal: spacing.xl,
