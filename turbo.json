@@ -32,6 +32,10 @@
 		"android:build": {
 			"cache": false,
 			"persistent": false
+		},
+		"web": {
+			"cache": false,
+			"persistent": true
 		}
 	}
 }

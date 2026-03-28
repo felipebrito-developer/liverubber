@@ -2,83 +2,73 @@
 
 ## 📱 Project Overview
 
-LiveRubber is a mobile application designed for ADHD or other neurodivergent people overall organization.
+LiveRubber is a local-first monorepo designed for ADHD and neurodivergent task management. It uses a **Hybrid AI Architecture** to reduce cognitive load while maintaining absolute data privacy.
 
-## 🏗️ Architecture
+## 🏛️ Architecture
 
 ### Monorepo Structure
 ```
 LiveRubber/
-├── app/service/           # Node.js backend service
-├── app/ai-bridge/         # MCP server for AI integration
-├── app/mobile/            # React Native application (android only for now)
-├── docs/                  # Documentation for AI agents
-├── env/                   # Environment variables
-├── packages/shared/       # Shared resources
-├── packages/security/     # Security related packages
-├── turbo.json             # Turborepo configuration
-├── .cursorrules           # Agent AI rules
-└── package.json           # Root package configuration
+├── apps/
+│   ├── mobile/           # React Native application (Jotai + SQLite)
+│   ├── service/          # Node.js backend + MCP Server (Drizzle + SQLite)
+│   └── ai-bridge/        # AI Orchestrator (Ollama / Gemini / Privacy Router)
+├── packages/
+│   ├── shared/           # Single Source of Truth for Types & Zod Schemas
+│   └── security/         # PII Scrubbing & Local Encryption
+├── docs/                 # Central Knowledge Base (See docs/index.md)
+├── .agents/              # Agentic Protocols & Personas
+└── skills-lock.json      # Modular Skill Manifest
 ```
 
-### Tech Stack
-- **Backend**: Node.js, SQLite database
-- **Frontend**: React Native 0.84.4, TypeScript, Jotai state management, TanStack Query for data fetching and caching, local SQLite database with WatermellonDB
-- **Build System**: Turborepo with Bun package manager
-- **Code Quality**: Biome for linting and formatting
+### 🧠 Agentic Architecture
 
-## 🎯 Core Features
+This repository uses a **Specialist Orchestrator Protocol** to manage complex development tasks:
 
-### Current Focus (MVP)
-- **Task Management**: Create, organize, and track tasks with priorities and due dates
-- **Local Database**: SQLite for fast, offline-first data persistence
-- **Type Safety**: End-to-end type sharing between frontend and backend
+1.  **Personas**: Specialist identities (Tech Lead, FE Architect, etc.) are versioned in `.agents/personas/`.
+2.  **Skills-as-Dependencies**: Technical capabilities are treated as unversioned dependencies via `skills-lock.json`.
+3.  **Master Index**: All documentation is indexed in **[docs/index.md](file:///home/felip/projects/LiveRubber/docs/index.md)**, allowing agents to route research without reading full files.
 
-### MVP Planned Features
-- Routine and habit tracking
-- Goal tracking with progress monitoring
-- Android platform support
+---
 
-### Future Features
-- Exercises and physical activities management
-- Financial transaction management
+## ⚡ AI Onboarding (Seeds)
+
+For new AI conversations, provide the following "Seeds" to establish immediate project context:
+
+1.  **[Project Structure Seed](file:///home/felip/projects/LiveRubber/docs/Dev-AI/project-structure-seed.md)**: High-level mission, folder mapping, and strategic goals.
+2.  **[AI Architecture Seed](file:///home/felip/projects/LiveRubber/docs/Dev-AI/ai-structure-seed.md)**: Details on the Specialist Orchestrator, Privacy Router, and MCP Tooling.
+
+---
 
 ## 🚀 Development
 
 ### Prerequisites
 - Bun 1.3+
 - Node.js 22+
-- React Native 0.84+
+- Ollama (for local inference features)
 
 ### Quick Start
 ```bash
-# Clone and setup
-git clone <repository>
-cd LiveRubber
+# Install dependencies across all workspaces
+bun install
 
-# Install dependencies and generate code
-bun run setup
-
-# Start development servers
+# Start development environment
 bun run dev
 ```
 
 ### Available Scripts
 ```bash
-bun run dev              # Start all services
-bun run dev:server       # Start Go backend only
-bun run dev:mobile       # Start React Native development server
-bun run proto:generate   # Regenerate protobuf types
-bun run typecheck        # Run TypeScript type checking
-bun run lint             # Run Biome linting
+bun run dev              # Start all services (Mobile + Service + Bridge)
+bun run typecheck        # Run TypeScript checking across monorepo
+bun run lint             # Run Biome linting and formatting
 ```
+
 ## 🔧 Development Philosophy
 
-- **Type Safety First**: gRPC and Protocol Buffers ensure consistent types across stack
-- **Local-First**: Local SQLite database with WatermellonDB for offline capability and fast performance
-- **Monorepo Efficiency**: Shared tooling and dependencies managed by Turborepo
-- **DRY**: Don't repeat yourself, utilities and shared code in packages/
-- **KISS**: Keep it simple, stupid, keep the code simple and easy to understand
+- **Privacy-First AI**: Sensitive data stays local (Ollama); generic reasoning uses Cloud (Gemini) via a Privacy Router.
+- **Local-First Data**: Mobile and Service both use SQLite as the primary source of truth.
+- **Type Safety**: End-to-end Zod schemas and TypeScript interfaces defined in `packages/shared/`.
+- **Neuro-UI**: Hardcoded design constraints (Deep Slate, Soft Gold) and the "Rule of One" to prevent cognitive overload.
 
 ## 🛠️ Built With
 - [React Native](https://reactnative.dev/) - Mobile framework
@@ -88,10 +78,6 @@ bun run lint             # Run Biome linting
 - [Jotai](https://jotai.org/) - State management
 - [TanStack Query](https://tanstack.com/query) - Data fetching & caching
 - [Biome](https://biomejs.dev/) - Code formatting & linting
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## 🤝 Contributing
 

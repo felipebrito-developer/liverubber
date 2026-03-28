@@ -47,8 +47,9 @@ yarn-debug.log*
 yarn-error.log*
 
 # AI
-.agent/logs/
-.agent/tmp/
+.agents/skills/
+.agents/logs/
+.agents/tmp/
 
 # SQLite databases (generated at runtime)
 *.db
@@ -60,5 +61,6 @@ apps/mobile/android/local.properties
 apps/mobile/android/app/debug.keystore
 .gitignore
 */*/dist/*
+apps/mobile/dist-web/
 
 

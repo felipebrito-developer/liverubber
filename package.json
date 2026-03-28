@@ -22,6 +22,7 @@
 		"mobile:android:clean": "cd apps/mobile/android && ./gradlew clean",
 		"mobile:android:clean-all": "rm -rf apps/mobile/android/build apps/mobile/android/app/build",
 		"mobile:start": "turbo run start --filter=mobile",
+		"mobile:web": "turbo run web --filter=mobile",
 		"mobile:dev": "concurrently --kill-others -n \"METRO,ANDROID\" -c \"cyan,green\" \"bun mobile:start\" \"bun mobile:android\""
 	},
 	"devDependencies": {
