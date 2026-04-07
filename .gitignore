@@ -48,6 +48,7 @@ yarn-error.log*
 
 # AI
 .agents/skills/
+.agents/bin/
 .agents/logs/
 .agents/memory/
 .agents/tmp/
@@ -63,4 +64,4 @@ apps/mobile/android/app/debug.keystore
 .gitignore
 */*/dist/*
 apps/mobile/dist-web/
-
+__tests__/

@@ -1,10 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "bun install",
-      "bun run test",
-      "bun biome",
-      "bun x tsc",
+      "./.agents/bin/bun install",
+      "./.agents/bin/bun run dev --host 0.0.0.0",
+      "./.agents/bin/bun run test",
+      "./.agents/bin/bun biome",
+      "./.agents/bin/bun x tsc",
       "ls",
       "grep",
       "cat",
@@ -12,7 +13,10 @@
       "cp",
       "touch",
       "mv",
-      "find"
+      "find",
+      "./.agents/bin/bun install",
+      "./.agents/bin/bun biome check --write",
+      "./.agents/bin/turbo run build"
     ],
     "deny": [
       "rm -rf",
@@ -29,6 +33,19 @@
     "shared-type-architect": "packages/shared/",
     "be-architect": "apps/service/",
     "fe-architect": "apps/mobile/",
-    "ai-bridge-specialist": "apps/ai-bridge/"
-  }
+    "ai-bridge-specialist": "apps/ai-bridge/",
+    "qa-specialist": "."
+  },
+  "env": {
+    "BUN_BINARY": "./.agents/bin/bun",
+    "BIOME_BINARY": "./.agents/bin/biome",
+    "TURBO_BINARY": "./.agents/bin/turbo",
+    "REMOTE_DEBUGGING_URL": "http://$WINDOWS_HOST:9222",
+    "USE_LOOPBACK": false
+  },
+  "trusted_commands": [
+    "./.agents/bin/bun install",
+    "./.agents/bin/biome check",
+    "./.agents/bin/turbo run dev"
+  ]
 }

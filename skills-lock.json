@@ -26,11 +26,6 @@
 			"sourceType": "github",
 			"computedHash": "9aea7469d696c9b5fa54a84b7a92ea692872fb624fb028f866ab0f3deac84867"
 		},
-		"frontend-patterns": {
-			"source": "affaan-m/everything-claude-code",
-			"sourceType": "github",
-			"computedHash": "48c9438b32e62679de45e510b34f3e81b1341d4ba9aeae97b92bbd7e3e01986a"
-		},
 		"jotai-expert": {
 			"source": "s-hiraoku/skills-factory",
 			"sourceType": "github",
