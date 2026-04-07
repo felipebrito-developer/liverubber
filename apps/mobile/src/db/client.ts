@@ -4,6 +4,7 @@ import {
 	INITIAL_GOALS,
 	INITIAL_HABITS,
 	INITIAL_MEANINGS,
+	INITIAL_RESOURCES,
 	INITIAL_TAGS,
 	INITIAL_TASKS,
 	schema,
@@ -470,6 +471,36 @@ async function seedDatabase() {
 				})),
 			)
 			.onConflictDoNothing();
+
+		// 8. Resource Types & Store
+		for (const r of INITIAL_RESOURCES) {
+			const resTypeId = r.id;
+			const resStoreId = `res-store-${r.id.split("-").pop()}`;
+
+			await db
+				.insert(schema.resourceType)
+				.values({
+					id: resTypeId,
+					name: r.name,
+					amountType: r.amountType,
+					categoryId: r.categoryId,
+					description: r.description,
+					createdAt: now,
+					updatedAt: now,
+				})
+				.onConflictDoNothing();
+
+			await db
+				.insert(schema.resourceStore)
+				.values({
+					id: resStoreId,
+					resourceTypeId: resTypeId,
+					amount: r.amount,
+					createdAt: now,
+					updatedAt: now,
+				})
+				.onConflictDoNothing();
+		}
 
 		console.log("Seed data injected successfully");
 	} catch (err) {
