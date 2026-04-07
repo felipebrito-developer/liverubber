@@ -20,14 +20,14 @@ priority: 1
 ## 📊 Overall MVP Progress
 
 ```
-Overall  [█████████████░░░░░░░] 65%
+Overall  [██████████████░░░░░] 70%
 ```
 
 | Layer        | Area                  | Progress              | Status      |
 | ------------ | --------------------- | --------------------- | ----------- |
 | 🏗 Infra     | Monorepo / Tooling    | ██████████ 100%       | ✅ Done      |
 | 🤖 AI        | AI Bridge             | ███████░░░ 70%        | 🔄 In Progress |
-| 🗄 Backend   | Service / MCP / DB    | ██████░░░░ 60%        | 🔄 In Progress |
+| 🗄 Backend   | Service / MCP / DB    | ███████░░░ 70%        | 🔄 In Progress |
 | 📱 Frontend  | Mobile App            | ██████████ 100%       | ✅ Done      |
 | 🔒 Security  | Anonymization / Crypto| ████░░░░░░ 40%        | 🔄 In Progress |
 
@@ -146,6 +146,7 @@ Overall  [█████████████░░░░░░░] 65%
 | 2026-03-21 | Mobile Architecture | - **[Navigator]** Refactored global navigation into **Modular Tab Navigators** (Focus, Strategic, Logistics, Fitness) as per `ui-modules-description.md`. - **[UI/UX]** Enhanced **Pizza Graph** in `UserProgressScreen` with Reanimated spring transitions and "toppings" visual flair. - **[Audit]** Cleaned up `MainTabNavigator` and orphaned `HomeScreen` assets. |
 | 2026-03-21 | Critical Fixes | - **[Navigator]** Resolved **undefined AppNavigator** crash by fixing a self-referencing export in `TaskCreationModal` and switching to default exports. - **[Worklets]** Fixed **Reanimated 4.x "Failed to create worklet"** and **"Duplicate plugin"** errors by correctly replacing `react-native-reanimated/plugin` with `react-native-worklets/plugin` as the final plugin. |
 | 2026-03-31 | Module Activation | - **[Mobile]** Activated **Logistical (Store)** and **Proprioception (Fitness)** modules. - **[Resource]** Implemented **Audit Trail** and quick +/- reserve adjustments. - **[Fitness]** Deployed **Rhythmic Pacer** for physical grounding and **Body Strategy** planning view. - **[Focus]** Refined `NowScreen` with **Task Picker** and high-contrast timer. - **[Docs]** Created **ASCII Wireframes** and updated DB schema documentation. |
+| 2026-04-06 | Action Hub Overhaul | - **[Mobile]** Implemented **ADHD-optimized Action Hub**: Left-aligned header, sticky energy filtering (Small Wins/Regular Work/Deep Work) and frequency accordions. - **[Components]** Unified `ActivityCard` with meaning/goal tags and pre-flight checklist triggers. - **[Logistics]** Implemented **PreflightModal** for session readiness checks. - **[Schema]** Added `estimatedTime` to tasks/habits and joined resource assignments for checklists. |
 
 ---
 

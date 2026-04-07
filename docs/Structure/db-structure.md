@@ -38,9 +38,10 @@ This document provides a high-density reference for the database schema used in 
 ### ✅ 3. Execution & Progress
 | Table    | Description                                      | Key Columns                                       | Relationships                                       |
 | :------- | :----------------------------------------------- | :------------------------------------------------ | :-------------------------------------------------- |
-| `task`   | Individual units of work.                        | `id`, `goalId`, `is_for_today`, `title`, `status` | Optionally nested (subtasks) or linked to **goal**. |
-| `habit`  | Recurring actions for behavioral conditioning.   | `id`, `name`, `meaningId`, `streakCount`          | Linked to **meaning** for purpose alignment.        |
+| `task`   | Individual units of work.                        | `id`, `goalId`, `is_for_today`, `estimatedTime`, `title`, `status` | Optionally nested (subtasks) or linked to **goal**. |
+| `habit`  | Recurring actions for behavioral conditioning.   | `id`, `name`, `meaningId`, `estimatedTime`, `streakCount`          | Linked to **meaning** for purpose alignment.        |
 | `reward` | Dopamine-driven incentives for completing tasks. | `id`, `name`, `type`, `description`               | System-wide engagement layer.                       |
+| `resources_assignments` | Pre-flight requirement mapping. | `id`, `resourceId`, `entityRelatedId`, `amount` | Maps requirements to tasks/habits for checklists. |
 
 ### 💎 4. Resource Logistics
 | Table            | Description                                   | Key Columns                                | Relationships                          |

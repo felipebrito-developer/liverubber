@@ -12,6 +12,7 @@ interface TaskRow {
 	due_date: string | null;
 	priority: string | null;
 	is_for_today: number | null;
+	estimated_time: number | null;
 	created_at: string | null;
 	updated_at: string | null;
 	is_synced: number | null;
@@ -28,6 +29,7 @@ const mapTask = (row: TaskRow): TaskDefinition => ({
 	dueDate: row.due_date,
 	priority: row.priority as TaskDefinition["priority"],
 	isForToday: row.is_for_today === 1,
+	estimatedTime: row.estimated_time,
 	createdAt: row.created_at,
 	updatedAt: row.updated_at,
 	isSynced: row.is_synced === 1,
@@ -43,6 +45,7 @@ export interface TaskInsert {
 	due_date?: string | null;
 	priority?: string | null;
 	is_for_today?: boolean;
+	estimated_time?: number | null;
 }
 
 export interface TaskUpdate {
@@ -54,6 +57,7 @@ export interface TaskUpdate {
 	due_date?: string | null;
 	priority?: string | null;
 	is_for_today?: boolean;
+	estimated_time?: number | null;
 }
 
 export const TaskRepository = {
@@ -74,8 +78,8 @@ export const TaskRepository = {
 	createTask(data: TaskInsert): TaskDefinition {
 		const db = getDB();
 		const stmt = db.query(`
-			INSERT INTO task (id, goal_id, parent_task_id, title, description, status, due_date, priority, is_for_today, created_at, updated_at, is_synced)
-			VALUES ($id, $goal_id, $parent_task_id, $title, $description, $status, $due_date, $priority, $is_for_today, $now, $now, 1)
+			INSERT INTO task (id, goal_id, parent_task_id, title, description, status, due_date, priority, is_for_today, estimated_time, created_at, updated_at, is_synced)
+			VALUES ($id, $goal_id, $parent_task_id, $title, $description, $status, $due_date, $priority, $is_for_today, $estimated_time, $now, $now, 1)
 			RETURNING *
 		`);
 		const now = new Date().toISOString();
@@ -89,6 +93,7 @@ export const TaskRepository = {
 			$due_date: data.due_date ?? null,
 			$priority: data.priority ?? null,
 			$is_for_today: data.is_for_today ? 1 : 0,
+			$estimated_time: data.estimated_time ?? null,
 			$now: now,
 		}) as TaskRow;
 		return mapTask(row);
@@ -112,6 +117,7 @@ export const TaskRepository = {
 				due_date = $due_date,
 				priority = $priority,
 				is_for_today = $is_for_today,
+				estimated_time = $estimated_time,
 				updated_at = $updated_at
 			WHERE id = $id
 			RETURNING *
@@ -132,8 +138,14 @@ export const TaskRepository = {
 			$priority: data.priority !== undefined ? data.priority : current.priority,
 			$is_for_today:
 				data.is_for_today !== undefined
-					? (data.is_for_today ? 1 : 0)
+					? data.is_for_today
+						? 1
+						: 0
 					: current.is_for_today,
+			$estimated_time:
+				data.estimated_time !== undefined
+					? data.estimated_time
+					: current.estimated_time,
 			$updated_at: new Date().toISOString(),
 		};
 

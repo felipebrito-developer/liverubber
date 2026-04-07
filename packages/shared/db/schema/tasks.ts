@@ -19,6 +19,7 @@ export const task = sqliteTable("task", {
 	dueDate: text("due_date"),
 	priority: text("priority"),
 	isForToday: integer("is_for_today", { mode: "boolean" }).default(false),
+	estimatedTime: integer("estimated_time"),
 	createdAt: text("created_at"),
 	updatedAt: text("updated_at"),
 	isSynced: integer("is_synced", { mode: "boolean" }).default(false),

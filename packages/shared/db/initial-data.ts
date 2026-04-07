@@ -219,6 +219,8 @@ export const INITIAL_HABITS = [
 			"Consistent cardiovascular activity for mental and physical health.",
 		categoryId: "cat-fitness",
 		frequencyId: "freq-daily",
+		streakCount: 0,
+		estimatedTime: 60,
 		isSynced: true,
 	},
 	{
@@ -236,6 +238,8 @@ export const INITIAL_HABITS = [
 		description: "Cultivating focus and existential presence.",
 		categoryId: "cat-philosophy",
 		frequencyId: "freq-daily",
+		streakCount: 12,
+		estimatedTime: 15,
 		isSynced: true,
 	},
 	{

@@ -13,6 +13,7 @@ export const habit = sqliteTable("habit", {
 	startDate: text("start_date"),
 	lastUpdate: text("last_update"),
 	streakCount: integer("streak_count").notNull(),
+	estimatedTime: integer("estimated_time"),
 	createdAt: text("created_at"),
 	updatedAt: text("updated_at"),
 	isSynced: integer("is_synced", { mode: "boolean" }).default(false),
