@@ -1,6 +1,5 @@
 import type { Task } from "@liverubber/shared";
-import { useSetAtom } from "jotai";
-import { Pressable, StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, TouchableOpacity, View } from "react-native";
 import Animated, {
 	useAnimatedStyle,
 	useSharedValue,
@@ -8,17 +7,14 @@ import Animated, {
 } from "react-native-reanimated";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
-import { selectedTaskIdAtom } from "@/stores/tasksStore";
 import { colors, radius, spacing } from "@/theme";
-
-interface TaskCardProps {
-	task: Task;
-}
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-export function TaskCard({ task }: TaskCardProps) {
-	const setSelectedTask = useSetAtom(selectedTaskIdAtom);
+export function TaskCard({
+	task,
+	onFocus,
+}: { task: Task; onFocus: (id: string) => void }) {
 	const scale = useSharedValue(1);
 
 	const animatedStyle = useAnimatedStyle(() => ({
@@ -28,41 +24,51 @@ export function TaskCard({ task }: TaskCardProps) {
 	return (
 		<AnimatedPressable
 			style={[styles.pressable, animatedStyle]}
-			onPress={() => setSelectedTask(task.id)}
 			onPressIn={() => {
-				scale.value = withSpring(0.97, { damping: 15, stiffness: 400 });
+				scale.value = withSpring(0.98, { damping: 15, stiffness: 400 });
 			}}
 			onPressOut={() => {
 				scale.value = withSpring(1, { damping: 15, stiffness: 400 });
 			}}
 			accessibilityRole="button"
-			accessibilityLabel={`Focus on ${task.title}`}
 		>
 			<Card elevated style={styles.card}>
 				<View style={styles.row}>
 					<View style={styles.textBlock}>
-						<Typography variant="label">{task.title}</Typography>
-					</View>
-					<View
-						style={[
-							styles.priorityBadge,
-							{ borderColor: priorityColor(task.priority) },
-						]}
-					>
-						<Typography
-							variant="caption"
-							style={{ color: priorityColor(task.priority) }}
-						>
-							{(task.priority ?? "medium").toUpperCase()}
+						<Typography variant="label" numberOfLines={1}>
+							{task.title}
 						</Typography>
+						{task.description ? (
+							<Typography variant="caption" color={colors.muted} numberOfLines={1}>
+								{task.description}
+							</Typography>
+						) : null}
 					</View>
-					<Typography
-						variant="caption"
-						color={colors.muted}
-						style={styles.hint}
-					>
-						→ focus
-					</Typography>
+
+					<View style={styles.actions}>
+						<View
+							style={[
+								styles.priorityBadge,
+								{ backgroundColor: `${priorityColor(task.priority)}20` },
+							]}
+						>
+							<Typography
+								variant="caption"
+								style={{ color: priorityColor(task.priority), fontSize: 10, fontWeight: '700' }}
+							>
+								{task.priority?.toUpperCase()}
+							</Typography>
+						</View>
+
+						<TouchableOpacity
+							style={styles.focusBtn}
+							onPress={() => onFocus(task.id)}
+						>
+							<Typography variant="caption" style={styles.focusBtnText}>
+								🎯 FOCUS
+							</Typography>
+						</TouchableOpacity>
+					</View>
 				</View>
 			</Card>
 		</AnimatedPressable>
@@ -78,10 +84,10 @@ function priorityColor(p: string | null): string {
 
 const styles = StyleSheet.create({
 	pressable: {
-		marginBottom: 4,
+		marginBottom: spacing.xs,
 	},
 	card: {
-		// no extra margin — handled by pressable wrapper
+		padding: spacing.md,
 	},
 	row: {
 		flexDirection: "row",
@@ -93,15 +99,32 @@ const styles = StyleSheet.create({
 		flex: 1,
 		gap: 2,
 	},
+	actions: {
+		flexDirection: "row",
+		alignItems: "center",
+		gap: spacing.sm,
+	},
 	priorityBadge: {
-		borderWidth: 1,
 		paddingHorizontal: spacing.xs,
+		paddingVertical: 2,
 		borderRadius: radius.sm,
-		minWidth: 60,
+		minWidth: 50,
 		alignItems: "center",
 	},
-	hint: {
-		opacity: 0.5,
-		fontSize: 11,
+	focusBtn: {
+		backgroundColor: colors.primary,
+		paddingHorizontal: spacing.md,
+		paddingVertical: 6,
+		borderRadius: radius.md,
+		elevation: 2,
+		shadowColor: colors.primary,
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.2,
+		shadowRadius: 4,
+	},
+	focusBtnText: {
+		color: colors.onPrimary,
+		fontWeight: "bold",
+		fontSize: 10,
 	},
 });

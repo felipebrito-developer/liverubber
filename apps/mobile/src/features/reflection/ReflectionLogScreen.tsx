@@ -223,7 +223,6 @@ export function ReflectionLogScreen(props: AnyType) {
 			<FAB
 				label="New Reward"
 				onPress={() => setIsModalVisible(true)}
-				style={styles.fab}
 			/>
 
 			<Modal visible={isModalVisible} animationType="slide" transparent>
@@ -292,13 +291,8 @@ const styles = StyleSheet.create({
 		backgroundColor: colors.background,
 	},
 	scroll: {
-		paddingBottom: spacing.xl,
+		paddingBottom: 120,
 		gap: spacing.lg,
-	},
-	fab: {
-		position: "absolute",
-		bottom: spacing.xl,
-		right: spacing.xl,
 	},
 	logSection: {
 		paddingHorizontal: spacing.xl,

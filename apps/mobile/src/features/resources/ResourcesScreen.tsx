@@ -13,8 +13,10 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/atoms/Button";
+import { FAB } from "@/components/atoms/FAB";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
+import { ScreenHeader } from "@/components/molecules/ScreenHeader";
 import type { LogisticsTabScreenProps } from "@/navigation/types";
 import {
 	categoriesAtom,
@@ -102,7 +104,6 @@ export function ResourcesScreen({
 			name: store.name || "",
 			initialAmount: newAmount,
 		});
-		// Log the change
 		await _logChange({
 			resourceId: store.id,
 			amountChange: delta,
@@ -162,68 +163,54 @@ export function ResourcesScreen({
 	return (
 		<SafeAreaView style={styles.safe}>
 			<StatusBar barStyle="light-content" backgroundColor={colors.background} />
+			<ScreenHeader
+				title="Life Resources"
+				subtitle="Track your internal and external reserves."
+				onDrawerOpen={() => navigation.openDrawer()}
+			/>
 
-			<View style={styles.header}>
-				<View style={styles.headerRow}>
-					<View style={styles.headerText}>
-						<Typography variant="h2">Life Resources</Typography>
-						<Typography variant="bodySmall" color={colors.muted}>
-							Track your internal and external reserves.
-						</Typography>
-					</View>
-					<TouchableOpacity
-						onPress={() => navigation.openDrawer()}
-						style={styles.drawerBtn}
-					>
-						<Typography variant="h3">≡</Typography>
-					</TouchableOpacity>
-
-					<Button label="+" onPress={handleAddPress} style={styles.addBtn} />
-				</View>
-
-				<View style={styles.filterContainer}>
-					<ScrollView horizontal showsHorizontalScrollIndicator={false}>
-						<View style={styles.filterRow}>
-							<TouchableOpacity
-								onPress={() => setFilterCategoryId(null)}
-								style={[
-									styles.filterPill,
-									!filterCategoryId && styles.filterPillActive,
-								]}
+			<View style={styles.filterContainer}>
+				<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+					<View style={styles.filterRow}>
+						<TouchableOpacity
+							onPress={() => setFilterCategoryId(null)}
+							style={[
+								styles.filterPill,
+								!filterCategoryId && styles.filterPillActive,
+							]}
+						>
+							<Typography
+								variant="caption"
+								style={!filterCategoryId && { color: colors.onPrimary }}
 							>
-								<Typography
-									variant="caption"
-									style={!filterCategoryId && { color: colors.onPrimary }}
+								ALL
+							</Typography>
+						</TouchableOpacity>
+						{categories.map((cat) => {
+							const active = filterCategoryId === cat.id;
+							return (
+								<TouchableOpacity
+									key={cat.id}
+									onPress={() => setFilterCategoryId(cat.id)}
+									style={[
+										styles.filterPill,
+										active && {
+											backgroundColor: cat.categoryColor,
+											borderColor: cat.categoryColor,
+										},
+									]}
 								>
-									ALL
-								</Typography>
-							</TouchableOpacity>
-							{categories.map((cat) => {
-								const active = filterCategoryId === cat.id;
-								return (
-									<TouchableOpacity
-										key={cat.id}
-										onPress={() => setFilterCategoryId(cat.id)}
-										style={[
-											styles.filterPill,
-											active && {
-												backgroundColor: cat.categoryColor,
-												borderColor: cat.categoryColor,
-											},
-										]}
+									<Typography
+										variant="caption"
+										style={active && { color: colors.onPrimary }}
 									>
-										<Typography
-											variant="caption"
-											style={active && { color: colors.onPrimary }}
-										>
-											{cat.name.toUpperCase()}
-										</Typography>
-									</TouchableOpacity>
-								);
-							})}
-						</View>
-					</ScrollView>
-				</View>
+										{cat.name.toUpperCase()}
+									</Typography>
+								</TouchableOpacity>
+							);
+						})}
+					</View>
+				</ScrollView>
 			</View>
 
 			<FlatList
@@ -238,6 +225,7 @@ export function ResourcesScreen({
 				)}
 				contentContainerStyle={styles.list}
 				showsVerticalScrollIndicator={false}
+				ListFooterComponent={<View style={{ height: 120 }} />}
 				ListEmptyComponent={
 					<View style={styles.empty}>
 						<Typography color={colors.muted} align="center">
@@ -247,33 +235,29 @@ export function ResourcesScreen({
 				}
 			/>
 
+			<FAB onPress={handleAddPress} />
+
 			<Modal visible={isModalVisible} animationType="slide" transparent>
 				<View style={styles.modalOverlay}>
 					<Card style={styles.modalCard}>
 						<Typography variant="h3">
 							{editingStore ? "Edit Resource" : "New Resource"}
 						</Typography>
-						<Typography variant="bodySmall" color={colors.muted}>
-							Define your resource type (e.g. Energy, Money) and amount.
-						</Typography>
-
 						<TextInput
-							placeholder="Resource Name (e.g. Energy)"
+							placeholder="Resource Name"
 							placeholderTextColor={colors.muted}
 							value={name}
 							onChangeText={setName}
 							style={styles.input}
 						/>
-
 						<TextInput
-							placeholder="Current Amount"
+							placeholder="Amount"
 							placeholderTextColor={colors.muted}
 							value={amountStr}
 							onChangeText={setAmountStr}
 							keyboardType="numeric"
 							style={styles.input}
 						/>
-
 						<View>
 							<Typography variant="label" style={{ marginBottom: spacing.xs }}>
 								Category
@@ -328,36 +312,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: colors.background,
 	},
-	header: {
-		paddingHorizontal: spacing.xl,
-		paddingTop: spacing.xl,
-		paddingBottom: spacing.md,
-		gap: spacing.xs,
-	},
-	headerRow: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-	},
-	headerText: {
-		flex: 1,
-	},
-	addBtn: {
-		width: 44,
-		height: 44,
-		borderRadius: radius.full,
-		marginLeft: spacing.sm,
-	},
-	drawerBtn: {
-		width: 44,
-		height: 44,
-		borderRadius: radius.sm,
-		backgroundColor: colors.surface,
-		borderWidth: 1,
-		borderColor: colors.border,
-		alignItems: "center",
-		justifyContent: "center",
-	},
 	list: {
 		paddingHorizontal: spacing.xl,
 		paddingBottom: spacing.xl,
@@ -396,9 +350,9 @@ const styles = StyleSheet.create({
 		gap: spacing.sm,
 	},
 	filterPill: {
-		paddingHorizontal: spacing.md,
-		paddingVertical: 6,
-		borderRadius: radius.md,
+		paddingHorizontal: spacing.lg,
+		paddingVertical: 8,
+		borderRadius: radius.full,
 		borderWidth: 1,
 		borderColor: colors.border,
 		backgroundColor: colors.surface,
@@ -406,5 +360,10 @@ const styles = StyleSheet.create({
 	filterPillActive: {
 		backgroundColor: colors.primary,
 		borderColor: colors.primary,
+		elevation: 4,
+		shadowColor: colors.primary,
+		shadowOffset: { width: 0, height: 4 },
+		shadowOpacity: 0.3,
+		shadowRadius: 6,
 	},
 });

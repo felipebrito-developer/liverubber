@@ -24,20 +24,18 @@ export function MeaningCard({
 	const [expanded, setExpanded] = useState(false);
 
 	return (
-		<View>
+		<View style={styles.container}>
 			<TouchableOpacity
-				activeOpacity={0.85}
+				activeOpacity={0.9}
 				onPress={() => setExpanded((v) => !v)}
 				onLongPress={() => onLongPress(meaning)}
 				accessibilityRole="button"
-				accessibilityLabel={`${meaning.name} — ${expanded ? "collapse" : "expand"} goals`}
 			>
-				<Card elevated style={styles.meaningCard}>
-					{/* Header */}
+				<Card elevated={expanded} style={[styles.meaningCard, expanded && styles.cardExpanded]}>
 					<View style={styles.meaningHeader}>
 						<View
 							style={[
-								styles.categoryDot,
+								styles.categoryIndicator,
 								{
 									backgroundColor:
 										meaning.category?.categoryColor || colors.primary,
@@ -45,46 +43,50 @@ export function MeaningCard({
 							]}
 						/>
 						<View style={styles.meaningText}>
-							<Typography variant="h3">{meaning.name}</Typography>
+							<Typography variant="h3" style={styles.title}>{meaning.name}</Typography>
 							<Typography
 								variant="bodySmall"
 								color={colors.muted}
-								style={styles.meaningDesc}
+								numberOfLines={expanded ? undefined : 2}
 							>
 								{meaning.description}
 							</Typography>
 						</View>
-						<Typography variant="caption" color={colors.muted}>
-							{expanded ? "▲" : "▼"}
-						</Typography>
+						<View style={[styles.arrowBg, expanded && styles.arrowBgActive]}>
+							<Typography variant="caption" style={expanded ? { color: colors.onPrimary } : { color: colors.muted }}>
+								{expanded ? "−" : "+"}
+							</Typography>
+						</View>
 					</View>
 
-					{/* Accordion — Goals */}
 					{expanded && (
-						<View style={styles.goalsContainer}>
+						<View style={styles.goalsSection}>
 							<View style={styles.divider} />
 							<View style={styles.goalsHeaderRow}>
-								<Typography variant="meaning" style={styles.goalsLabel}>
-									Goals attached to this meaning
+								<Typography variant="label" style={styles.goalsLabel}>
+									STRATEGIC GOALS ({goals.length})
 								</Typography>
 								<TouchableOpacity
 									onPress={() => onAddGoal(meaning.id)}
 									style={styles.inlineAddBtn}
 								>
 									<Typography variant="label" color={colors.primary}>
-										+ Add Goal
+										+ NEW
 									</Typography>
 								</TouchableOpacity>
 							</View>
-							{goals.length === 0 ? (
-								<Typography variant="caption" color={colors.muted}>
-									No goals attached yet.
-								</Typography>
-							) : (
-								goals.map((g) => (
-									<GoalRow key={g.id} goal={g} onLongPress={onGoalLongPress} />
-								))
-							)}
+							
+							<View style={styles.goalsList}>
+								{goals.length === 0 ? (
+									<Typography variant="caption" color={colors.muted} align="center" style={styles.emptyText}>
+										No goals anchored to this purpose.
+									</Typography>
+								) : (
+									goals.map((g) => (
+										<GoalRow key={g.id} goal={g} onLongPress={onGoalLongPress} />
+									))
+								)}
+							</View>
 						</View>
 					)}
 				</Card>
@@ -94,47 +96,76 @@ export function MeaningCard({
 }
 
 const styles = StyleSheet.create({
+	container: {
+		marginBottom: spacing.md,
+	},
 	meaningCard: {
-		gap: spacing.sm,
+		padding: spacing.md,
+		borderWidth: 1,
+		borderColor: "transparent",
+	},
+	cardExpanded: {
+		borderColor: colors.border,
+		backgroundColor: colors.surface,
 	},
 	meaningHeader: {
 		flexDirection: "row",
-		alignItems: "flex-start",
+		alignItems: "center",
 		gap: spacing.md,
 	},
-	categoryDot: {
-		width: 14,
-		height: 14,
-		borderRadius: radius.full,
-		marginTop: 4,
-		flexShrink: 0,
+	categoryIndicator: {
+		width: 4,
+		height: 32,
+		borderRadius: radius.sm,
 	},
 	meaningText: {
 		flex: 1,
-		gap: spacing.xs,
+		gap: 2,
 	},
-	meaningDesc: {
-		lineHeight: 20,
+	title: {
+		fontSize: 18,
+		fontWeight: "600",
 	},
-	goalsContainer: {
-		gap: spacing.sm,
+	arrowBg: {
+		width: 28,
+		height: 28,
+		borderRadius: 14,
+		backgroundColor: colors.surface,
+		justifyContent: "center",
+		alignItems: "center",
+		borderWidth: 1,
+		borderColor: colors.border,
+	},
+	arrowBgActive: {
+		backgroundColor: colors.primary,
+		borderColor: colors.primary,
+	},
+	goalsSection: {
+		marginTop: spacing.md,
 	},
 	goalsHeaderRow: {
 		flexDirection: "row",
 		justifyContent: "space-between",
 		alignItems: "center",
-		marginBottom: spacing.xs,
+		marginVertical: spacing.sm,
+	},
+	goalsLabel: {
+		letterSpacing: 1,
+		opacity: 0.7,
+		fontSize: 10,
 	},
 	inlineAddBtn: {
-		paddingVertical: 4,
-		paddingHorizontal: 8,
+		padding: 4,
+	},
+	goalsList: {
+		gap: spacing.xs,
 	},
 	divider: {
 		height: 1,
 		backgroundColor: colors.border,
-		marginVertical: spacing.xs,
+		opacity: 0.5,
 	},
-	goalsLabel: {
-		marginBottom: spacing.xs,
-	},
+	emptyText: {
+		paddingVertical: spacing.md,
+	}
 });

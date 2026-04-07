@@ -47,7 +47,6 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
 			};
 
 			await saveSession(mockUser);
-			navigation.navigate("AppDrawer");
 		} catch {
 			setErrors({ email: "Login failed. Please check your credentials." });
 		} finally {

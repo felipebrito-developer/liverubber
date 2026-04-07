@@ -1,41 +1,29 @@
-import type { Habit, NewTask, Task } from "@liverubber/shared";
+import type { Habit, Task } from "@liverubber/shared";
 import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
-	Alert,
-	Modal,
 	ScrollView,
 	StatusBar,
 	StyleSheet,
-	TextInput,
-	TouchableOpacity,
 	View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button } from "@/components/atoms/Button";
-import { FAB } from "@/components/atoms/FAB";
 import { Typography } from "@/components/atoms/Typography";
-import { Card } from "@/components/molecules/Card";
 import { EmptyState } from "@/components/molecules/EmptyState";
 import { ScreenHeader } from "@/components/molecules/ScreenHeader";
-import { TaskCreationModal } from "@/components/organisms/TaskCreationModal";
 import type { FocusTabScreenProps } from "@/navigation/types";
 import {
-	createHabitAction,
-	deleteHabitAction,
 	habitsAtom,
 	loadHabitsAndRewardsAction,
-	updateHabitAction,
 } from "@/stores/habitsStore";
-import { loadMeaningsAction, meaningsAtom } from "@/stores/meaningsStore";
 import { isTagsLoadedAtom, loadTagsAction, tagsAtom } from "@/stores/tagsStore";
 import {
-	createTaskAction,
 	isTasksLoadedAtom,
 	loadTasksAction,
+	selectedTaskIdAtom,
 	tasksAtom,
 } from "@/stores/tasksStore";
-import { colors, radius, spacing } from "@/theme";
+import { colors, spacing } from "@/theme";
 import { EnergyToggle } from "./components/EnergyToggle";
 import { HabitCard } from "./components/HabitCard";
 import { TaskCard } from "./components/TaskCard";
@@ -48,23 +36,18 @@ export type EnergyLevel =
 
 export const energyLevelAtom = atom<EnergyLevel>("tag-balanced-energy");
 
-// ─── Energy Filter logic ───────────────────────────────────────────────────────
-function energyPassesHabit(_level: EnergyLevel, _habit: Habit) {
-	return true;
-}
-
 function energyPassesTask(level: EnergyLevel, task: Task) {
 	if (task.tags?.some((t) => t.id === level)) {
 		return true;
 	}
-	if (level === "tag-low-energy")
-		return task.priority !== "high" && task.priority !== "urgent";
-	if (level === "tag-high-energy")
-		return task.priority === "high" || task.priority === "urgent";
+	if (level === "tag-low-energy") {
+		return task.priority !== "urgent" && task.priority !== "high";
+	}
+	if (level === "tag-high-energy") {
+		return task.priority === "urgent" || task.priority === "high";
+	}
 	return true;
 }
-
-// ─── Screen ────────────────────────────────────────────────────────────────────
 
 export function ActionHubScreen({
 	navigation,
@@ -74,156 +57,64 @@ export function ActionHubScreen({
 	const tasks = useAtomValue(tasksAtom);
 	const isTasksLoaded = useAtomValue(isTasksLoadedAtom);
 	const loadTasks = useSetAtom(loadTasksAction);
-	const createTask = useSetAtom(createTaskAction);
+	const setSelectedTaskId = useSetAtom(selectedTaskIdAtom);
 
 	const habits = useAtomValue(habitsAtom);
-	const meanings = useAtomValue(meaningsAtom);
 	const loadHabits = useSetAtom(loadHabitsAndRewardsAction);
-	const loadMeanings = useSetAtom(loadMeaningsAction);
 
 	const tags = useAtomValue(tagsAtom);
 	const loadTags = useSetAtom(loadTagsAction);
 	const isTagsLoaded = useAtomValue(isTagsLoadedAtom);
 
-	const createHabit = useSetAtom(createHabitAction);
-	const updateHabit = useSetAtom(updateHabitAction);
-	const deleteHabit = useSetAtom(deleteHabitAction);
-
-	// Modals State
-	const [isHabitModalVisible, setIsHabitModalVisible] = useState(false);
-	const [isTaskModalVisible, setIsTaskModalVisible] = useState(false);
-	const [isActionMenuVisible, setIsActionMenuVisible] = useState(false);
-
-	const [editingHabit, setEditingHabit] = useState<Habit | null>(null);
-	const [habitName, setHabitName] = useState("");
-	const [meaningId, setMeaningId] = useState<string | null>(null);
-
 	useEffect(() => {
 		if (!isTasksLoaded) loadTasks();
 		loadHabits();
-		loadMeanings();
 		if (!isTagsLoaded) loadTags();
 	}, [
 		isTasksLoaded,
 		loadTasks,
 		loadHabits,
-		loadMeanings,
 		isTagsLoaded,
 		loadTags,
 	]);
 
-	// --- Habit Handlers ---
-	const handleSaveHabit = async () => {
-		if (!habitName.trim()) return;
-
-		if (editingHabit) {
-			await updateHabit({
-				id: editingHabit.id,
-				data: { name: habitName, meaningId },
-			});
-		} else {
-			await createHabit({
-				name: habitName,
-				meaningId,
-				streakCount: 0,
-				startDate: new Date().toISOString(),
-				createdAt: new Date().toISOString(),
-				updatedAt: new Date().toISOString(),
-				isSynced: false,
-				lastSyncedAt: null,
-			});
-		}
-
-		handleCloseHabitModal();
+	const handleFocusPress = (id: string) => {
+		setSelectedTaskId(id);
+		navigation.navigate("Now");
 	};
 
-	const handleEditHabitPress = (habit: Habit) => {
-		setEditingHabit(habit);
-		setHabitName(habit.name);
-		setMeaningId(habit.meaningId);
-		setIsHabitModalVisible(true);
-	};
-
-	const handleDeleteHabitPress = (habit: Habit) => {
-		Alert.alert(
-			"Shelve Habit",
-			"Are you sure you want to stop tracking this habit for now?",
-			[
-				{ text: "Keep it", style: "cancel" },
-				{
-					text: "Shelve / Remove",
-					style: "destructive",
-					onPress: async () => {
-						await deleteHabit(habit.id);
-					},
-				},
-			],
-		);
-	};
-
-	const handleHabitOptionsPress = (habit: Habit) => {
-		Alert.alert("Habit Options", `Manage your connection to "${habit.name}"`, [
-			{ text: "Edit Details", onPress: () => handleEditHabitPress(habit) },
-			{
-				text: "Archive / Remove",
-				style: "destructive",
-				onPress: () => handleDeleteHabitPress(habit),
-			},
-			{ text: "Cancel", style: "cancel" },
-		]);
-	};
-
-	const handleCloseHabitModal = () => {
-		setIsHabitModalVisible(false);
-		setEditingHabit(null);
-		setHabitName("");
-		setMeaningId(null);
-	};
-
-	// --- Task Handlers ---
-	const handleSaveTask = async (
-		payload: Omit<NewTask, "id">,
-		selectedTagIds: string[],
-	) => {
-		await createTask({ payload, tagIds: selectedTagIds });
-		setIsTaskModalVisible(false);
-	};
-
-	const visibleHabits = habits.filter((h) => energyPassesHabit(energy, h));
-	const visibleTasks = tasks.filter((t) => energyPassesTask(energy, t));
+	const todayTasks = tasks.filter(t => !!t.isForToday && t.status !== "done");
+	const visibleTasks = todayTasks.filter((t) => energyPassesTask(energy, t));
+	const visibleHabits = habits;
 
 	return (
 		<SafeAreaView style={styles.safe}>
 			<StatusBar barStyle="light-content" backgroundColor={colors.background} />
-			<ScrollView contentContainerStyle={styles.scroll}>
+			<ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
 				<ScreenHeader
 					title="Action Hub"
-					subtitle="How is your energy right now?"
+					subtitle="Your strategic execution plan for today."
 					onDrawerOpen={() => navigation.openDrawer()}
 				/>
 
 				<EnergyToggle value={energy} onChange={setEnergy} tags={tags} />
 
 				<View style={styles.section}>
-					<View style={styles.sectionHeader}>
-						<Typography variant="h3">Habits for Today</Typography>
-					</View>
+					<Typography variant="h3">Habits for Today</Typography>
 					{visibleHabits.length === 0 ? (
 						<EmptyState
 							emoji="⚡"
-							title="No habits yet"
-							subtitle="Small daily actions compound into big changes."
-							ctaLabel="Add a Habit"
-							onCta={() => {
-								setIsActionMenuVisible(true);
-							}}
+							title="No habits active"
+							subtitle="Habits are the compound interest of self-development."
+							ctaLabel="Go to Backlog"
+							onCta={() => navigation.navigate("TasksBacklog" as never)}
 						/>
 					) : (
-						visibleHabits.map((h) => (
+						visibleHabits.slice(0, 3).map((h) => (
 							<HabitCard
 								key={h.id}
 								habit={h}
-								onLongPress={handleHabitOptionsPress}
+								onLongPress={() => {}}
 							/>
 						))
 					)}
@@ -231,166 +122,29 @@ export function ActionHubScreen({
 
 				<View style={styles.section}>
 					<Typography variant="h3" style={styles.sectionTitle}>
-						Next Tasks
+						Focus Tasks
 					</Typography>
 					{visibleTasks.length === 0 ? (
 						<EmptyState
-							emoji="✅"
-							title="No tasks lined up"
-							subtitle="Capture what needs doing — start small."
-							ctaLabel="Add a Task"
-							onCta={() => {
-								setIsActionMenuVisible(true);
-							}}
+							emoji="🎯"
+							title={todayTasks.length === 0 ? "No tasks for today" : "Energy Mismatch"}
+							subtitle={todayTasks.length === 0 
+								? "Promote tasks from your strategic backlog to start focusing." 
+								: "None of today's tasks fit your current energy level. Recalibrate?"}
+							ctaLabel={todayTasks.length === 0 ? "Open Backlog" : undefined}
+							onCta={() => navigation.navigate("TasksBacklog" as never)}
 						/>
 					) : (
-						visibleTasks.map((t) => <TaskCard key={t.id} task={t} />)
+						visibleTasks.map((t) => (
+							<TaskCard 
+								key={t.id} 
+								task={t} 
+								onFocus={handleFocusPress}
+							/>
+						))
 					)}
 				</View>
 			</ScrollView>
-
-			<FAB
-				label="+"
-				onPress={() => setIsActionMenuVisible(true)}
-				style={styles.fab}
-			/>
-
-			{/* Action Menu Modal */}
-			<Modal
-				visible={isActionMenuVisible}
-				transparent
-				animationType="fade"
-				onRequestClose={() => setIsActionMenuVisible(false)}
-			>
-				<TouchableOpacity
-					style={styles.menuOverlay}
-					activeOpacity={1}
-					onPress={() => setIsActionMenuVisible(false)}
-				>
-					<Card style={styles.menuCard}>
-						<Typography variant="h3" align="center">
-							Quick Action
-						</Typography>
-						<View style={styles.menuOptions}>
-							<Button
-								label="⚡ New Habit"
-								onPress={() => {
-									setIsActionMenuVisible(false);
-									setIsHabitModalVisible(true);
-								}}
-								fullWidth
-							/>
-							<Button
-								label="✅ New Task"
-								variant="outline"
-								onPress={() => {
-									setIsActionMenuVisible(false);
-									setIsTaskModalVisible(true);
-								}}
-								fullWidth
-							/>
-						</View>
-					</Card>
-				</TouchableOpacity>
-			</Modal>
-
-			{/* Habit Modal */}
-			<Modal visible={isHabitModalVisible} animationType="slide" transparent>
-				<View style={styles.modalOverlay}>
-					<Card style={styles.modalCard}>
-						<Typography variant="h3">
-							{editingHabit ? "Edit Habit" : "New Habit"}
-						</Typography>
-						<TextInput
-							placeholder="Condition your brain (e.g. Morning Walk)"
-							placeholderTextColor={colors.muted}
-							value={habitName}
-							onChangeText={setHabitName}
-							style={styles.input}
-						/>
-
-						<Typography variant="label" style={{ marginTop: spacing.sm }}>
-							Anchor to Meaning (Optional)
-						</Typography>
-						<ScrollView horizontal showsHorizontalScrollIndicator={false}>
-							<View style={styles.pickerRow}>
-								<TouchableOpacity
-									onPress={() => setMeaningId(null)}
-									style={[
-										styles.pickerBtn,
-										!meaningId && {
-											backgroundColor: colors.muted,
-											borderColor: colors.muted,
-										},
-									]}
-								>
-									<Typography
-										variant="caption"
-										style={{
-											color: !meaningId
-												? colors.onPrimary
-												: colors.onBackground,
-										}}
-									>
-										NONE
-									</Typography>
-								</TouchableOpacity>
-								{meanings.map((m) => {
-									const active = meaningId === m.id;
-									return (
-										<TouchableOpacity
-											key={m.id}
-											onPress={() => setMeaningId(m.id)}
-											disabled={active}
-											style={[
-												styles.pickerBtn,
-												active && {
-													backgroundColor:
-														m.category?.categoryColor || colors.primary,
-													borderColor:
-														m.category?.categoryColor || colors.primary,
-												},
-											]}
-										>
-											<Typography
-												variant="caption"
-												style={{
-													color: active
-														? colors.onPrimary
-														: colors.onBackground,
-												}}
-											>
-												{m.name}
-											</Typography>
-										</TouchableOpacity>
-									);
-								})}
-							</View>
-						</ScrollView>
-
-						<View style={styles.modalActions}>
-							<Button
-								label="Cancel"
-								variant="outline"
-								onPress={handleCloseHabitModal}
-								style={{ flex: 1 }}
-							/>
-							<Button
-								label="Save Habit"
-								onPress={handleSaveHabit}
-								style={{ flex: 1 }}
-							/>
-						</View>
-					</Card>
-				</View>
-			</Modal>
-
-			{/* Task Modal */}
-			<TaskCreationModal
-				visible={isTaskModalVisible}
-				onClose={() => setIsTaskModalVisible(false)}
-				onSave={handleSaveTask}
-			/>
 		</SafeAreaView>
 	);
 }
@@ -401,75 +155,14 @@ const styles = StyleSheet.create({
 		backgroundColor: colors.background,
 	},
 	scroll: {
-		paddingBottom: spacing.xl,
-	},
-	fab: {
-		position: "absolute",
-		bottom: spacing.xl,
-		right: spacing.xl,
+		paddingBottom: 120,
 	},
 	section: {
 		paddingHorizontal: spacing.xl,
 		marginTop: spacing.md,
 		gap: spacing.sm,
 	},
-	sectionHeader: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-	},
 	sectionTitle: {
 		marginBottom: spacing.xs,
-	},
-	// Menu styles
-	menuOverlay: {
-		flex: 1,
-		backgroundColor: "rgba(0,0,0,0.6)",
-		justifyContent: "center",
-		alignItems: "center",
-		padding: spacing.xl,
-	},
-	menuCard: {
-		width: "80%",
-		gap: spacing.lg,
-		paddingVertical: spacing.xl,
-	},
-	menuOptions: {
-		gap: spacing.md,
-	},
-	// Modal styles
-	modalOverlay: {
-		flex: 1,
-		backgroundColor: "rgba(0,0,0,0.5)",
-		justifyContent: "center",
-		padding: spacing.xl,
-	},
-	modalCard: {
-		gap: spacing.md,
-	},
-	input: {
-		backgroundColor: colors.surface,
-		borderWidth: 1,
-		borderColor: colors.border,
-		borderRadius: radius.md,
-		padding: spacing.md,
-		color: colors.onBackground,
-	},
-	pickerRow: {
-		flexDirection: "row",
-		gap: spacing.xs,
-		paddingBottom: spacing.xs,
-	},
-	pickerBtn: {
-		paddingHorizontal: spacing.md,
-		paddingVertical: 6,
-		borderRadius: radius.full,
-		borderWidth: 1,
-		borderColor: colors.border,
-	},
-	modalActions: {
-		flexDirection: "row",
-		gap: spacing.sm,
-		marginTop: spacing.sm,
 	},
 });

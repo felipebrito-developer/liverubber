@@ -2,6 +2,8 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import {
 	Alert,
+	Modal,
+	ScrollView,
 	StatusBar,
 	StyleSheet,
 	TouchableOpacity,
@@ -26,6 +28,7 @@ import {
 	loadTasksAction,
 	selectedTaskIdAtom,
 	tasksAtom,
+	updateTaskAction,
 } from "@/stores/tasksStore";
 import { colors, radius, spacing } from "@/theme";
 import { PreflightModal } from "./components/PreflightModal";
@@ -33,14 +36,20 @@ import { useCountdown } from "./hooks/useCountdown";
 
 export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 	const selectedTaskId = useAtomValue(selectedTaskIdAtom);
+	const setSelectedTaskId = useSetAtom(selectedTaskIdAtom);
 	const tasks = useAtomValue(tasksAtom);
 	const isTasksLoaded = useAtomValue(isTasksLoadedAtom);
 	const loadTasks = useSetAtom(loadTasksAction);
 	const logActivity = useSetAtom(logActivityAction);
+	const updateTask = useSetAtom(updateTaskAction);
 
 	const [preflightDone, setPreflightDone] = useState(false);
 	const [moodRating, setMoodRating] = useState<number | null>(null);
 	const [completed, setCompleted] = useState(false);
+	const [isPickerVisible, setIsPickerVisible] = useState(false);
+
+	// Filter tasks for today that aren't done
+	const todayTasks = tasks.filter(t => !!t.isForToday && t.status !== "done");
 
 	// Win celebration animation
 	const celebrateScale = useSharedValue(1);
@@ -52,7 +61,7 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 		if (!isTasksLoaded) loadTasks();
 	}, [isTasksLoaded, loadTasks]);
 
-	const task = tasks.find((t) => t.id === selectedTaskId) || tasks[0];
+	const task = tasks.find((t) => t.id === selectedTaskId) || todayTasks[0];
 
 	const timer = useCountdown(25 * 60); // Default to 25 min pomodoro
 
@@ -65,14 +74,37 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 		);
 	}
 
+	async function handleLogAndFinish() {
+		if (!task) return;
+		
+		await logActivity({
+			activityId: "manual_focus",
+			taskId: task.id,
+			moodRating: moodRating || 3,
+			amountAchieved: 1.0,
+			completedAt: new Date().toISOString(),
+		});
+
+		// Mark task as done
+		await updateTask({
+			id: task.id,
+			data: { status: "done" }
+		});
+
+		setCompleted(false);
+		setMoodRating(null);
+		setPreflightDone(false);
+		navigation.navigate("ActionHub");
+	}
+
 	function handleRecalibrate() {
 		Alert.alert(
 			"Recalibrate",
 			"No problem. What would you like to do?",
 			[
 				{ text: "Reset timer", onPress: () => timer.reset() },
-				{ text: "Change task", style: "cancel" },
-				{ text: "Rest — I need a break", style: "destructive" },
+				{ text: "Choose different task", onPress: () => setIsPickerVisible(true) },
+				{ text: "Rest — I need a break", style: "destructive", onPress: () => navigation.navigate("ActionHub") },
 			],
 			{ cancelable: true },
 		);
@@ -83,8 +115,8 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 		return (
 			<SafeAreaView style={styles.safe}>
 				<ScreenHeader
-					title="Now"
-					subtitle="Focus on the present moment."
+					title="Focus"
+					subtitle="Strategic presence."
 					onDrawerOpen={() => navigation.openDrawer()}
 				/>
 				<View style={styles.centeredContainer}>
@@ -92,14 +124,14 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 						🎯
 					</Typography>
 					<Typography variant="h3" align="center">
-						No task selected yet
+						No task selected
 					</Typography>
 					<Typography align="center" color={colors.muted}>
-						Pick a task from the Action Hub to start your focus session.
+						Promote a task from the backlog to "Today" in the Action Hub to start focusing.
 					</Typography>
 					<Button
 						label="Go to Action Hub →"
-						onPress={() => navigation.navigate("ActionHub" as never)}
+						onPress={() => navigation.navigate("ActionHub")}
 						style={styles.emptyStateCta}
 					/>
 				</View>
@@ -117,19 +149,19 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 				/>
 				<Animated.View style={[styles.completedContainer, celebrateStyle]}>
 					<Typography variant="h2" align="center" style={styles.winText}>
-						Your future self is proud. 🌿
+						Flow Accomplished. 🌿
 					</Typography>
 					<Typography
 						variant="meaning"
 						align="center"
 						style={styles.meaningAnchor}
 					>
-						✦ You just finished: {task.title}
+						✦ {task.title}
 					</Typography>
 
 					<Card style={styles.moodCard}>
 						<Typography variant="h3" align="center" style={styles.moodTitle}>
-							How do you feel now?
+							Rate your mental clarity:
 						</Typography>
 						<View style={styles.moodRow}>
 							{[1, 2, 3, 4, 5].map((n) => (
@@ -167,20 +199,9 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 
 					{moodRating && (
 						<Button
-							label="Log & return to Action Hub"
+							label="Log Win & Continue"
 							fullWidth
-							onPress={() => {
-								logActivity({
-									activityId: "manual_focus",
-									taskId: task.id,
-									moodRating: moodRating || 3,
-									amountAchieved: 1.0,
-									completedAt: new Date().toISOString(),
-								});
-								setCompleted(false);
-								setMoodRating(null);
-								setPreflightDone(false);
-							}}
+							onPress={handleLogAndFinish}
 						/>
 					)}
 				</Animated.View>
@@ -200,19 +221,28 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 
 			<View style={styles.nowContainer}>
 				<ScreenHeader
-					title="Now"
-					subtitle="Focus on the present moment."
+					title="Focus"
+					subtitle="Protect your attention."
 					onDrawerOpen={() => navigation.openDrawer()}
 				/>
 
-				{/* Task info */}
-				<View style={styles.taskInfo}>
-					<Typography variant="h1" align="center" style={styles.taskTitle}>
-						{task.title}
-					</Typography>
-					<Typography variant="body" align="center" color={colors.muted}>
-						{task.description}
-					</Typography>
+				{/* Task info w/ Change button */}
+				<View style={styles.taskInfoContainer}>
+					<TouchableOpacity 
+						style={styles.taskSelector} 
+						onPress={() => setIsPickerVisible(true)}
+						activeOpacity={0.7}
+					>
+						<Typography variant="caption" color={colors.primary} style={styles.selectorLabel}>
+							TARGETING:
+						</Typography>
+						<Typography variant="h2" align="center" style={styles.taskTitle}>
+							{task.title}
+						</Typography>
+						<Typography variant="caption" color={colors.muted}>
+							Tap to switch task (Today's Plan)
+						</Typography>
+					</TouchableOpacity>
 				</View>
 
 				{/* Timer display */}
@@ -240,7 +270,7 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 				{/* Actions */}
 				<View style={styles.actions}>
 					<Button
-						label={timer.running ? "Pause" : "Start Focus"}
+						label={timer.running ? "Hold" : "Engage Focus"}
 						fullWidth
 						onPress={timer.toggle}
 					/>
@@ -252,13 +282,47 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 						style={styles.recalibrateBtn}
 					/>
 					<Button
-						label="Mark Complete ✓"
+						label="Mission Accomplished ✓"
 						variant="ghost"
 						fullWidth
 						onPress={handleComplete}
 					/>
 				</View>
 			</View>
+
+			{/* Task Picker Modal */}
+			<Modal visible={isPickerVisible} transparent animationType="slide">
+				<View style={styles.modalOverlay}>
+					<Card style={styles.pickerCard}>
+						<Typography variant="h3">Shift Focus</Typography>
+						<Typography variant="bodySmall" color={colors.muted}>
+							Which task from your daily plan will you tackle next?
+						</Typography>
+						
+						<ScrollView style={styles.pickerList}>
+							{todayTasks.map((t) => (
+								<TouchableOpacity 
+									key={t.id}
+									style={[
+										styles.pickerItem, 
+										t.id === task.id && styles.pickerItemActive
+									]}
+									onPress={() => {
+										setSelectedTaskId(t.id);
+										setIsPickerVisible(false);
+									}}
+								>
+									<Typography style={t.id === task.id ? { color: colors.onPrimary } : {}}>
+										{t.title}
+									</Typography>
+								</TouchableOpacity>
+							))}
+						</ScrollView>
+						
+						<Button label="Close" onPress={() => setIsPickerVisible(false)} variant="outline" />
+					</Card>
+				</View>
+			</Modal>
 		</SafeAreaView>
 	);
 }
@@ -282,26 +346,40 @@ const styles = StyleSheet.create({
 	emptyStateCta: {
 		marginTop: spacing.sm,
 	},
-	taskInfo: {
-		gap: spacing.xs,
-		alignItems: "center",
+	taskInfoContainer: {
 		paddingHorizontal: spacing.xl,
+		alignItems: "center",
+	},
+	taskSelector: {
+		alignItems: "center",
+		backgroundColor: colors.surface,
+		padding: spacing.lg,
+		borderRadius: radius.md,
+		width: "100%",
+		borderWidth: 1,
+		borderColor: colors.border,
+	},
+	selectorLabel: {
+		fontWeight: "bold",
+		letterSpacing: 2,
+		marginBottom: spacing.xs,
 	},
 	taskTitle: {
-		marginTop: spacing.sm,
+		marginBottom: 4,
 	},
 	timerContainer: {
 		gap: spacing.lg,
 		alignItems: "center",
 	},
 	timerText: {
-		fontSize: 72,
+		fontSize: 84, // Even bigger for focus
+		fontWeight: "200", // Sleeker, more premium look
 		letterSpacing: 4,
 		color: colors.primary,
 	},
 	timerTrack: {
-		width: "85%",
-		height: 12,
+		width: "75%",
+		height: 8,
 		backgroundColor: colors.border,
 		borderRadius: radius.full,
 		overflow: "hidden",
@@ -314,6 +392,8 @@ const styles = StyleSheet.create({
 	actions: {
 		gap: spacing.sm,
 		paddingHorizontal: spacing.xl,
+		marginTop: "auto",
+		paddingBottom: 40,
 	},
 	recalibrateBtn: {
 		borderColor: colors.muted,
@@ -350,5 +430,32 @@ const styles = StyleSheet.create({
 	},
 	moodBtnActive: {
 		backgroundColor: colors.primary,
+	},
+	modalOverlay: {
+		flex: 1,
+		backgroundColor: "rgba(0,0,0,0.6)",
+		justifyContent: "flex-end",
+	},
+	pickerCard: {
+		borderBottomLeftRadius: 0,
+		borderBottomRightRadius: 0,
+		paddingTop: spacing.xl,
+		paddingBottom: 40,
+		gap: spacing.md,
+		maxHeight: "70%",
+	},
+	pickerList: {
+		marginTop: spacing.sm,
+	},
+	pickerItem: {
+		padding: spacing.md,
+		borderRadius: radius.md,
+		marginBottom: spacing.xs,
+		borderWidth: 1,
+		borderColor: colors.border,
+	},
+	pickerItemActive: {
+		backgroundColor: colors.primary,
+		borderColor: colors.primary,
 	},
 });

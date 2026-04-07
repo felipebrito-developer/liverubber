@@ -73,14 +73,18 @@ export function FAB({
 
 const styles = StyleSheet.create({
 	fab: {
-		minWidth: 56,
-		minHeight: 56,
-		borderRadius: 28,
+		position: "absolute",
+		bottom: 32, // More pronounced bottom padding
+		right: 32,
+		minWidth: 60,
+		minHeight: 60,
+		borderRadius: 30,
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "center",
-		paddingHorizontal: spacing.md,
-		gap: spacing.xs,
-		...shadow.md,
+		paddingHorizontal: spacing.lg,
+		gap: spacing.sm,
+		zIndex: 9999, // Ensure it's on top of everything
+		...shadow.lg, // Elevate it more
 	},
 });

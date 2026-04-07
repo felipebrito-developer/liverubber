@@ -49,7 +49,6 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
 				{ name, email, password },
 			);
 			setUser(response.user);
-			navigation.navigate("AppDrawer");
 		} catch {
 			setErrors({
 				email: "Registration failed. This email might already be in use.",

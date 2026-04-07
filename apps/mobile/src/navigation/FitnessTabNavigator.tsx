@@ -1,6 +1,8 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Text } from "react-native";
-import { WIPScreen } from "@/components/organisms/WIPScreen";
+import { FitnessDashboardScreen } from "@/features/fitness/FitnessDashboardScreen";
+import { FitnessExecutionScreen } from "@/features/fitness/FitnessExecutionScreen";
+import { FitnessPlanningScreen } from "@/features/fitness/FitnessPlanningScreen";
 import { colors, radius, spacing } from "@/theme";
 import type { FitnessTabParamList } from "./types";
 
@@ -39,31 +41,28 @@ export function FitnessTabNavigator() {
 		>
 			<Tab.Screen
 				name="FitnessDashboard"
+				component={FitnessDashboardScreen}
 				options={{
 					tabBarLabel: "Today",
 					tabBarIcon: ({ focused }) => <TabIcon icon="💪" focused={focused} />,
 				}}
-			>
-				{() => <WIPScreen name="Fitness Today" />}
-			</Tab.Screen>
+			/>
 			<Tab.Screen
 				name="FitnessExecution"
+				component={FitnessExecutionScreen}
 				options={{
 					tabBarLabel: "Execute",
 					tabBarIcon: ({ focused }) => <TabIcon icon="🏃" focused={focused} />,
 				}}
-			>
-				{() => <WIPScreen name="Fitness Execution" />}
-			</Tab.Screen>
+			/>
 			<Tab.Screen
 				name="FitnessPlanning"
+				component={FitnessPlanningScreen}
 				options={{
 					tabBarLabel: "Plan",
 					tabBarIcon: ({ focused }) => <TabIcon icon="📅" focused={focused} />,
 				}}
-			>
-				{() => <WIPScreen name="Fitness Planning" />}
-			</Tab.Screen>
+			/>
 		</Tab.Navigator>
 	);
 }

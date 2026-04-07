@@ -6,15 +6,16 @@ import {
 	FlatList,
 	StatusBar,
 	StyleSheet,
-	TouchableOpacity,
 	View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, Typography } from "@/components/atoms";
+import { FAB } from "@/components/atoms/FAB";
+import { Typography } from "@/components/atoms/Typography";
 import {
 	GoalCreationModal,
 	MeaningCreationModal,
 } from "@/components/organisms";
+import { ScreenHeader } from "@/components/molecules/ScreenHeader";
 import type { StrategicTabScreenProps } from "@/navigation/types";
 import {
 	createGoalAction,
@@ -32,7 +33,7 @@ import {
 	meaningsAtom,
 	updateMeaningAction,
 } from "@/stores/meaningsStore";
-import { colors, radius, spacing } from "@/theme";
+import { colors, spacing } from "@/theme";
 import { MeaningCard } from "./components/MeaningCard";
 
 export function MeaningDashboardScreen({
@@ -190,28 +191,11 @@ export function MeaningDashboardScreen({
 	return (
 		<SafeAreaView style={styles.safe}>
 			<StatusBar barStyle="light-content" backgroundColor={colors.background} />
-			<View style={styles.header}>
-				<View style={styles.headerRow}>
-					<View style={styles.headerText}>
-						<Typography variant="h2">Your Meanings</Typography>
-						<Typography variant="bodySmall" color={colors.muted}>
-							Define what truly matters to you.
-						</Typography>
-					</View>
-					<TouchableOpacity
-						onPress={() => navigation.openDrawer()}
-						style={styles.drawerBtn}
-					>
-						<Typography variant="h3">≡</Typography>
-					</TouchableOpacity>
-
-					<Button
-						label="+"
-						onPress={() => setIsMeaningModalVisible(true)}
-						style={styles.addBtn}
-					/>
-				</View>
-			</View>
+			<ScreenHeader
+				title="Your Meanings"
+				subtitle="Define what truly matters to you."
+				onDrawerOpen={() => navigation.openDrawer()}
+			/>
 
 			<FlatList
 				data={data}
@@ -227,21 +211,21 @@ export function MeaningDashboardScreen({
 				)}
 				contentContainerStyle={styles.list}
 				showsVerticalScrollIndicator={false}
+				ListFooterComponent={<View style={{ height: 100 }} />}
 				ListEmptyComponent={
 					isMeaningsLoaded ? (
 						<View style={styles.empty}>
 							<Typography color={colors.muted} align="center">
 								No meanings found.{"\n"}Start by defining what matters!
 							</Typography>
-							<Button
-								label="Create Meaning"
-								variant="outline"
-								onPress={() => setIsMeaningModalVisible(true)}
-								style={{ marginTop: spacing.md }}
-							/>
 						</View>
 					) : null
 				}
+			/>
+
+			<FAB
+				onPress={() => setIsMeaningModalVisible(true)}
+				variant="primary"
 			/>
 
 			<MeaningCreationModal
@@ -266,36 +250,6 @@ const styles = StyleSheet.create({
 	safe: {
 		flex: 1,
 		backgroundColor: colors.background,
-	},
-	header: {
-		paddingHorizontal: spacing.xl,
-		paddingTop: spacing.xl,
-		paddingBottom: spacing.md,
-		gap: spacing.xs,
-	},
-	headerRow: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-	},
-	headerText: {
-		flex: 1,
-	},
-	addBtn: {
-		width: 44,
-		height: 44,
-		borderRadius: radius.full,
-		marginLeft: spacing.sm,
-	},
-	drawerBtn: {
-		width: 44,
-		height: 44,
-		borderRadius: radius.sm,
-		backgroundColor: colors.surface,
-		borderWidth: 1,
-		borderColor: colors.border,
-		alignItems: "center",
-		justifyContent: "center",
 	},
 	list: {
 		paddingHorizontal: spacing.xl,

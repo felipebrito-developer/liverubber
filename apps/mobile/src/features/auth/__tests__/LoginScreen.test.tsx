@@ -86,7 +86,6 @@ describe("LoginScreen", () => {
 				email: "test@example.com",
 				password: "password123",
 			});
-			expect(mockNavigation.navigate).toHaveBeenCalledWith("AppDrawer");
 		});
 	});
 });

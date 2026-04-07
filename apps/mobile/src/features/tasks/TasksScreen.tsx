@@ -5,13 +5,17 @@ import {
 	ActivityIndicator,
 	Alert,
 	FlatList,
+	ScrollView,
 	StatusBar,
 	StyleSheet,
 	TouchableOpacity,
 	View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button, FAB, Typography } from "@/components/atoms";
+import { Button } from "@/components/atoms/Button";
+import { FAB } from "@/components/atoms/FAB";
+import { Typography } from "@/components/atoms/Typography";
+import { ScreenHeader } from "@/components/molecules/ScreenHeader";
 import { Card } from "@/components/molecules/Card";
 import type { StrategicTabScreenProps } from "@/navigation/types";
 import {
@@ -52,32 +56,32 @@ function TaskItem({
 	task: Task;
 	onLongPress: (task: Task) => void;
 }) {
+	const status = task.status ?? "todo";
 	return (
-		<TouchableOpacity activeOpacity={0.7} onLongPress={() => onLongPress(task)}>
+		<TouchableOpacity activeOpacity={0.8} onLongPress={() => onLongPress(task)} style={styles.taskContainer}>
 			<Card elevated style={styles.taskCard}>
-				<View style={styles.taskHeader}>
-					<View
-						style={[
-							styles.statusDot,
-							{ backgroundColor: statusColor(task.status) },
-						]}
-					/>
-					<Typography variant="label" style={styles.taskTitle}>
-						{task.title}
-					</Typography>
+				<View style={styles.taskContent}>
+					<View style={styles.taskHeader}>
+						<Typography variant="h3" style={styles.taskTitle}>
+							{task.title}
+						</Typography>
+						<View style={[styles.statusBadge, { backgroundColor: `${statusColor(status)}20` }]}>
+							<Typography variant="caption" style={{ color: statusColor(status), fontSize: 10, fontWeight: '700' }}>
+								{status.replace("_", " ").toUpperCase()}
+							</Typography>
+						</View>
+					</View>
+					{task.description ? (
+						<Typography
+							variant="bodySmall"
+							color={colors.muted}
+							numberOfLines={2}
+							style={styles.taskDesc}
+						>
+							{task.description}
+						</Typography>
+					) : null}
 				</View>
-				{task.description ? (
-					<Typography
-						variant="bodySmall"
-						color={colors.muted}
-						style={styles.taskDesc}
-					>
-						{task.description}
-					</Typography>
-				) : null}
-				<Typography variant="caption" style={styles.taskStatus}>
-					{(task.status ?? "todo").replace("_", " ").toUpperCase()}
-				</Typography>
 			</Card>
 		</TouchableOpacity>
 	);
@@ -140,10 +144,20 @@ export function TasksScreen({
 	};
 
 	const handleOptionsPress = (task: Task) => {
+		const isToday = !!task.isForToday;
 		Alert.alert(
 			"Task Options",
 			`What would you like to do with "${task.title}"?`,
 			[
+				{
+					text: isToday ? "🌙 Remove from Today" : "☀️ Add to Today",
+					onPress: async () => {
+						await updateTask({
+							id: task.id,
+							data: { isForToday: !isToday },
+						});
+					},
+				},
 				{ text: "Edit", onPress: () => handleEditPress(task) },
 				{ text: "Remove / Prune", onPress: () => handleDeletePress(task) },
 				{ text: "Cancel", style: "cancel" },
@@ -162,41 +176,33 @@ export function TasksScreen({
 	return (
 		<SafeAreaView style={styles.safe}>
 			<StatusBar barStyle="light-content" backgroundColor={colors.background} />
-
-			{/* Header */}
-			<View style={styles.header}>
-				<View style={styles.headerRow}>
-					<View style={{ flex: 1 }}>
-						<Typography variant="h2">Backlog</Typography>
-						<Typography variant="bodySmall" color={colors.muted}>
-							Strategic task decomposition.
-						</Typography>
-					</View>
-					<TouchableOpacity
-						onPress={() => navigation.openDrawer()}
-						style={styles.drawerBtn}
-					>
-						<Typography variant="h3">≡</Typography>
-					</TouchableOpacity>
-					<Button
-						label="+"
-						onPress={() => setIsModalVisible(true)}
-						style={styles.addBtn}
-					/>
-				</View>
-			</View>
+			<ScreenHeader
+				title="Backlog"
+				subtitle="Strategic task decomposition."
+				onDrawerOpen={() => navigation.openDrawer()}
+			/>
 
 			{/* Filter Pills */}
-			<View style={styles.filterRow}>
-				{FILTERS.map((f) => (
-					<Button
-						key={f.key}
-						label={f.label}
-						variant={filter === f.key ? "primary" : "outline"}
-						onPress={() => setFilter(f.key)}
-						style={styles.pill}
-					/>
-				))}
+			<View style={styles.filterContainer}>
+				<ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterScroll}>
+					{FILTERS.map((f) => (
+						<TouchableOpacity
+							key={f.key}
+							onPress={() => setFilter(f.key)}
+							style={[
+								styles.pill,
+								filter === f.key ? styles.pillActive : styles.pillInactive
+							]}
+						>
+							<Typography 
+								variant="label" 
+								style={filter === f.key ? { color: colors.onPrimary } : { color: colors.muted }}
+							>
+								{f.label}
+							</Typography>
+						</TouchableOpacity>
+					))}
+				</ScrollView>
 			</View>
 
 			{/* Content */}
@@ -229,6 +235,7 @@ export function TasksScreen({
 					)}
 					contentContainerStyle={styles.list}
 					showsVerticalScrollIndicator={false}
+					ListFooterComponent={<View style={{ height: 100 }} />}
 				/>
 			)}
 
@@ -250,43 +257,28 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: colors.background,
 	},
-	header: {
-		paddingHorizontal: spacing.xl,
-		paddingTop: spacing.xl,
-		paddingBottom: spacing.sm,
+	filterContainer: {
+		marginBottom: spacing.md,
 	},
-	headerRow: {
-		flexDirection: "row",
-		justifyContent: "space-between",
-		alignItems: "center",
-	},
-	addBtn: {
-		width: 44,
-		height: 44,
-		borderRadius: radius.full,
-	},
-	drawerBtn: {
-		width: 44,
-		height: 44,
-		borderRadius: radius.sm,
-		backgroundColor: colors.surface,
-		borderWidth: 1,
-		borderColor: colors.border,
-		alignItems: "center",
-		justifyContent: "center",
-		marginRight: spacing.sm,
-	},
-	filterRow: {
-		flexDirection: "row",
+	filterScroll: {
 		paddingHorizontal: spacing.xl,
 		gap: spacing.sm,
-		marginBottom: spacing.md,
-		flexWrap: "wrap",
 	},
 	pill: {
-		height: 36,
-		paddingHorizontal: spacing.sm,
-		minWidth: 64,
+		height: 38,
+		paddingHorizontal: spacing.lg,
+		borderRadius: radius.full,
+		justifyContent: "center",
+		alignItems: "center",
+		borderWidth: 1,
+	},
+	pillActive: {
+		backgroundColor: colors.primary,
+		borderColor: colors.primary,
+	},
+	pillInactive: {
+		backgroundColor: colors.surface,
+		borderColor: colors.border,
 	},
 	center: {
 		flex: 1,
@@ -296,31 +288,36 @@ const styles = StyleSheet.create({
 	},
 	list: {
 		paddingHorizontal: spacing.xl,
-		paddingBottom: spacing.xl,
+		paddingBottom: spacing.sm,
 		gap: spacing.sm,
 	},
+	taskContainer: {
+		marginBottom: spacing.xs,
+	},
 	taskCard: {
+		padding: spacing.md,
+	},
+	taskContent: {
 		gap: spacing.xs,
 	},
 	taskHeader: {
 		flexDirection: "row",
-		alignItems: "center",
+		justifyContent: "space-between",
+		alignItems: "flex-start",
 		gap: spacing.sm,
 	},
-	statusDot: {
-		width: 8,
-		height: 8,
-		borderRadius: radius.full,
+	statusBadge: {
+		paddingHorizontal: 8,
+		paddingVertical: 2,
+		borderRadius: radius.sm,
 	},
 	taskTitle: {
 		flex: 1,
+		fontSize: 16,
+		fontWeight: "600",
 	},
 	taskDesc: {
-		marginLeft: spacing.lg,
-	},
-	taskStatus: {
-		marginLeft: spacing.lg,
-		letterSpacing: 0.5,
+		opacity: 0.8,
 	},
 	modalOverlay: {
 		flex: 1,

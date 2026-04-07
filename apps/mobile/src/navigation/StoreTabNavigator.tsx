@@ -1,7 +1,8 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Text } from "react-native";
-import { WIPScreen } from "@/components/organisms/WIPScreen";
+import { ResourceDashboardScreen } from "@/features/resources/ResourceDashboardScreen";
 import { ResourcesScreen } from "@/features/resources/ResourcesScreen";
+import { ResourceAuditScreen } from "@/features/resources/ResourceAuditScreen";
 import { colors, radius, spacing } from "@/theme";
 import type { StoreTabParamList } from "./types";
 
@@ -40,13 +41,12 @@ export function StoreTabNavigator() {
 		>
 			<Tab.Screen
 				name="StoreDashboard"
+				component={ResourceDashboardScreen}
 				options={{
 					tabBarLabel: "Status",
 					tabBarIcon: ({ focused }) => <TabIcon icon="📊" focused={focused} />,
 				}}
-			>
-				{() => <WIPScreen name="Resources Dashboard" />}
-			</Tab.Screen>
+			/>
 			<Tab.Screen
 				name="StoreManagement"
 				component={ResourcesScreen}
@@ -57,13 +57,12 @@ export function StoreTabNavigator() {
 			/>
 			<Tab.Screen
 				name="StoreAudit"
+				component={ResourceAuditScreen}
 				options={{
 					tabBarLabel: "Audit",
 					tabBarIcon: ({ focused }) => <TabIcon icon="📜" focused={focused} />,
 				}}
-			>
-				{() => <WIPScreen name="Store Audit" />}
-			</Tab.Screen>
+			/>
 		</Tab.Navigator>
 	);
 }
