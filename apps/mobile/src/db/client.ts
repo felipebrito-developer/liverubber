@@ -127,6 +127,7 @@ CREATE TABLE IF NOT EXISTS habit (
   start_date DATETIME,
   last_update DATETIME,
   streak_count INTEGER NOT NULL,
+  estimated_time INTEGER,
   created_at DATETIME,
   updated_at DATETIME,
   is_synced INTEGER DEFAULT 0,
@@ -146,6 +147,7 @@ CREATE TABLE IF NOT EXISTS task (
   due_date DATE,
   priority VARCHAR,
   is_for_today INTEGER DEFAULT 0,
+  estimated_time INTEGER,
   created_at DATETIME,
   updated_at DATETIME,
   is_synced INTEGER DEFAULT 0,
@@ -345,6 +347,16 @@ async function runMigrations() {
 			table: "task",
 			column: "is_for_today",
 			ddl: "ALTER TABLE task ADD COLUMN is_for_today INTEGER DEFAULT 0;",
+		},
+		{
+			table: "task",
+			column: "estimated_time",
+			ddl: "ALTER TABLE task ADD COLUMN estimated_time INTEGER;",
+		},
+		{
+			table: "habit",
+			column: "estimated_time",
+			ddl: "ALTER TABLE habit ADD COLUMN estimated_time INTEGER;",
 		},
 	];
 

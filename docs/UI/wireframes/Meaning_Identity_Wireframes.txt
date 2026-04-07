@@ -2,25 +2,23 @@
 
 ---
 
-## 🏛️ MEANING DASHBOARD (Strategic Anchors)
+## 🧠 MEANING SCREEN (Strategic Anchors)
 [ (≡) Menu ]                 STRATEGY                 [ (🔔) Notifications ]
 ----------------------------------------------------------------------
-(Subtitle: "Define what truly matters to you.")
+(Subtitle: "The 'Why' behind every action.")
 
 [ Section: MEANING CARDS (Vertical List) ]
 --------------------------------------------------
-| [ Card: (❤️) Auto suficiente                                   ]
-| [ Description: Independência fisica                         ]
-| [ Associated Goals: ]
-|    - [🔵] Goal #A (80%)
-|    - [🔵] Goal #B (45%)
-| [ (➕) Add Goal Link ]
+| [ Card: (❤️) Auto suficiente                 [✎] [✕] ]
+| [ Category: (Health)                                ]
+| [ Description: Independência física e mental        ]
 --------------------------------------------------
-| [ Card: (💰) Liberdade Financeira                             ]
-| [ Description: Independência financeira                      ]
+| [ Card: (💰) Liberdade Financeira           [✎] [✕] ]
+| [ Category: (Work)                                  ]
+| [ Description: Investimentos e segurança            ]
 --------------------------------------------------
 
-[ (🏠) DASHBOARD ]   [ (📁) T-BACKLOG ]   [ (📁) G-BACKLOG ]   [ (📔) LOGS ]
+[ (🧠) MEANINGS ]   [ (🎯) GOALS ]   [ (📋) TASKS ]   [ (🧘) REFLECT ]
 ------------------------- STRATEGIC TABS -----------------------------
 
 [ (➕) FAB: Create Meaning (Bottom Right) ]
@@ -51,5 +49,5 @@
 |
 |   [      ACKNOWLEDGE & CONTINUE       ]
 |
-----------------------------------------------------------------------
+---
 (Appears on first launch of the day)

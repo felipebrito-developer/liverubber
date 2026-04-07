@@ -1,40 +1,48 @@
-# Strategic Backlog (Tasks) Wireframe
+# Strategic Task Layer Wireframes
 
-[Status Bar (Time, Battery, etc.)]
+---
+
+## 📋 TASKS SCREEN (Decomposition Backlog)
+[ (≡) Menu ]                 STRATEGY                 [ (🔔) Notifications ]
 ----------------------------------------------------------------------
-[ (≡) Menu ]                 BACKLOG                  [ (🔔) Notifications ]
-----------------------------------------------------------------------
-(Subtitle: "Strategic task decomposition.")
+(Subtitle: "Break down milestones into concrete actions.")
 
-[ ALL ]  [ TO DO ]  [ IN PROGRESS ]  [ DONE ]
-------------------------- FILTER PILLS --------------------------------
-(Horizontal Scroll for filtered states)
+[ Filter Row: ( ALL ) | ( TODO ) | ( IN PROGRESS ) | ( DONE ) ]
 
-[ Section: BACKLOG LIST (Vertical List) ]
+[ Section: TASK CARDS (Vertical List) ]
 --------------------------------------------------
-| [ Card: Task Title #1                                           ]
-| [ Description: Long term goal #A (Triggers Task Creation) ]
-| [ Status Badge: IN PROGRESS ]
+| [ Card: (📋) Chest Day Workout [☀️] [✎] [✕] ]
+| [ Goal: (🔵) Finalizar Treino A                ]
+| [ Priority: (HIGH)                            ]
+| [ Description: Focus on bench press technique ]
 --------------------------------------------------
-| [ Card: Task Title #2                                           ]
-| [ Description: Long term goal #B (Triggers Task Creation) ]
-| [ Status Badge: TO DO ]
---------------------------------------------------
-| [ Card: Task Title #3                                           ]
-| [ Description: Long term goal #C (Triggers Task Creation) ]
-| [ Status Badge: DONE (Crossed Out) ]
+| [ Card: (📋) Write Outline     [🌙] [✎] [✕] ]
+| [ Goal: (🔵) Publicar Artigo                  ]
+| [ Priority: (MEDIUM)                          ]
 --------------------------------------------------
 
-... [ Clear scannable vertical list ] ...
-
---------------------------------------------------
-[ List Padding: 120px Buffer for Nav Bar / Visibility ]
---------------------------------------------------
-
-[ (≡) STRATEGY ]   [ (🎯) DAILY ]   [ (🏋️) BODY ]   [ (📊) LOGS ]
-------------------------- NAVIGATION BAR -----------------------------
+[ (🧠) MEANINGS ]   [ (🎯) GOALS ]   [ (📋) TASKS ]   [ (🧘) REFLECT ]
+------------------------- STRATEGIC TABS -----------------------------
 
 [ (➕) FAB: Create Task (Bottom Right) ]
+
+---
+
+## 🏗️ CREATE/EDIT TASK (Goal Dropdown Selection)
 --------------------------------------------------
-| Triggered by: FAB -> TaskCreationModal
+[ (X) Cancel ]                TASK DETAIL                [ (✓) Save ]
 --------------------------------------------------
+Task Name: [ __________________________________ ]
+
+Anchor to Goal:
+[ Choice: (🎯) Finalizar Treino A ▼ ] (Dropdown Select)
+[ (Description: A concrete milestone) ]
+
+Priority:
+( ) Low ( ) Medium ( ) High (X) Urgent
+
+Tags (Contexts):
+[ Work ] [ Home ] [ Deep Work ] [ Small Win ]
+
+---
+(Visual: Optimized for ADHD by providing explicit goal selection and priority focus.)
