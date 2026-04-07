@@ -1,0 +1,46 @@
+# Resource Management (Assets & Audit) Wireframes
+
+---
+
+## 💎 RESOURCE ASSETS (Inventory)
+[ (≡) Menu ]                 RESOURCES                [ (🔔) Notifications ]
+----------------------------------------------------------------------
+(Subtitle: "Inventory of biological and logistical reserves.")
+
+[ ALL ]  [ MONEY ]  [ HEALTH ]  [ TIME ]
+------------------------- CATEGORY FILTER -----------------------------
+
+[ Section: RESOURCE STORES (Vertical List) ]
+--------------------------------------------------
+| [ Card: (💰) Cash Wallet                                       ]
+| [ Amount: $1,250 ]   [ (⬆️) Add ]   [ (⬇️) Subtract ]
+--------------------------------------------------
+| [ Card: (🌿) Biological Vitality                              ]
+| [ Amount: 75% ]      [ (⬆️) Log Sleep ] [ (⬇️) Log Stress ]
+--------------------------------------------------
+| [ Card: (⚡) Spare Time                                        ]
+| [ Amount: 12h ]      [ (⬆️) Add ]   [ (⬇️) Subtract ]
+--------------------------------------------------
+
+[ (➕) FAB: Create Resource Store (Bottom Right) ]
+--------------------------------------------------
+
+---
+
+## 📜 RESOURCE AUDIT (Transaction History)
+----------------------------------------------------------------------
+(Subtitle: "Historical ledger of resource changes.")
+
+[ Section: AUDIT LOG (Vertical List) ]
+--------------------------------------------------
+| (Timeline view of Resource shifts)
+|
+| [ Card: (🌿) Vitality (Regen: Sleep)                           ]
+| [ (+ 10%) ]  [ Date: Today, 08:00 ]
+--------------------------------------------------
+| [ Card: (💰) Cash Wallet (Spend: Coffee)                       ]
+| [ (- $5)  ]  [ Date: Yesterday, 14:00 ]
+--------------------------------------------------
+
+[ (📊) STATUS ]   [ (💎) ASSETS ]   [ (📜) AUDIT ]
+------------------------- STORE TABS (INTERNAL) ----------------------

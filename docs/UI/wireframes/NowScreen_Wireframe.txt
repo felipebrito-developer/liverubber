@@ -1,0 +1,46 @@
+# Focus Screen (Now) Wireframe
+
+[Status Bar (Time, Battery, etc.)]
+----------------------------------------------------------------------
+[ (≡) Menu ]                   FOCUS                  [ (🔔) Notifications ]
+----------------------------------------------------------------------
+(Subtitle: "Protect your attention.")
+
+[ Pre-flight Checklist (Overlays Screen if Not Done) ]
+--------------------------------------------------
+| [ (🔘) Quiet Space ] | [ (🔘) Water ] | [ (🔘) Silent Phone ]
+--------------------------------------------------
+
+[ Section: TARGETING SELECTOR CARD ]
+--------------------------------------------------
+| (TARGETING: )
+| [      🚀 Task Title Being Focused (H2 Text)     ]
+| (Tap to switch task / Today's Plan)
+--------------------------------------------------
+
+[ Section: TIMER (High-Contrast / Oversized) ]
+--------------------------------------------------
+|
+|            25:00
+|
+|   (Subtitle: "Time to rest") / "Mission time"
+--------------------------------------------------
+[ PROGRESS TRACK BAR (Linear / Horizontal) ]
+[ [##########-----------------------------------------] ]
+(Visual tracking fights time blindness)
+--------------------------------------------------
+
+[ Section: ENGAGEMENT CONTROLS ]
+--------------------------------------------------
+|
+|   [      ENGAGE FOCUS / HOLD (Primary Btn)       ]
+|
+|   [      Recalibrate (Outline Btn)               ]
+|
+|   [      Mission Accomplished (Ghost Btn)        ] 
+| 
+--------------------------------------------------
+
+
+[ (≡) STRATEGY ]   [ (🎯) DAILY ]   [ (🏋️) BODY ]   [ (📊) LOGS ]
+------------------------- NAVIGATION BAR -----------------------------

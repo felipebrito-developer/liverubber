@@ -1,0 +1,49 @@
+# Goals & Strategic Layer Wireframes
+
+---
+
+## 🏗️ GOALS DASHBOARD (Summary)
+[ (≡) Menu ]                 STRATEGY                 [ (🔔) Notifications ]
+----------------------------------------------------------------------
+(Subtitle: "Long-term trajectory and momentum.")
+
+[ GOAL COMPLETION (Pizza Graphs / Pie Charts) ]
+--------------------------------------------------
+| ( [🔵] Goal #1 )  ( [🔴] Goal #2 )  ( [🟢] Goal #3 )
+| ( 80% Done )     ( 45% Done )      ( 12% Done )
+--------------------------------------------------
+
+[ Section: MILESTONES / REWARDS ]
+--------------------------------------------------
+| [ Card: (🎁) Reward Name ]
+| [ Requirement: Finish Goal #1 ]
+| [ [##########-------------------------] 80% ]
+--------------------------------------------------
+
+[ (🏠) DASHBOARD ]   [ (📁) T-BACKLOG ]   [ (📁) G-BACKLOG ]   [ (📔) LOGS ]
+------------------------- STRATEGIC TABS -----------------------------
+
+---
+
+## 📁 GOALS BACKLOG (Strategic Units)
+----------------------------------------------------------------------
+(Subtitle: "High-level goal decomposition.")
+
+[ ACTIVE ]  [ PAUSED ]  [ DONE ]
+------------------------- FILTER PILLS --------------------------------
+
+[ Section: GOAL CARDS (Vertical List) ]
+--------------------------------------------------
+| [ Card: Goal Title #1                                          ]
+| [ Meaning Anchor (HSL Color Code) ]   [ Category Badge ]
+| [ [##########-------------------------] 80% ]
+--------------------------------------------------
+| [ Card: Goal Title #2                                          ]
+| [ Meaning Anchor (HSL Color Code) ]   [ Category Badge ]
+| [ [####-------------------------------] 45% ]
+--------------------------------------------------
+
+[ (➕) FAB: Create Goal (Bottom Right) ]
+--------------------------------------------------
+| Trigger: CreateGoalModal -> Link to Meaning / Category
+--------------------------------------------------

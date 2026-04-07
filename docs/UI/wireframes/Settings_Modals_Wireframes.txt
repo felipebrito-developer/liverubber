@@ -1,0 +1,50 @@
+# User Settings & Structural Modals Wireframes
+
+---
+
+## ⚙️ USER SETTINGS (Profile CRUD)
+[ (≡) Menu ]                 SETTINGS                 [ (🔔) Notifications ]
+----------------------------------------------------------------------
+(Subtitle: "Your digital mirror and preferences.")
+
+[ Section: PROFILE MANAGEMENT ]
+--------------------------------------------------
+| ( [👤] Avatar Edit )
+| [ Name: User Name ]
+| [ Age: 32 ]
+--------------------------------------------------
+
+[ Section: PREFERENCES ]
+--------------------------------------------------
+| [ (🔘) THEME: DARK / LIGHT ]
+| [ (🔘) GAME MODE: CLASIC (Locked) ]
+--------------------------------------------------
+
+[ Section: DATA & SYNC ]
+--------------------------------------------------
+| [ (🗳️) Export Data ]   [ (📁) Import Data ]
+--------------------------------------------------
+
+---
+
+## 🏗️ STRUCTURAL MODALS (Atomic Creation)
+
+### A. TASK CREATION MODAL (Full-Screen Overlay)
+----------------------------------------------------------------------
+[ (X) Close ]               NEW TASK                 [ (✓) Save ]
+----------------------------------------------------------------------
+[ TITLE: Condition your brain (e.g. Code feature) ]
+[ DESCRIPTION: Tactical decomposition... ]
+[ PRIORITY SELECTOR: [LOW] [MEDIUM] [HIGH] [URGENT] ]
+------------------------- TAG SELECTOR -------------------------------
+| [ (🏷️) DEEP WORK ] [ (🏷️) SMALL WIN ] [ ... ]
+----------------------------------------------------------------------
+
+### B. GOAL CREATION MODAL (Strategic Entry)
+----------------------------------------------------------------------
+[ (X) Close ]               NEW GOAL                 [ (✓) Save ]
+----------------------------------------------------------------------
+[ TITLE: Long-term trajectory (e.g. Career Shift) ]
+[ STRATEGIC MEANING ANCHOR (Link to Meaning Card) ]
+[ CATEGORY SELECTOR: (Money, Health, Time, Assets) ]
+----------------------------------------------------------------------

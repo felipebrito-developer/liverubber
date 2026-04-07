@@ -1,0 +1,55 @@
+# Meaning & Identity Layer Wireframes
+
+---
+
+## 🏛️ MEANING DASHBOARD (Strategic Anchors)
+[ (≡) Menu ]                 STRATEGY                 [ (🔔) Notifications ]
+----------------------------------------------------------------------
+(Subtitle: "Define what truly matters to you.")
+
+[ Section: MEANING CARDS (Vertical List) ]
+--------------------------------------------------
+| [ Card: (❤️) Auto suficiente                                   ]
+| [ Description: Independência fisica                         ]
+| [ Associated Goals: ]
+|    - [🔵] Goal #A (80%)
+|    - [🔵] Goal #B (45%)
+| [ (➕) Add Goal Link ]
+--------------------------------------------------
+| [ Card: (💰) Liberdade Financeira                             ]
+| [ Description: Independência financeira                      ]
+--------------------------------------------------
+
+[ (🏠) DASHBOARD ]   [ (📁) T-BACKLOG ]   [ (📁) G-BACKLOG ]   [ (📔) LOGS ]
+------------------------- STRATEGIC TABS -----------------------------
+
+[ (➕) FAB: Create Meaning (Bottom Right) ]
+
+---
+
+## 🚀 ONBOARDING (Identity Initialization)
+----------------------------------------------------------------------
+[ SKIP ]                 INITIALIZATION                 [ NEXT ]
+----------------------------------------------------------------------
+"Who are you becoming today?"
+
+1. Primary Meaning: [ ___________________________ ] (e.g. Creator)
+2. Why does this matter? [ __________________________________ ]
+
+(Visual: Calm, high-contrast typography. Minimalist.)
+
+---
+
+## ☀️ MEANING OF THE DAY (Identity Reinforcement)
+----------------------------------------------------------------------
+[ (X) ]
+----------------------------------------------------------------------
+|
+|         "Your experience is the present."
+|
+|   (Anchor: Auto suficiente)
+|
+|   [      ACKNOWLEDGE & CONTINUE       ]
+|
+----------------------------------------------------------------------
+(Appears on first launch of the day)

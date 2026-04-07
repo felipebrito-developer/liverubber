@@ -35,6 +35,7 @@ This index provides a map of all project documentation. Technical agents (such a
 | [global.md](file:///home/felip/projects/LiveRubber/docs/Roadmaps/global.md) | **Global Roadmap** | High-level milestones and completed steps. | `roadmap`, `progress`, `backlog` |
 | [status.md](file:///home/felip/projects/LiveRubber/docs/Roadmaps/status.md) | **MVP Progress Tracker** | Real-time status of the MVP layers. | `mvp`, `status`, `progress`, `metrics` |
 | [workspace-mapping.md](file:///home/felip/projects/LiveRubber/docs/Roadmaps/workspace-mapping.md) | **Workspace Mapping** | Detailed monorepo directory tree and responsibilities. | `structure`, `directory-map`, `organization` |
+| [db-structure.md](file:///home/felip/projects/LiveRubber/docs/Structure/db-structure.md) | **Database Structure** | Table entities, relationships, and seeding patterns. | `db`, `schema`, `architecture` |
 | [mobile.md](file:///home/felip/projects/LiveRubber/docs/Roadmaps/mobile.md) | **Mobile Roadmap** | Detailed progress for the React Native application. | `react-native`, `jotai`, `neuro-ui` |
 | [service.md](file:///home/felip/projects/LiveRubber/docs/Roadmaps/service.md) | **Service Roadmap** | Detailed progress for the Node.js backend. | `nodejs`, `drizzle`, `sqlite`, `mcp` |
 | [ai-bridge.md](file:///home/felip/projects/LiveRubber/docs/Roadmaps/ai-bridge.md) | **AI Bridge Roadmap** | Detailed progress for the AI Orchestrator. | `ai-bridge`, `ollama`, `gemini`, `mcp` |

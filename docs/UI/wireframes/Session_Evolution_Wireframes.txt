@@ -1,0 +1,50 @@
+# Session & Break Evolution Wireframes
+
+---
+
+## ☕ BREAK SCREEN (Pomodoro Interval)
+----------------------------------------------------------------------
+[ (X) ]                   BREAK                   [ (🔔) ]
+----------------------------------------------------------------------
+(Subtitle: "Recovery is part of the work.")
+
+[ RESISTANCE IS NORMAL (Mood Anchor) ]
+--------------------------------------------------
+| [ (🔘) I’m still tired ] | [ (🔘) I’m ready to return ]
+--------------------------------------------------
+
+[ Section: BREAK TIMER (Circular / Calm) ]
+--------------------------------------------------
+|
+|            05:00
+|
+|   (Subtitle: "Rest your eyes / Stretch")
+--------------------------------------------------
+
+[ Section: BREAK ACTIONS ]
+--------------------------------------------------
+| [      Skip Break & Return (Outline Btn)       ]
+|
+| [      Extend Break (2m) (Outline Btn)         ]
+--------------------------------------------------
+
+---
+
+## 📋 MISSION BRIEFING (Pre-Session Planning)
+----------------------------------------------------------------------
+[ (X) Close ]             BRIEFING                 [ ENGAGE ]
+----------------------------------------------------------------------
+(Subtitle: "A moment of preparation prevents flow interruptions.")
+
+[ Section: DEFINING THE WIN ]
+--------------------------------------------------
+| What does 'Done' look like for this 25m?
+| [ (🔘) Clear 3 emails ]
+| [ (🔘) Write 1 function ]
+--------------------------------------------------
+
+[ Section: SENSORY PROTECTION ]
+--------------------------------------------------
+| [ (🔘) Headphones On ]
+| [ (🔘) Do Not Disturb (System Sync) ]
+--------------------------------------------------

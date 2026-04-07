@@ -1,0 +1,38 @@
+# Action Hub (Daily Execution) Wireframe
+
+[Status Bar (Time, Battery, etc.)]
+----------------------------------------------------------------------
+[ (≡) Menu ]                 ACTION HUB                 [ (🔔) Notifications ]
+----------------------------------------------------------------------
+(Subtitle: "Your strategic execution plan for today.")
+
+[ (🧘) LOW Energy ]    [ (⚡) BALANCED Energy ]     [ (🔥) HIGH Energy ]
+(Descr: "Small wins")  (Descr: "Regular work")      (Descr: "Deep work")
+----------------------------------------------------------------------
+
+[ Section: HABITS FOR TODAY (Horiz Scroll) ]
+--------------------------------------------------
+| [ Card (Habit Name) ]   | [ Card (Habit Name) ]   | [ Card ... ]
+| [ Icon / 0 Streak ]     | [ Icon / 5 Streak ]     | [ ... ]
+--------------------------------------------------
+
+[ Section: FOCUS TASKS (Vertical List) ]
+--------------------------------------------------
+| [ Card: Task Title #1                                           ]
+| [ Priority Badge (HSL-colored) ]   [ 🎯 FOCUS (Action Btn) ]
+--------------------------------------------------
+| [ Card: Task Title #2                                           ]
+| [ Priority Badge (HSL-colored) ]   [ 🎯 FOCUS (Action Btn) ]
+--------------------------------------------------
+| [ Card: Task Title #3                                           ]
+| [ Priority Badge (HSL-colored) ]   [ 🎯 FOCUS (Action Btn) ]
+--------------------------------------------------
+
+... [ Clear scannable vertical list ] ...
+
+--------------------------------------------------
+[ List Padding: 120px Buffer for Nav Bar / Visibility ]
+--------------------------------------------------
+
+[ (≡) STRATEGY ]   [ (🎯) DAILY ]   [ (🏋️) BODY ]   [ (📊) LOGS ]
+------------------------- NAVIGATION BAR -----------------------------

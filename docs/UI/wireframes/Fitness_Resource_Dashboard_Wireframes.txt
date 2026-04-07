@@ -1,0 +1,47 @@
+# Fitness & Resource Dashboard Wireframes
+
+## 🏋️ FITNESS DASHBOARD (Body & Mind)
+[Status Bar (Time, Battery, etc.)]
+----------------------------------------------------------------------
+[ (≡) Menu ]                 BODY & MIND              [ (🔔) Notifications ]
+----------------------------------------------------------------------
+(Subtitle: "Building physical and mental resilience.")
+
+[ WEEKLY ACTIVITY (Horizontal Stats) ]
+--------------------------------------------------
+| [ Card (7 Days Streak) ] | [ Card (12 Wins) ] | [ Card (7.2h Sleep) ]
+--------------------------------------------------
+
+[ Section: PERFORMANCE HABITS ]
+--------------------------------------------------
+| (Daily walks, Meditation, Hydration)
+| [ Card (Habit Name) ]
+| [ Card (Habit Name) ]
+--------------------------------------------------
+
+[ (🏠) DASHBOARD ]   [ (💪) EXECUTION ]   [ (📊) LOGS ]
+------------------------- FITNESS TABS (INTERNAL) --------------------
+
+---
+
+## 💎 RESOURCE DASHBOARD (Status)
+[Status Bar (Time, Battery, etc.)]
+----------------------------------------------------------------------
+[ (≡) Menu ]                 STATUS                   [ (🔔) Notifications ]
+----------------------------------------------------------------------
+(Subtitle: "Global overview of your biological and logistical reserves.")
+
+[ GRID VIEW: CATEGORY RESERVES ]
+--------------------------------------------------
+| [ Card: MONEY  ($1.2k) ]   | [ Card: HEALTH (78%) ]
+| [ Card: TIME   (12h)  ]   | [ Card: ASSETS (5)   ]
+--------------------------------------------------
+
+[ Section: STRATEGIC RESERVES ]
+--------------------------------------------------
+| [ Progress Bar for Store #1 (Color: Category Color) ]
+| [ Progress Bar for Store #2 (Color: Category Color) ]
+--------------------------------------------------
+
+[ (📊) STATUS ]   [ (💎) ASSETS ]   [ (📜) AUDIT ]
+------------------------- STORE TABS (INTERNAL) ----------------------

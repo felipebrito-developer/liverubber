@@ -56,5 +56,16 @@ priority: 1
 * **Tab 3: Planning**
     * Task-tree view for planning body-part-specific sessions.
 
-## 5. User Settings
-* Profile CRUD: Avatar, Display Name, Theme (Dark/Light), Game Mode (Classic - locked).
+## 6. Layout Wireframes
+For detailed text-based visualizations of screen positions and structural layouts, refer to the following wireframes in `docs/UI/wireframes/`:
+
+* **[Global Navigation Drawer](file:///home/felip/projects/LiveRubber/docs/UI/wireframes/Global_Nav_Drawer_Wireframe.txt)**: Identity card and module routing.
+* **[Action Hub](file:///home/felip/projects/LiveRubber/docs/UI/wireframes/ActionHub_Wireframe.txt)**: Daily execution and energy filtering.
+* **[Now Screen](file:///home/felip/projects/LiveRubber/docs/UI/wireframes/NowScreen_Wireframe.txt)**: Focus timer and pre-flight flow.
+* **[Tasks Backlog](file:///home/felip/projects/LiveRubber/docs/UI/wireframes/TasksBacklog_Wireframe.txt)**: Strategic planning and task elevation.
+* **[Strategy Hub](file:///home/felip/projects/LiveRubber/docs/UI/wireframes/Goals_Strategic_Wireframes.txt)**: Goals dashboard (Pizza graphs) and backlog.
+* **[Reflection Log](file:///home/felip/projects/LiveRubber/docs/UI/wireframes/Reflection_Log_Wireframe.txt)**: Mood vs. Activity analytics.
+* **[Store Management](file:///home/felip/projects/LiveRubber/docs/UI/wireframes/Resource_Management_Wireframes.txt)**: Inventory (Assets) and audit history.
+* **[Fitness Advanced](file:///home/felip/projects/LiveRubber/docs/UI/wireframes/Fitness_Advanced_Wireframes.txt)**: Bio-execution (Mirror/Pacer) and planning.
+* **[Meaning & Identity](file:///home/felip/projects/LiveRubber/docs/UI/wireframes/Meaning_Identity_Wireframes.txt)**: Goal-anchoring dashboard and onboarding.
+* **[Session Evolution](file:///home/felip/projects/LiveRubber/docs/UI/wireframes/Session_Evolution_Wireframes.txt)**: Break timer and pre-session mission briefing.

@@ -1,0 +1,42 @@
+# Fitness Execution & Planning Wireframes
+
+---
+
+## 💪 FITNESS EXECUTION (Proprioception & Focus)
+----------------------------------------------------------------------
+[ (≡) Menu ]                 EXECUTION                [ (🔔) Notifications ]
+----------------------------------------------------------------------
+(Subtitle: "Grounding the user in their body.")
+
+[ OPTION A: THE RHYTHMIC PACER (Visual Flow) ]
+--------------------------------------------------
+| ( [🔵] Pulsing Aura (Visual Heartrate Sync) )
+| ( Audio pulses (Metronome) for rhythmic motor planning )
+--------------------------------------------------
+
+[ OPTION B: MIRROR MODE (Form Verification) ]
+--------------------------------------------------
+| ( [🖼️] Minimalist GIF/Video Loops of Form )
+--------------------------------------------------
+
+[ (🏠) DASHBOARD ]   [ (💪) EXECUTION ]   [ (📊) LOGS ]
+------------------------- FITNESS TABS (INTERNAL) --------------------
+
+---
+
+## 🏗️ FITNESS PLANNING (Body-Part Specific)
+----------------------------------------------------------------------
+(Subtitle: "Planning body-part-specific sessions.")
+
+[ UPPER BODY ]  [ LOWER BODY ]  [ CORE ]  [ CARDIO ]
+------------------------- TARGET FILTERS ----------------------------
+
+[ Section: EXERCISE PLAN (Task-Tree View) ]
+--------------------------------------------------
+| (Vertical List of Exercise Tasks)
+| [ Card: (🏋️) Push Up (3 Sets of 10)                           ]
+| [ Card: (🏃) Jumping Jacks (5 Min)                            ]
+--------------------------------------------------
+
+[ (➕) FAB: Create Fitness Plan (Bottom Right) ]
+--------------------------------------------------

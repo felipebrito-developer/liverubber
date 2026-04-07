@@ -1,0 +1,33 @@
+# Global Navigation Drawer Wireframe
+
+[ ------------------- HEADER: IDENTITY CARD ------------------- ]
+|                                                                |
+|   ( [👤] Avatar )    [ USER NAME ]                             |
+|                      Age: [ 32 ] (Combat Time Blindness)       |
+|                                                                |
+[ ------------------------------------------------------------- ]
+
+[ CORE MODULES LIST ]
+--------------------------------------------------
+| [ (🎯) FOCUS             ] -> Navigate: ActionHub / Now
+| [ (🏗️) STRATEGY          ] -> Navigate: GoalsDashboard / Backlog
+| [ (💎) STORE             ] -> Navigate: ResourceDashboard / Assets
+| [ (🏋️) BODY & MIND       ] -> Navigate: FitnessDashboard / Stats
+--------------------------------------------------
+
+[ RECENT ANALYTICS (Mini-View) ]
+--------------------------------------------------
+| (Visual: Mini Streak Graph or Mood Indicator)
+| "7 Day Flow Streak 🔥"
+--------------------------------------------------
+
+[ SECONDARY ACTIONS ]
+--------------------------------------------------
+| [ (⚙️) Settings           ]
+--------------------------------------------------
+
+[ FOOTER ]
+--------------------------------------------------
+| v1.0.4 - Strategic Build                                       |
+| [ LOGOUT (Secondary) ]                                         |
+--------------------------------------------------

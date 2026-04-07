@@ -1,0 +1,40 @@
+# Strategic Backlog (Tasks) Wireframe
+
+[Status Bar (Time, Battery, etc.)]
+----------------------------------------------------------------------
+[ (≡) Menu ]                 BACKLOG                  [ (🔔) Notifications ]
+----------------------------------------------------------------------
+(Subtitle: "Strategic task decomposition.")
+
+[ ALL ]  [ TO DO ]  [ IN PROGRESS ]  [ DONE ]
+------------------------- FILTER PILLS --------------------------------
+(Horizontal Scroll for filtered states)
+
+[ Section: BACKLOG LIST (Vertical List) ]
+--------------------------------------------------
+| [ Card: Task Title #1                                           ]
+| [ Description: Long term goal #A (Triggers Task Creation) ]
+| [ Status Badge: IN PROGRESS ]
+--------------------------------------------------
+| [ Card: Task Title #2                                           ]
+| [ Description: Long term goal #B (Triggers Task Creation) ]
+| [ Status Badge: TO DO ]
+--------------------------------------------------
+| [ Card: Task Title #3                                           ]
+| [ Description: Long term goal #C (Triggers Task Creation) ]
+| [ Status Badge: DONE (Crossed Out) ]
+--------------------------------------------------
+
+... [ Clear scannable vertical list ] ...
+
+--------------------------------------------------
+[ List Padding: 120px Buffer for Nav Bar / Visibility ]
+--------------------------------------------------
+
+[ (≡) STRATEGY ]   [ (🎯) DAILY ]   [ (🏋️) BODY ]   [ (📊) LOGS ]
+------------------------- NAVIGATION BAR -----------------------------
+
+[ (➕) FAB: Create Task (Bottom Right) ]
+--------------------------------------------------
+| Triggered by: FAB -> TaskCreationModal
+--------------------------------------------------

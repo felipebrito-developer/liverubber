@@ -1,0 +1,36 @@
+# Reflection Log (Analytics) Wireframe
+
+[Status Bar (Time, Battery, etc.)]
+----------------------------------------------------------------------
+[ (≡) Menu ]                 REFLECTION               [ (🔔) Notifications ]
+----------------------------------------------------------------------
+(Subtitle: "Mood vs. Activity correlation.")
+
+[ MOOD / ACTIVITY CORRELATION (Visual Overlay) ]
+--------------------------------------------------
+| (Visual: Graph mapping Mood Rating (1-5) over Work Hours)
+| [  [📈] [###########-------------------] 25% Win Rate   ]
+--------------------------------------------------
+
+[ Section: RECENT ACTIVITY HISTORY ]
+--------------------------------------------------
+| (Vertical List of Individual Sessions)
+| [ Card: (🌿) Session Title #1                                   ]
+| [ Mood: 😄 (5/5) ]  [ Duration: 25m ]  [ Date: Today ]
+--------------------------------------------------
+| [ Card: (🎯) Session Title #2                                   ]
+| [ Mood: 😐 (3/5) ]  [ Duration: 25m ]  [ Date: Yesterday ]
+--------------------------------------------------
+| [ Card ... ]
+--------------------------------------------------
+
+[ (🏠) DASHBOARD ]   [ (📁) T-BACKLOG ]   [ (📁) G-BACKLOG ]   [ (📔) LOGS ]
+------------------------- STRATEGIC TABS -----------------------------
+
+---
+
+[ REWARD COLLECTOR (Bottom Drawer / Secondary) ]
+--------------------------------------------------
+| [ (🎁) Milestone #1 Unlocked (Collect) ]
+| [ (🎁) Milestone #2 Locked ]
+--------------------------------------------------
