@@ -4,6 +4,7 @@ import { getDB } from "../../db";
 
 interface GoalRow {
 	id: string;
+	category_id: string | null;
 	meaning_id: string | null;
 	name: string;
 	description: string;
@@ -19,6 +20,7 @@ interface GoalRow {
 
 const mapGoal = (row: GoalRow): Goal => ({
 	id: row.id,
+	categoryId: row.category_id,
 	meaningId: row.meaning_id,
 	name: row.name,
 	description: row.description,
@@ -33,6 +35,7 @@ const mapGoal = (row: GoalRow): Goal => ({
 });
 
 export interface GoalInsert {
+	category_id?: string | null;
 	meaning_id?: string | null;
 	name: string;
 	description: string;
@@ -43,6 +46,7 @@ export interface GoalInsert {
 }
 
 export interface GoalUpdate {
+	category_id?: string | null;
 	meaning_id?: string | null;
 	name?: string;
 	description?: string;
@@ -70,13 +74,14 @@ export const GoalRepository = {
 	createGoal(data: GoalInsert): Goal {
 		const db = getDB();
 		const stmt = db.query(`
-			INSERT INTO goal (id, meaning_id, name, description, status, due_date, progress, cover_image_id, created_at, updated_at, is_synced)
-			VALUES ($id, $meaning_id, $name, $description, $status, $due_date, $progress, $cover_image_id, $now, $now, 1)
+			INSERT INTO goal (id, category_id, meaning_id, name, description, status, due_date, progress, cover_image_id, created_at, updated_at, is_synced)
+			VALUES ($id, $category_id, $meaning_id, $name, $description, $status, $due_date, $progress, $cover_image_id, $now, $now, 1)
 			RETURNING *
 		`);
 		const now = new Date().toISOString();
 		const row = stmt.get({
 			$id: uuidv4(),
+			$category_id: data.category_id ?? null,
 			$meaning_id: data.meaning_id ?? null,
 			$name: data.name,
 			$description: data.description,
@@ -99,6 +104,7 @@ export const GoalRepository = {
 		const stmt = db.query(`
 			UPDATE goal
 			SET 
+				category_id = $category_id,
 				meaning_id = $meaning_id,
 				name = $name,
 				description = $description,
@@ -113,6 +119,8 @@ export const GoalRepository = {
 
 		const toUpdate = {
 			$id: id,
+			$category_id:
+				data.category_id !== undefined ? data.category_id : current.category_id,
 			$meaning_id:
 				data.meaning_id !== undefined ? data.meaning_id : current.meaning_id,
 			$name: data.name !== undefined ? data.name : current.name,

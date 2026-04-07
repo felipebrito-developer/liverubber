@@ -21,13 +21,19 @@ export const resourceStoresAtom = atom<UIResourceStore[]>([]);
 export const resourceTypesAtom = atom<ResourceType[]>([]);
 export const resourceLogsAtom = atom<ResourceLog[]>([]);
 
+export const loadResourceLogsAction = atom(null, async (_get, set) => {
+	const logs = await logsRepository.getAllResourceLogs();
+	set(resourceLogsAtom, logs as ResourceLog[]);
+});
+
 export const loadResourcesAction = atom(null, async (_get, set) => {
 	const stores = await resourcesRepository.getAllStores();
 	const types = await resourcesRepository.getAllTypes();
-	const logs = await logsRepository.getAllResourceLogs();
-	set(resourceStoresAtom, stores as UIResourceStore[]);
-	set(resourceTypesAtom, types as ResourceType[]);
-	set(resourceLogsAtom, logs as ResourceLog[]);
+	await Promise.all([
+		set(resourceStoresAtom, stores as UIResourceStore[]),
+		set(resourceTypesAtom, types as ResourceType[]),
+		set(loadResourceLogsAction),
+	]);
 });
 
 export const createResourceTypeAction = atom(

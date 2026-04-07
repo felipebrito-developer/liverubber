@@ -1,4 +1,13 @@
-import { schema } from "@liverubber/shared";
+import {
+	INITIAL_CATEGORIES,
+	INITIAL_FREQUENCIES,
+	INITIAL_GOALS,
+	INITIAL_HABITS,
+	INITIAL_MEANINGS,
+	INITIAL_TAGS,
+	INITIAL_TASKS,
+	schema,
+} from "@liverubber/shared";
 import { open } from "@op-engineering/op-sqlite";
 import { drizzle } from "drizzle-orm/op-sqlite";
 
@@ -81,6 +90,7 @@ CREATE TABLE IF NOT EXISTS meaning_assets (
 
 CREATE TABLE IF NOT EXISTS goal (
   id VARCHAR PRIMARY KEY NOT NULL,
+  category_id VARCHAR,
   meaning_id VARCHAR,
   name VARCHAR NOT NULL,
   description TEXT NOT NULL,
@@ -92,6 +102,7 @@ CREATE TABLE IF NOT EXISTS goal (
   updated_at DATETIME,
   is_synced INTEGER DEFAULT 0,
   last_synced_at DATETIME,
+  FOREIGN KEY(category_id) REFERENCES category_type(id),
   FOREIGN KEY(meaning_id) REFERENCES meaning(id),
   FOREIGN KEY(cover_image_id) REFERENCES asset(id)
 );
@@ -108,9 +119,11 @@ CREATE TABLE IF NOT EXISTS goal_assets (
 
 CREATE TABLE IF NOT EXISTS habit (
   id VARCHAR PRIMARY KEY NOT NULL,
+  category_id VARCHAR,
   meaning_id VARCHAR,
   frequency_id VARCHAR,
   name VARCHAR NOT NULL,
+  description TEXT,
   start_date DATETIME,
   last_update DATETIME,
   streak_count INTEGER NOT NULL,
@@ -118,6 +131,7 @@ CREATE TABLE IF NOT EXISTS habit (
   updated_at DATETIME,
   is_synced INTEGER DEFAULT 0,
   last_synced_at DATETIME,
+  FOREIGN KEY(category_id) REFERENCES category_type(id),
   FOREIGN KEY(meaning_id) REFERENCES meaning(id),
   FOREIGN KEY(frequency_id) REFERENCES frequency_type(id)
 );
@@ -131,6 +145,7 @@ CREATE TABLE IF NOT EXISTS task (
   status VARCHAR,
   due_date DATE,
   priority VARCHAR,
+  is_for_today INTEGER DEFAULT 0,
   created_at DATETIME,
   updated_at DATETIME,
   is_synced INTEGER DEFAULT 0,
@@ -279,60 +294,173 @@ CREATE TABLE IF NOT EXISTS habit_tag (
   FOREIGN KEY(habit_id) REFERENCES habit(id),
   FOREIGN KEY(tag_id) REFERENCES tag_type(id)
 );
-
-INSERT OR IGNORE INTO frequency_type (id, type, name, frequency_period, amount, repeat, created_at, updated_at) VALUES
-('freq-daily', 'repeat', 'Daily', 'day', 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('freq-workdays', 'repeat', 'Work Days', 'day', 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('freq-weekend', 'repeat', 'Weekend', 'day', 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('freq-oneshot', 'once', 'One shot', 'once', 1, 0, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('freq-hourly', 'repeat', 'Hourly', 'hour', 1, 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-
-INSERT OR IGNORE INTO category_type (id, name, category_color, description, created_at, updated_at) VALUES
-('cat-fitness', 'Fitness', '#FF5722', 'Physical health and training', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('cat-home-cleaning', 'Home Cleaning', '#2196F3', 'Maintenance and cleaning tasks', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('cat-home-organization', 'Home Organization', '#9C27B0', 'Decluttering and organizing spaces', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('cat-resources', 'Resources Management', '#4CAF50', 'Inventory and supplies', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('cat-health', 'Health Activities', '#E91E63', 'Wellbeing and medical', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('cat-meals', 'Meals', '#FFC107', 'Cooking and eating', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('cat-hobbies', 'Hobbies', '#00BCD4', 'Leisure and interest', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('cat-studies', 'Studies', '#3F51B5', 'Education and learning', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('cat-professional', 'Professional', '#607D8B', 'Work and career', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-
-INSERT OR IGNORE INTO tag_type (id, color_hex, name, created_at, updated_at) VALUES
-('tag-urgent', '#D32F2F', 'Urgent Priority', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('tag-critical', '#B71C1C', 'Critical Priority', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('tag-low-priority', '#8BC34A', 'Low Priority', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('tag-low-energy', '#FFEB3B', 'Low Energy', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('tag-balanced-energy', '#FF9800', 'Balanced Energy', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('tag-high-energy', '#F44336', 'High Energy', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('tag-preparation', '#9E9E9E', 'Preparation', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 `;
 
 /**
  * Executes the DDL statements to set up the DB locally on first launch.
- * This is meant for the MVP offline-first architecture.
  */
 export async function initializeDatabase() {
 	try {
-		// Basic setup using raw execution
-		// op-sqlite has executeBatch, but to simplify we'll split by ; and do individual executes
-		// in case batch implementation acts weird with raw string.
-		// Or we can just use simple execute operations for each block:
 		const ddlStatements = INITIALIZATION_SQL.split(";")
 			.map((s) => s.trim())
 			.filter((s) => s.length > 0);
 
 		for (const ddl of ddlStatements) {
-			try {
-				await sqliteDB.execute(ddl);
-			} catch (statementErr) {
-				console.error(`Failed to execute DDL: ${ddl}`, statementErr);
-				throw statementErr;
-			}
+			await sqliteDB.execute(ddl);
 		}
 
-		console.log("Local SQLite initialized successfully");
+		// Run safety migrations for existing tables
+		await runMigrations();
+
+		// Seed initial data after tables are ready
+		await seedDatabase();
+
+		console.log("Local SQLite initialized and seeded successfully");
 	} catch (err) {
-		console.error("Local SQLite initialization failed overall", err);
+		console.error("Local SQLite initialization failed", err);
+	}
+}
+
+/**
+ * Defensive migrations to ensure existing tables match the new schema.
+ */
+async function runMigrations() {
+	const migrations = [
+		{
+			table: "habit",
+			column: "category_id",
+			ddl: "ALTER TABLE habit ADD COLUMN category_id VARCHAR;",
+		},
+		{
+			table: "habit",
+			column: "description",
+			ddl: "ALTER TABLE habit ADD COLUMN description TEXT;",
+		},
+		{
+			table: "goal",
+			column: "category_id",
+			ddl: "ALTER TABLE goal ADD COLUMN category_id VARCHAR;",
+		},
+		{
+			table: "task",
+			column: "is_for_today",
+			ddl: "ALTER TABLE task ADD COLUMN is_for_today INTEGER DEFAULT 0;",
+		},
+	];
+
+	for (const m of migrations) {
+		try {
+			// Check if column exists using table_info pragma
+			const info = await sqliteDB.execute(`PRAGMA table_info(${m.table});`);
+			// Handle different op-sqlite response formats for rows
+			const rows = info.rows as unknown as { name: string }[] | undefined;
+			const columnExists = rows?.some((col) => col.name === m.column);
+
+			if (!columnExists) {
+				await sqliteDB.execute(m.ddl);
+				console.log(`Migration applied: Added ${m.column} to ${m.table}`);
+			}
+		} catch (e) {
+			console.warn(`Migration skipped or failed for ${m.column}:`, e);
+		}
+	}
+}
+
+/**
+ * Seeds the database with default values from the shared package.
+ */
+async function seedDatabase() {
+	const now = new Date().toISOString();
+
+	try {
+		// 1. Categories
+		await db
+			.insert(schema.categoryType)
+			.values(
+				INITIAL_CATEGORIES.map((c) => ({
+					...c,
+					createdAt: now,
+					updatedAt: now,
+				})),
+			)
+			.onConflictDoNothing();
+
+		// 2. Frequencies
+		await db
+			.insert(schema.frequencyType)
+			.values(
+				INITIAL_FREQUENCIES.map((f) => ({
+					...f,
+					createdAt: now,
+					updatedAt: now,
+				})),
+			)
+			.onConflictDoNothing();
+
+		// 3. Tags
+		await db
+			.insert(schema.tagType)
+			.values(
+				INITIAL_TAGS.map((t) => ({
+					...t,
+					createdAt: now,
+					updatedAt: now,
+				})),
+			)
+			.onConflictDoNothing();
+
+		// 4. Meanings
+		await db
+			.insert(schema.meaning)
+			.values(
+				INITIAL_MEANINGS.map((m) => ({
+					...m,
+					createdAt: now,
+					updatedAt: now,
+				})),
+			)
+			.onConflictDoNothing();
+
+		// 5. Goals
+		await db
+			.insert(schema.goal)
+			.values(
+				INITIAL_GOALS.map((g) => ({
+					...g,
+					progress: 0,
+					createdAt: now,
+					updatedAt: now,
+				})),
+			)
+			.onConflictDoNothing();
+
+		// 6. Habits
+		await db
+			.insert(schema.habit)
+			.values(
+				INITIAL_HABITS.map((h) => ({
+					...h,
+					streakCount: 0,
+					createdAt: now,
+					updatedAt: now,
+				})),
+			)
+			.onConflictDoNothing();
+
+		// 7. Tasks
+		await db
+			.insert(schema.task)
+			.values(
+				INITIAL_TASKS.map((t) => ({
+					...t,
+					createdAt: now,
+					updatedAt: now,
+				})),
+			)
+			.onConflictDoNothing();
+
+		console.log("Seed data injected successfully");
+	} catch (err) {
+		console.error("Seeding failed", err);
 	}
 }

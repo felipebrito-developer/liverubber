@@ -1,11 +1,13 @@
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { asset } from "./assets";
+import { categoryType } from "./core";
 import { meaning } from "./meanings";
 import { reward } from "./rewards";
 
 export const goal = sqliteTable("goal", {
 	id: text("id").primaryKey().notNull(),
+	categoryId: text("category_id").references(() => categoryType.id),
 	meaningId: text("meaning_id").references(() => meaning.id),
 	name: text("name").notNull(),
 	description: text("description").notNull(),

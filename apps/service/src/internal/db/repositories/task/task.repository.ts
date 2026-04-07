@@ -11,6 +11,7 @@ interface TaskRow {
 	status: string | null;
 	due_date: string | null;
 	priority: string | null;
+	is_for_today: number | null;
 	created_at: string | null;
 	updated_at: string | null;
 	is_synced: number | null;
@@ -26,6 +27,7 @@ const mapTask = (row: TaskRow): TaskDefinition => ({
 	status: row.status as TaskDefinition["status"],
 	dueDate: row.due_date,
 	priority: row.priority as TaskDefinition["priority"],
+	isForToday: row.is_for_today === 1,
 	createdAt: row.created_at,
 	updatedAt: row.updated_at,
 	isSynced: row.is_synced === 1,
@@ -40,6 +42,7 @@ export interface TaskInsert {
 	status?: "todo" | "in_progress" | "done";
 	due_date?: string | null;
 	priority?: string | null;
+	is_for_today?: boolean;
 }
 
 export interface TaskUpdate {
@@ -50,6 +53,7 @@ export interface TaskUpdate {
 	status?: "todo" | "in_progress" | "done";
 	due_date?: string | null;
 	priority?: string | null;
+	is_for_today?: boolean;
 }
 
 export const TaskRepository = {
@@ -70,8 +74,8 @@ export const TaskRepository = {
 	createTask(data: TaskInsert): TaskDefinition {
 		const db = getDB();
 		const stmt = db.query(`
-			INSERT INTO task (id, goal_id, parent_task_id, title, description, status, due_date, priority, created_at, updated_at, is_synced)
-			VALUES ($id, $goal_id, $parent_task_id, $title, $description, $status, $due_date, $priority, $now, $now, 1)
+			INSERT INTO task (id, goal_id, parent_task_id, title, description, status, due_date, priority, is_for_today, created_at, updated_at, is_synced)
+			VALUES ($id, $goal_id, $parent_task_id, $title, $description, $status, $due_date, $priority, $is_for_today, $now, $now, 1)
 			RETURNING *
 		`);
 		const now = new Date().toISOString();
@@ -84,6 +88,7 @@ export const TaskRepository = {
 			$status: data.status ?? "todo",
 			$due_date: data.due_date ?? null,
 			$priority: data.priority ?? null,
+			$is_for_today: data.is_for_today ? 1 : 0,
 			$now: now,
 		}) as TaskRow;
 		return mapTask(row);
@@ -99,23 +104,18 @@ export const TaskRepository = {
 		const stmt = db.query(`
 			UPDATE task
 			SET 
-				goal_id = coalesce($goal_id, goal_id),
-				parent_task_id = coalesce($parent_task_id, parent_task_id),
-				title = coalesce($title, title),
-				description = coalesce($description, description),
-				status = coalesce($status, status),
-				due_date = coalesce($due_date, due_date),
-				priority = coalesce($priority, priority),
+				goal_id = $goal_id,
+				parent_task_id = $parent_task_id,
+				title = $title,
+				description = $description,
+				status = $status,
+				due_date = $due_date,
+				priority = $priority,
+				is_for_today = $is_for_today,
 				updated_at = $updated_at
 			WHERE id = $id
 			RETURNING *
 		`);
-
-		// We need to pass undefined for properties that aren't provided in the update,
-		// but since coalesce considers NULL as missing and we might want to set to NULL,
-		// SQLite's coalesce is tricky if we explicitly want to update to NULL.
-		// A more robust approach for dynamic updates in SQLite via bun is either dynamic SQL
-		// or passing the actual values we want to retain if not provided.
 
 		const toUpdate = {
 			$id: id,
@@ -130,6 +130,10 @@ export const TaskRepository = {
 			$status: data.status !== undefined ? data.status : current.status,
 			$due_date: data.due_date !== undefined ? data.due_date : current.due_date,
 			$priority: data.priority !== undefined ? data.priority : current.priority,
+			$is_for_today:
+				data.is_for_today !== undefined
+					? (data.is_for_today ? 1 : 0)
+					: current.is_for_today,
 			$updated_at: new Date().toISOString(),
 		};
 

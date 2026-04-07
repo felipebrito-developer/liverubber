@@ -5,9 +5,11 @@ import { meaning } from "./meanings";
 
 export const habit = sqliteTable("habit", {
 	id: text("id").primaryKey().notNull(),
+	categoryId: text("category_id").references(() => categoryType.id),
 	meaningId: text("meaning_id").references(() => meaning.id),
 	frequencyId: text("frequency_id").references(() => frequencyType.id),
 	name: text("name").notNull(),
+	description: text("description"),
 	startDate: text("start_date"),
 	lastUpdate: text("last_update"),
 	streakCount: integer("streak_count").notNull(),
