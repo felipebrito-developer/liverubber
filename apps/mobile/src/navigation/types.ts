@@ -41,9 +41,9 @@ export type FocusTabParamList = {
 
 // ─── Module 2: Strategic (Goals Management) ───────────────────────────────────
 export type StrategicTabParamList = {
-	GoalsDashboard: undefined;
-	TasksBacklog: undefined;
-	GoalsBacklog: undefined;
+	Meanings: undefined;
+	Goals: undefined;
+	Tasks: undefined;
 	Reflection: undefined;
 };
 

@@ -1,7 +1,7 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Text } from "react-native";
-import { WIPScreen } from "@/components/organisms/WIPScreen";
-import { MeaningDashboardScreen } from "@/features/meaning/MeaningDashboardScreen";
+import { GoalsScreen } from "@/features/meaning/GoalsScreen";
+import { MeaningsScreen } from "@/features/meaning/MeaningsScreen";
 import { ReflectionLogScreen } from "@/features/reflection/ReflectionLogScreen";
 import { TasksScreen } from "@/features/tasks/TasksScreen";
 import { colors, radius, spacing } from "@/theme";
@@ -18,7 +18,7 @@ function TabIcon({ icon, focused }: { icon: string; focused: boolean }) {
 export function StrategicTabNavigator() {
 	return (
 		<Tab.Navigator
-			initialRouteName="GoalsDashboard"
+			initialRouteName="Meanings"
 			screenOptions={{
 				headerShown: false,
 				tabBarStyle: {
@@ -41,31 +41,29 @@ export function StrategicTabNavigator() {
 			}}
 		>
 			<Tab.Screen
-				name="GoalsDashboard"
-				component={MeaningDashboardScreen}
+				name="Meanings"
+				component={MeaningsScreen}
+				options={{
+					tabBarLabel: "Meanings",
+					tabBarIcon: ({ focused }) => <TabIcon icon="🧠" focused={focused} />,
+				}}
+			/>
+			<Tab.Screen
+				name="Goals"
+				component={GoalsScreen}
 				options={{
 					tabBarLabel: "Goals",
 					tabBarIcon: ({ focused }) => <TabIcon icon="🎯" focused={focused} />,
 				}}
 			/>
 			<Tab.Screen
-				name="TasksBacklog"
+				name="Tasks"
 				component={TasksScreen}
 				options={{
 					tabBarLabel: "Tasks",
 					tabBarIcon: ({ focused }) => <TabIcon icon="📋" focused={focused} />,
 				}}
 			/>
-
-			<Tab.Screen
-				name="GoalsBacklog"
-				options={{
-					tabBarLabel: "Audit",
-					tabBarIcon: ({ focused }) => <TabIcon icon="🔍" focused={focused} />,
-				}}
-			>
-				{() => <WIPScreen name="Goals Backlog" />}
-			</Tab.Screen>
 			<Tab.Screen
 				name="Reflection"
 				component={ReflectionLogScreen}

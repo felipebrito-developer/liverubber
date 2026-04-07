@@ -51,61 +51,94 @@ function statusColor(status: string | null) {
 
 function TaskItem({
 	task,
-	onLongPress,
+	onEdit,
+	onDelete,
+	onToggleToday,
 }: {
 	task: Task;
-	onLongPress: (task: Task) => void;
+	onEdit: (task: Task) => void;
+	onDelete: (task: Task) => void;
+	onToggleToday: (task: Task) => void;
 }) {
 	const status = task.status ?? "todo";
+	const isToday = !!task.isForToday;
+
 	return (
-		<TouchableOpacity
-			activeOpacity={0.8}
-			onLongPress={() => onLongPress(task)}
-			style={styles.taskContainer}
-		>
-			<Card elevated style={styles.taskCard}>
-				<View style={styles.taskContent}>
-					<View style={styles.taskHeader}>
+		<Card elevated style={styles.taskCard}>
+			<View style={styles.taskContent}>
+				<View style={styles.taskHeader}>
+					<View style={styles.taskTitleContainer}>
 						<Typography variant="h3" style={styles.taskTitle}>
 							{task.title}
 						</Typography>
-						<View
-							style={[
-								styles.statusBadge,
-								{ backgroundColor: `${statusColor(status)}20` },
-							]}
-						>
-							<Typography
-								variant="caption"
-								style={{
-									color: statusColor(status),
-									fontSize: 10,
-									fontWeight: "700",
-								}}
-							>
-								{status.replace("_", " ").toUpperCase()}
+						{task.goal?.name && (
+							<Typography variant="caption" color={colors.primary}>
+								Goal: {task.goal.name}
 							</Typography>
-						</View>
+						)}
 					</View>
-					{task.description ? (
-						<Typography
-							variant="bodySmall"
-							color={colors.muted}
-							numberOfLines={2}
-							style={styles.taskDesc}
+
+					<View style={styles.taskActions}>
+						<TouchableOpacity
+							onPress={() => onToggleToday(task)}
+							style={[styles.taskActionBtn, isToday && styles.todayActive]}
 						>
-							{task.description}
-						</Typography>
-					) : null}
+							<Typography style={{ fontSize: 14 }}>{isToday ? "🌙" : "☀️"}</Typography>
+						</TouchableOpacity>
+						<TouchableOpacity
+							onPress={() => onEdit(task)}
+							style={styles.taskActionBtn}
+						>
+							<Typography color={colors.primary}>✎</Typography>
+						</TouchableOpacity>
+						<TouchableOpacity
+							onPress={() => onDelete(task)}
+							style={styles.taskActionBtn}
+						>
+							<Typography color={colors.error}>✕</Typography>
+						</TouchableOpacity>
+					</View>
 				</View>
-			</Card>
-		</TouchableOpacity>
+
+				<View style={styles.statusRow}>
+					<View
+						style={[
+							styles.statusBadge,
+							{ backgroundColor: `${statusColor(status)}20` },
+						]}
+					>
+						<Typography
+							variant="caption"
+							style={{
+								color: statusColor(status),
+								fontSize: 10,
+								fontWeight: "700",
+							}}
+						>
+							{status.replace("_", " ").toUpperCase()}
+						</Typography>
+					</View>
+					<Typography variant="caption" color={colors.muted}>
+						Priority: {(task.priority || "medium").toUpperCase()}
+					</Typography>
+				</View>
+
+				{task.description ? (
+					<Typography
+						variant="bodySmall"
+						color={colors.muted}
+						numberOfLines={2}
+						style={styles.taskDesc}
+					>
+						{task.description}
+					</Typography>
+				) : null}
+			</View>
+		</Card>
 	);
 }
 
-export function TasksScreen({
-	navigation,
-}: StrategicTabScreenProps<"TasksBacklog">) {
+export function TasksScreen({ navigation }: StrategicTabScreenProps<"Tasks">) {
 	const [filter, setFilter] = useAtom(taskFilterAtom);
 	const tasks = useAtomValue(tasksAtom);
 	const isTasksLoaded = useAtomValue(isTasksLoadedAtom);
@@ -159,26 +192,12 @@ export function TasksScreen({
 		);
 	};
 
-	const handleOptionsPress = (task: Task) => {
+	const handleToggleToday = async (task: Task) => {
 		const isToday = !!task.isForToday;
-		Alert.alert(
-			"Task Options",
-			`What would you like to do with "${task.title}"?`,
-			[
-				{
-					text: isToday ? "🌙 Remove from Today" : "☀️ Add to Today",
-					onPress: async () => {
-						await updateTask({
-							id: task.id,
-							data: { isForToday: !isToday },
-						});
-					},
-				},
-				{ text: "Edit", onPress: () => handleEditPress(task) },
-				{ text: "Remove / Prune", onPress: () => handleDeletePress(task) },
-				{ text: "Cancel", style: "cancel" },
-			],
-		);
+		await updateTask({
+			id: task.id,
+			data: { isForToday: !isToday },
+		});
 	};
 
 	const handleCloseModal = () => {
@@ -255,7 +274,12 @@ export function TasksScreen({
 					data={filtered}
 					keyExtractor={(item) => item.id}
 					renderItem={({ item }) => (
-						<TaskItem task={item} onLongPress={handleOptionsPress} />
+						<TaskItem
+							task={item}
+							onEdit={handleEditPress}
+							onDelete={handleDeletePress}
+							onToggleToday={handleToggleToday}
+						/>
 					)}
 					contentContainerStyle={styles.list}
 					showsVerticalScrollIndicator={false}
@@ -335,12 +359,40 @@ const styles = StyleSheet.create({
 		paddingVertical: 2,
 		borderRadius: radius.sm,
 	},
-	taskTitle: {
+	taskTitleContainer: {
 		flex: 1,
+		gap: 2,
+	},
+	taskTitle: {
 		fontSize: 16,
 		fontWeight: "600",
 	},
+	taskActions: {
+		flexDirection: "row",
+		gap: spacing.xs,
+	},
+	taskActionBtn: {
+		width: 32,
+		height: 32,
+		borderRadius: radius.sm,
+		backgroundColor: colors.surface,
+		borderWidth: 1,
+		borderColor: colors.border,
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	todayActive: {
+		backgroundColor: colors.warning + "20",
+		borderColor: colors.warning,
+	},
+	statusRow: {
+		flexDirection: "row",
+		alignItems: "center",
+		gap: spacing.md,
+		marginTop: 2,
+	},
 	taskDesc: {
+		marginTop: spacing.xs,
 		opacity: 0.8,
 	},
 	modalOverlay: {

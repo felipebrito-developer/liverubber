@@ -3,10 +3,8 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import {
 	Modal,
-	ScrollView,
 	StyleSheet,
 	TextInput,
-	TouchableOpacity,
 	View,
 } from "react-native";
 import {
@@ -15,7 +13,7 @@ import {
 	meaningsAtom,
 } from "../../stores/meaningsStore";
 import { colors, radius, spacing } from "../../theme";
-import { Button, Typography } from "../atoms";
+import { Button, Select, Typography } from "../atoms";
 import { Card } from "../molecules/Card";
 
 interface GoalCreationModalProps {
@@ -105,44 +103,17 @@ export function GoalCreationModal({
 					/>
 
 					{!preselectedMeaningId && (
-						<View>
-							<Typography variant="label" style={{ marginBottom: spacing.xs }}>
-								Anchor to Meaning
-							</Typography>
-							<ScrollView horizontal showsHorizontalScrollIndicator={false}>
-								<View style={styles.meaningRow}>
-									{meanings.map((m) => {
-										const active = meaningId === m.id;
-										return (
-											<TouchableOpacity
-												key={m.id}
-												onPress={() => setMeaningId(m.id)}
-												style={[
-													styles.meaningPill,
-													active && {
-														backgroundColor:
-															m.category?.categoryColor || colors.primary,
-														borderColor:
-															m.category?.categoryColor || colors.primary,
-													},
-												]}
-											>
-												<Typography
-													variant="caption"
-													style={{
-														color: active
-															? colors.onPrimary
-															: colors.onBackground,
-													}}
-												>
-													{m.name}
-												</Typography>
-											</TouchableOpacity>
-										);
-									})}
-								</View>
-							</ScrollView>
-						</View>
+						<Select
+							label="Anchor to Meaning"
+							placeholder="Select a purpose..."
+							value={meaningId}
+							options={meanings.map((m) => ({
+								label: m.name,
+								value: m.id,
+								color: m.category?.categoryColor,
+							}))}
+							onValueChange={setMeaningId}
+						/>
 					)}
 
 					<View style={styles.modalActions}>
@@ -185,17 +156,6 @@ const styles = StyleSheet.create({
 	textArea: {
 		height: 80,
 		textAlignVertical: "top",
-	},
-	meaningRow: {
-		flexDirection: "row",
-		gap: spacing.sm,
-	},
-	meaningPill: {
-		paddingHorizontal: spacing.md,
-		paddingVertical: 6,
-		borderRadius: radius.full,
-		borderWidth: 1,
-		borderColor: colors.border,
 	},
 	modalActions: {
 		flexDirection: "row",

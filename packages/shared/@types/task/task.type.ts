@@ -9,12 +9,14 @@ export type TaskPriority = Priority;
 export type TaskStatus = Status;
 
 import type { TagType } from "../tag/tag.type";
+import type { Goal } from "../goal/goal.type";
 
 /**
  * Core types inferred from Zod schemas for consistency with DB.
  */
 export type Task = z.infer<typeof selectTaskSchema> & {
 	tags?: TagType[];
+	goal?: Goal;
 };
 export type NewTask = z.infer<typeof insertTaskSchema> & {
 	tagIds?: string[];

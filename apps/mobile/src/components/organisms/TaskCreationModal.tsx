@@ -16,8 +16,7 @@ import {
 } from "@/stores/goalsStore";
 import { tagsAtom } from "@/stores/tagsStore";
 import { colors, radius, spacing } from "../../theme";
-import { Button } from "../atoms/Button";
-import { Typography } from "../atoms/Typography";
+import { Button, Select, Typography } from "../atoms";
 import { Card } from "../molecules/Card";
 
 interface TaskCreationModalProps {
@@ -117,63 +116,17 @@ export function TaskCreationModal({
 						style={[styles.input, styles.textArea]}
 					/>
 
-					<View>
-						<Typography variant="label" style={{ marginBottom: spacing.xs }}>
-							Anchor to Goal (Outcome)
-						</Typography>
-						<ScrollView horizontal showsHorizontalScrollIndicator={false}>
-							<View style={styles.priorityRow}>
-								<TouchableOpacity
-									onPress={() => setGoalId(null)}
-									style={[
-										styles.tagPill,
-										!goalId && {
-											backgroundColor: colors.muted,
-											borderColor: colors.muted,
-										},
-									]}
-								>
-									<Typography
-										variant="caption"
-										style={{
-											color: !goalId ? colors.onPrimary : colors.onBackground,
-										}}
-									>
-										NONE
-									</Typography>
-								</TouchableOpacity>
-								{goals.map((goal) => {
-									const active = goalId === goal.id;
-									const color =
-										goal.meaning?.category?.categoryColor || colors.primary;
-									return (
-										<TouchableOpacity
-											key={goal.id}
-											onPress={() => setGoalId(goal.id)}
-											style={[
-												styles.tagPill,
-												active && {
-													backgroundColor: color,
-													borderColor: color,
-												},
-											]}
-										>
-											<Typography
-												variant="caption"
-												style={{
-													color: active
-														? colors.onPrimary
-														: colors.onBackground,
-												}}
-											>
-												{goal.name}
-											</Typography>
-										</TouchableOpacity>
-									);
-								})}
-							</View>
-						</ScrollView>
-					</View>
+					<Select
+						label="Anchor to Goal (Outcome)"
+						placeholder="Select a milestone..."
+						value={goalId}
+						options={goals.map((g) => ({
+							label: g.name,
+							value: g.id,
+							color: g.meaning?.category?.categoryColor,
+						}))}
+						onValueChange={setGoalId}
+					/>
 
 					<View>
 						<Typography variant="label" style={{ marginBottom: spacing.xs }}>

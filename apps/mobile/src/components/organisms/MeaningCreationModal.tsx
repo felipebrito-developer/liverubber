@@ -3,10 +3,8 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
 import {
 	Modal,
-	ScrollView,
 	StyleSheet,
 	TextInput,
-	TouchableOpacity,
 	View,
 } from "react-native";
 import {
@@ -15,7 +13,7 @@ import {
 	loadCategoriesAction,
 } from "../../stores/categoriesStore";
 import { colors, radius, spacing } from "../../theme";
-import { Button, Typography } from "../atoms";
+import { Button, Select, Typography } from "../atoms";
 import { Card } from "../molecules/Card";
 
 interface MeaningCreationModalProps {
@@ -98,42 +96,17 @@ export function MeaningCreationModal({
 						style={[styles.input, styles.textArea]}
 					/>
 
-					<View>
-						<Typography variant="label" style={{ marginBottom: spacing.xs }}>
-							Life Category
-						</Typography>
-						<ScrollView horizontal showsHorizontalScrollIndicator={false}>
-							<View style={styles.categoryRow}>
-								{categories.map((cat) => {
-									const active = categoryId === cat.id;
-									return (
-										<TouchableOpacity
-											key={cat.id}
-											onPress={() => setCategoryId(cat.id)}
-											style={[
-												styles.categoryPill,
-												active && {
-													backgroundColor: cat.categoryColor,
-													borderColor: cat.categoryColor,
-												},
-											]}
-										>
-											<Typography
-												variant="caption"
-												style={{
-													color: active
-														? colors.onPrimary
-														: colors.onBackground,
-												}}
-											>
-												{cat.name}
-											</Typography>
-										</TouchableOpacity>
-									);
-								})}
-							</View>
-						</ScrollView>
-					</View>
+					<Select
+						label="Life Category"
+						placeholder="Choose a domain..."
+						value={categoryId}
+						options={categories.map((cat) => ({
+							label: cat.name,
+							value: cat.id,
+							color: cat.categoryColor,
+						}))}
+						onValueChange={setCategoryId}
+					/>
 
 					<View style={styles.modalActions}>
 						<Button
@@ -175,17 +148,6 @@ const styles = StyleSheet.create({
 	textArea: {
 		height: 80,
 		textAlignVertical: "top",
-	},
-	categoryRow: {
-		flexDirection: "row",
-		gap: spacing.sm,
-	},
-	categoryPill: {
-		paddingHorizontal: spacing.md,
-		paddingVertical: 6,
-		borderRadius: radius.full,
-		borderWidth: 1,
-		borderColor: colors.border,
 	},
 	modalActions: {
 		flexDirection: "row",
