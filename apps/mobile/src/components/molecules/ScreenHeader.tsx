@@ -6,16 +6,23 @@ interface ScreenHeaderProps {
 	title: string;
 	subtitle?: string;
 	onDrawerOpen: () => void;
+	layout?: "center" | "left";
 }
 
 export function ScreenHeader({
 	title,
 	subtitle,
 	onDrawerOpen,
+	layout = "center",
 }: ScreenHeaderProps) {
 	return (
 		<View style={styles.header}>
-			<View style={styles.headerRow}>
+			<View
+				style={[
+					styles.headerRow,
+					layout === "left" && { flexDirection: "row" },
+				]}
+			>
 				<View style={{ flex: 1 }}>
 					<Typography variant="h2">{title}</Typography>
 					{subtitle ? (

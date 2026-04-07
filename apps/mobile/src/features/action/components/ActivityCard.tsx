@@ -1,4 +1,4 @@
-import type { Habit, ResourceStore, Task } from "@liverubber/shared";
+import type { Habit, Task } from "@liverubber/shared";
 import { useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
@@ -11,7 +11,7 @@ interface ActivityCardProps {
 	type: "task" | "habit";
 	meaningName?: string;
 	goalName?: string;
-	resources?: ResourceStore[];
+	resources?: string[];
 	onFocus: (id: string) => void;
 	onDetails: (id: string) => void;
 }
@@ -83,8 +83,7 @@ export function ActivityCard({
 						style={styles.resourceToggle}
 					>
 						<Typography variant="caption" color={colors.muted}>
-							{showResources ? "▲" : "▼"} Resources:{" "}
-							{resources.map((r) => r.id).join(", ")}
+							{showResources ? "▲" : "▼"} Resources: {resources.join(", ")}
 						</Typography>
 					</TouchableOpacity>
 					{showResources && (
@@ -95,11 +94,11 @@ export function ActivityCard({
 						>
 							{resources.map((res) => (
 								<Typography
-									key={res.id}
+									key={res}
 									variant="caption"
 									style={styles.resourceItem}
 								>
-									• {res.id}
+									• {res}
 								</Typography>
 							))}
 						</Animated.View>

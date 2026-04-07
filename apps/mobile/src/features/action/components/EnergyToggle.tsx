@@ -10,19 +10,35 @@ interface EnergyToggleProps {
 	tags: TagType[];
 }
 
-export function EnergyToggle({ value, onChange, tags }: EnergyToggleProps) {
-	const energyTags = tags.filter((t) => t.id.includes("energy"));
+export function EnergyToggle({
+	value,
+	onChange,
+}: Omit<EnergyToggleProps, "tags">) {
+	const energyTags = [
+		{
+			id: "tag-low-energy",
+			label: "LOW",
+			sub: "Small Wins",
+			color: colors.success,
+		},
+		{
+			id: "tag-balanced-energy",
+			label: "BALANCED",
+			sub: "Regular Work",
+			color: colors.secondary,
+		},
+		{
+			id: "tag-high-energy",
+			label: "HIGH",
+			sub: "Deep Work",
+			color: colors.warning,
+		},
+	];
 
 	return (
 		<View style={styles.energyRow}>
 			{energyTags.map((tag) => {
 				const active = value === tag.id;
-				const description =
-					tag.id === "tag-low-energy"
-						? "Small wins only"
-						: tag.id === "tag-balanced-energy"
-							? "Regular tasks"
-							: "Deep work mode";
 				return (
 					<TouchableOpacity
 						key={tag.id}
@@ -31,24 +47,24 @@ export function EnergyToggle({ value, onChange, tags }: EnergyToggleProps) {
 						style={[
 							styles.energyBtn,
 							active && {
-								backgroundColor: tag.colorHex,
-								borderColor: tag.colorHex,
+								backgroundColor: tag.color,
+								borderColor: tag.color,
 							},
 						]}
 						accessibilityRole="button"
-						accessibilityLabel={`${tag.name}: ${description}`}
+						accessibilityLabel={`${tag.label}: ${tag.sub}`}
 					>
 						<Typography
 							variant="label"
-							style={{ color: active ? colors.onPrimary : colors.muted }}
+							style={[styles.btnText, active && { color: colors.onPrimary }]}
 						>
-							{tag.name}
+							{tag.label}
 						</Typography>
 						<Typography
 							variant="caption"
-							style={{ color: active ? colors.onPrimary : colors.muted }}
+							style={[styles.btnSub, active && { color: colors.onPrimary }]}
 						>
-							{description}
+							{tag.sub}
 						</Typography>
 					</TouchableOpacity>
 				);
@@ -61,18 +77,26 @@ const styles = StyleSheet.create({
 	energyRow: {
 		flexDirection: "row",
 		paddingHorizontal: spacing.xl,
-		gap: spacing.sm,
+		gap: spacing.xs,
 		marginBottom: spacing.md,
+		backgroundColor: colors.surface,
+		paddingVertical: spacing.xs,
 	},
 	energyBtn: {
 		flex: 1,
-		padding: spacing.sm,
-		borderRadius: radius.md,
-		borderWidth: 1,
-		borderColor: colors.border,
-		backgroundColor: colors.surface,
+		paddingVertical: spacing.sm,
+		borderRadius: radius.sm,
 		alignItems: "center",
 		justifyContent: "center",
-		gap: 2,
+		borderWidth: 1,
+		borderColor: "transparent",
+	},
+	btnText: {
+		fontWeight: "bold",
+		color: colors.muted,
+	},
+	btnSub: {
+		fontSize: 10,
+		color: colors.muted,
 	},
 });

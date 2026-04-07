@@ -1,21 +1,15 @@
 import type { Goal, Meaning, NewGoal, NewMeaning } from "@liverubber/shared";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
-import {
-	Alert,
-	FlatList,
-	StatusBar,
-	StyleSheet,
-	View,
-} from "react-native";
+import { Alert, FlatList, StatusBar, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FAB } from "@/components/atoms/FAB";
 import { Typography } from "@/components/atoms/Typography";
+import { ScreenHeader } from "@/components/molecules/ScreenHeader";
 import {
 	GoalCreationModal,
 	MeaningCreationModal,
 } from "@/components/organisms";
-import { ScreenHeader } from "@/components/molecules/ScreenHeader";
 import type { StrategicTabScreenProps } from "@/navigation/types";
 import {
 	createGoalAction,
@@ -223,10 +217,7 @@ export function MeaningDashboardScreen({
 				}
 			/>
 
-			<FAB
-				onPress={() => setIsMeaningModalVisible(true)}
-				variant="primary"
-			/>
+			<FAB onPress={() => setIsMeaningModalVisible(true)} variant="primary" />
 
 			<MeaningCreationModal
 				visible={isMeaningModalVisible}

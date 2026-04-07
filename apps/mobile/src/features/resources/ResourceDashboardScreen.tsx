@@ -1,3 +1,5 @@
+import type { AnyType } from "@liverubber/shared";
+import { useNavigation } from "@react-navigation/native";
 import { useAtomValue } from "jotai";
 import { ScrollView, StatusBar, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -5,11 +7,9 @@ import { Button } from "@/components/atoms/Button";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
 import { ScreenHeader } from "@/components/molecules/ScreenHeader";
-import { resourceStoresAtom } from "@/stores/resourcesStore";
 import { categoriesAtom } from "@/stores/categoriesStore";
+import { resourceStoresAtom } from "@/stores/resourcesStore";
 import { colors, radius, spacing } from "@/theme";
-import { useNavigation } from "@react-navigation/native";
-import type { AnyType } from "@liverubber/shared";
 
 export function ResourceDashboardScreen() {
 	const navigation = useNavigation<AnyType>();
@@ -17,9 +17,9 @@ export function ResourceDashboardScreen() {
 	const categories = useAtomValue(categoriesAtom);
 
 	// Group resources by category for summary
-	const summaryData = categories.map(cat => {
+	const summaryData = categories.map((cat) => {
 		const total = stores
-			.filter(s => s.categoryId === cat.id)
+			.filter((s) => s.categoryId === cat.id)
 			.reduce((acc, s) => acc + s.amount, 0);
 		return { ...cat, total };
 	});
@@ -33,11 +33,21 @@ export function ResourceDashboardScreen() {
 				onDrawerOpen={() => navigation.openDrawer()}
 			/>
 
-			<ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+			<ScrollView
+				contentContainerStyle={styles.scroll}
+				showsVerticalScrollIndicator={false}
+			>
 				<View style={styles.grid}>
 					{summaryData.map((item) => (
-						<Card key={item.id} style={[styles.statCard, { borderLeftColor: item.categoryColor }]}>
-							<Typography variant="caption" color={colors.muted} numberOfLines={1}>
+						<Card
+							key={item.id}
+							style={[styles.statCard, { borderLeftColor: item.categoryColor }]}
+						>
+							<Typography
+								variant="caption"
+								color={colors.muted}
+								numberOfLines={1}
+							>
 								{item.name.toUpperCase()}
 							</Typography>
 							<Typography variant="h2" style={{ color: item.categoryColor }}>
@@ -63,21 +73,23 @@ export function ResourceDashboardScreen() {
 							</Typography>
 						</View>
 						<View style={styles.progressBar}>
-							<View 
+							<View
 								style={[
-									styles.progressFill, 
-									{ 
-										width: '100%', // For MVP, just full bar
-										backgroundColor: categories.find(c => c.id === store.categoryId)?.categoryColor || colors.primary 
-									}
-								]} 
+									styles.progressFill,
+									{
+										width: "100%", // For MVP, just full bar
+										backgroundColor:
+											categories.find((c) => c.id === store.categoryId)
+												?.categoryColor || colors.primary,
+									},
+								]}
 							/>
 						</View>
 					</Card>
 				))}
 
-				<Button 
-					label="Manage All Assets" 
+				<Button
+					label="Manage All Assets"
 					onPress={() => navigation.navigate("StoreManagement")}
 					style={{ marginTop: spacing.md }}
 				/>

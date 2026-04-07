@@ -1,3 +1,5 @@
+import type { AnyType } from "@liverubber/shared";
+import { useNavigation } from "@react-navigation/native";
 import { useAtomValue } from "jotai";
 import { ScrollView, StatusBar, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,16 +9,14 @@ import { ScreenHeader } from "@/components/molecules/ScreenHeader";
 import { habitsAtom } from "@/stores/habitsStore";
 import { colors, radius, spacing } from "@/theme";
 import { HabitCard } from "../action/components/HabitCard";
-import { useNavigation } from "@react-navigation/native";
-import type { AnyType } from "@liverubber/shared";
 
 export function FitnessDashboardScreen() {
 	const navigation = useNavigation<AnyType>();
 	const habits = useAtomValue(habitsAtom);
 
 	// Basic heuristic: Habits with physical-related words
-	const physicalHabits = habits.filter((h) => 
-		/caminhada|exercício|pilates|água|fumar|meditar|alongar/i.test(h.name)
+	const physicalHabits = habits.filter((h) =>
+		/caminhada|exercício|pilates|água|fumar|meditar|alongar/i.test(h.name),
 	);
 
 	return (
@@ -28,16 +28,27 @@ export function FitnessDashboardScreen() {
 				onDrawerOpen={() => navigation.openDrawer()}
 			/>
 
-			<ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+			<ScrollView
+				contentContainerStyle={styles.scroll}
+				showsVerticalScrollIndicator={false}
+			>
 				{/* Weekly stats summary */}
 				<View style={styles.statsRow}>
 					<Card style={styles.statCard}>
-						<Typography variant="h1" color={colors.primary}>7</Typography>
-						<Typography variant="caption" color={colors.muted}>Days Streak</Typography>
+						<Typography variant="h1" color={colors.primary}>
+							7
+						</Typography>
+						<Typography variant="caption" color={colors.muted}>
+							Days Streak
+						</Typography>
 					</Card>
 					<Card style={styles.statCard}>
-						<Typography variant="h1" color={colors.secondary}>12</Typography>
-						<Typography variant="caption" color={colors.muted}>Total Wins</Typography>
+						<Typography variant="h1" color={colors.secondary}>
+							12
+						</Typography>
+						<Typography variant="caption" color={colors.muted}>
+							Total Wins
+						</Typography>
 					</Card>
 				</View>
 
@@ -46,7 +57,7 @@ export function FitnessDashboardScreen() {
 					<Typography variant="bodySmall" color={colors.muted}>
 						Biological maintenance to support strategic focus. 💊
 					</Typography>
-					
+
 					<View style={styles.list}>
 						{physicalHabits.length === 0 ? (
 							<Typography variant="caption" color={colors.muted} align="center">
@@ -54,11 +65,7 @@ export function FitnessDashboardScreen() {
 							</Typography>
 						) : (
 							physicalHabits.map((h) => (
-								<HabitCard
-									key={h.id}
-									habit={h}
-									onLongPress={() => {}}
-								/>
+								<HabitCard key={h.id} habit={h} onLongPress={() => {}} />
 							))
 						)}
 					</View>
@@ -72,9 +79,13 @@ export function FitnessDashboardScreen() {
 							Quality rest is the multiplier for next-day engagement.
 						</Typography>
 						<View style={styles.progressBar}>
-							<View style={[styles.progressFill, { width: '80%' }]} />
+							<View style={[styles.progressFill, { width: "80%" }]} />
 						</View>
-						<Typography variant="caption" color={colors.success} style={{ alignSelf: 'flex-end' }}>
+						<Typography
+							variant="caption"
+							color={colors.success}
+							style={{ alignSelf: "flex-end" }}
+						>
 							Aim for 8h (Current avg: 7.2h)
 						</Typography>
 					</Card>

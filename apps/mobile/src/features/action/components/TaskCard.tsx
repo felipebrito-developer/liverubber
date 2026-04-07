@@ -14,7 +14,10 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 export function TaskCard({
 	task,
 	onFocus,
-}: { task: Task; onFocus: (id: string) => void }) {
+}: {
+	task: Task;
+	onFocus: (id: string) => void;
+}) {
 	const scale = useSharedValue(1);
 
 	const animatedStyle = useAnimatedStyle(() => ({
@@ -39,7 +42,11 @@ export function TaskCard({
 							{task.title}
 						</Typography>
 						{task.description ? (
-							<Typography variant="caption" color={colors.muted} numberOfLines={1}>
+							<Typography
+								variant="caption"
+								color={colors.muted}
+								numberOfLines={1}
+							>
 								{task.description}
 							</Typography>
 						) : null}
@@ -54,7 +61,11 @@ export function TaskCard({
 						>
 							<Typography
 								variant="caption"
-								style={{ color: priorityColor(task.priority), fontSize: 10, fontWeight: '700' }}
+								style={{
+									color: priorityColor(task.priority),
+									fontSize: 10,
+									fontWeight: "700",
+								}}
 							>
 								{task.priority?.toUpperCase()}
 							</Typography>

@@ -1,8 +1,8 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Text } from "react-native";
+import { ResourceAuditScreen } from "@/features/resources/ResourceAuditScreen";
 import { ResourceDashboardScreen } from "@/features/resources/ResourceDashboardScreen";
 import { ResourcesScreen } from "@/features/resources/ResourcesScreen";
-import { ResourceAuditScreen } from "@/features/resources/ResourceAuditScreen";
 import { colors, radius, spacing } from "@/theme";
 import type { StoreTabParamList } from "./types";
 

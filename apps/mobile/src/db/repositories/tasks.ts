@@ -8,20 +8,38 @@ export const tasksRepository = {
 			.select({
 				task: schema.task,
 				tag: schema.tagType,
+				resourceName: schema.resourceType.name,
 			})
 			.from(schema.task)
 			.leftJoin(schema.taskTag, eq(schema.task.id, schema.taskTag.taskId))
-			.leftJoin(schema.tagType, eq(schema.taskTag.tagId, schema.tagType.id));
+			.leftJoin(schema.tagType, eq(schema.taskTag.tagId, schema.tagType.id))
+			.leftJoin(
+				schema.resourcesAssignments,
+				eq(schema.task.id, schema.resourcesAssignments.entityRelatedId),
+			)
+			.leftJoin(
+				schema.resourceStore,
+				eq(schema.resourcesAssignments.resourceId, schema.resourceStore.id),
+			)
+			.leftJoin(
+				schema.resourceType,
+				eq(schema.resourceStore.resourceTypeId, schema.resourceType.id),
+			);
 
 		// Aggregate rows by task id
 		const tasksMap = new Map<string, AnyType>();
 		for (const row of rows) {
 			const taskId = row.task.id;
 			if (!tasksMap.has(taskId)) {
-				tasksMap.set(taskId, { ...row.task, tags: [] });
+				tasksMap.set(taskId, { ...row.task, tags: [], resources: [] });
 			}
-			if (row.tag) {
-				tasksMap.get(taskId).tags.push(row.tag);
+			const task = tasksMap.get(taskId);
+			const tag = row.tag;
+			if (tag && !task.tags.some((t: { id: string }) => t.id === tag.id)) {
+				task.tags.push(tag);
+			}
+			if (row.resourceName && !task.resources.includes(row.resourceName)) {
+				task.resources.push(row.resourceName);
 			}
 		}
 		return Array.from(tasksMap.values());

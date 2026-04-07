@@ -49,7 +49,7 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 	const [isPickerVisible, setIsPickerVisible] = useState(false);
 
 	// Filter tasks for today that aren't done
-	const todayTasks = tasks.filter(t => !!t.isForToday && t.status !== "done");
+	const todayTasks = tasks.filter((t) => !!t.isForToday && t.status !== "done");
 
 	// Win celebration animation
 	const celebrateScale = useSharedValue(1);
@@ -76,7 +76,7 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 
 	async function handleLogAndFinish() {
 		if (!task) return;
-		
+
 		await logActivity({
 			activityId: "manual_focus",
 			taskId: task.id,
@@ -88,7 +88,7 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 		// Mark task as done
 		await updateTask({
 			id: task.id,
-			data: { status: "done" }
+			data: { status: "done" },
 		});
 
 		setCompleted(false);
@@ -103,8 +103,15 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 			"No problem. What would you like to do?",
 			[
 				{ text: "Reset timer", onPress: () => timer.reset() },
-				{ text: "Choose different task", onPress: () => setIsPickerVisible(true) },
-				{ text: "Rest — I need a break", style: "destructive", onPress: () => navigation.navigate("ActionHub") },
+				{
+					text: "Choose different task",
+					onPress: () => setIsPickerVisible(true),
+				},
+				{
+					text: "Rest — I need a break",
+					style: "destructive",
+					onPress: () => navigation.navigate("ActionHub"),
+				},
 			],
 			{ cancelable: true },
 		);
@@ -127,7 +134,8 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 						No task selected
 					</Typography>
 					<Typography align="center" color={colors.muted}>
-						Promote a task from the backlog to "Today" in the Action Hub to start focusing.
+						Promote a task from the backlog to "Today" in the Action Hub to
+						start focusing.
 					</Typography>
 					<Button
 						label="Go to Action Hub →"
@@ -228,12 +236,16 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 
 				{/* Task info w/ Change button */}
 				<View style={styles.taskInfoContainer}>
-					<TouchableOpacity 
-						style={styles.taskSelector} 
+					<TouchableOpacity
+						style={styles.taskSelector}
 						onPress={() => setIsPickerVisible(true)}
 						activeOpacity={0.7}
 					>
-						<Typography variant="caption" color={colors.primary} style={styles.selectorLabel}>
+						<Typography
+							variant="caption"
+							color={colors.primary}
+							style={styles.selectorLabel}
+						>
 							TARGETING:
 						</Typography>
 						<Typography variant="h2" align="center" style={styles.taskTitle}>
@@ -298,28 +310,34 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 						<Typography variant="bodySmall" color={colors.muted}>
 							Which task from your daily plan will you tackle next?
 						</Typography>
-						
+
 						<ScrollView style={styles.pickerList}>
 							{todayTasks.map((t) => (
-								<TouchableOpacity 
+								<TouchableOpacity
 									key={t.id}
 									style={[
-										styles.pickerItem, 
-										t.id === task.id && styles.pickerItemActive
+										styles.pickerItem,
+										t.id === task.id && styles.pickerItemActive,
 									]}
 									onPress={() => {
 										setSelectedTaskId(t.id);
 										setIsPickerVisible(false);
 									}}
 								>
-									<Typography style={t.id === task.id ? { color: colors.onPrimary } : {}}>
+									<Typography
+										style={t.id === task.id ? { color: colors.onPrimary } : {}}
+									>
 										{t.title}
 									</Typography>
 								</TouchableOpacity>
 							))}
 						</ScrollView>
-						
-						<Button label="Close" onPress={() => setIsPickerVisible(false)} variant="outline" />
+
+						<Button
+							label="Close"
+							onPress={() => setIsPickerVisible(false)}
+							variant="outline"
+						/>
 					</Card>
 				</View>
 			</Modal>

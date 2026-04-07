@@ -1,22 +1,23 @@
 import type { Habit, Task } from "@liverubber/shared";
 import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
-import { useEffect } from "react";
-import {
-	ScrollView,
-	StatusBar,
-	StyleSheet,
-	View,
-} from "react-native";
+import { useEffect, useMemo, useState } from "react";
+import { ScrollView, StatusBar, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Typography } from "@/components/atoms/Typography";
-import { EmptyState } from "@/components/molecules/EmptyState";
+import { Accordion } from "@/components/molecules/Accordion";
 import { ScreenHeader } from "@/components/molecules/ScreenHeader";
 import type { FocusTabScreenProps } from "@/navigation/types";
 import {
-	habitsAtom,
-	loadHabitsAndRewardsAction,
-} from "@/stores/habitsStore";
-import { isTagsLoadedAtom, loadTagsAction, tagsAtom } from "@/stores/tagsStore";
+	goalsAtom,
+	isGoalsLoadedAtom,
+	loadGoalsAction,
+} from "@/stores/goalsStore";
+import { habitsAtom, loadHabitsAndRewardsAction } from "@/stores/habitsStore";
+import {
+	isMeaningsLoadedAtom,
+	loadMeaningsAction,
+	meaningsAtom,
+} from "@/stores/meaningsStore";
 import {
 	isTasksLoadedAtom,
 	loadTasksAction,
@@ -24,9 +25,9 @@ import {
 	tasksAtom,
 } from "@/stores/tasksStore";
 import { colors, spacing } from "@/theme";
+import { ActivityCard } from "./components/ActivityCard";
 import { EnergyToggle } from "./components/EnergyToggle";
-import { HabitCard } from "./components/HabitCard";
-import { TaskCard } from "./components/TaskCard";
+import { PreflightModal } from "./components/PreflightModal";
 
 // ─── Energy Level ──────────────────────────────────────────────────────────────
 export type EnergyLevel =
@@ -34,25 +35,48 @@ export type EnergyLevel =
 	| "tag-balanced-energy"
 	| "tag-high-energy";
 
+type ActivityWithResources = (Task | Habit) & { resources?: string[] };
+
 export const energyLevelAtom = atom<EnergyLevel>("tag-balanced-energy");
 
-function energyPassesTask(level: EnergyLevel, task: Task) {
-	if (task.tags?.some((t) => t.id === level)) {
+/**
+ * 🎯 ADHD Filtering Logic:
+ * - Urgent tasks always show regardless of energy.
+ * - Low energy hides high/medium priority non-urgent tasks.
+ */
+function activityPassesEnergy(level: EnergyLevel, item: Task | Habit) {
+	// If it's a task and urgent, it's always visible
+	const task = item as Task;
+	if (task.priority === "urgent") return true;
+
+	// If the item has the energy tag explicitly, show it
+	const itemTags = (item as Task).tags || [];
+	if (itemTags.some((t) => t.id === level)) return true;
+
+	if (level === "tag-low-energy") {
+		// Low energy hides High/Medium priority tasks
+		const priority = task.priority;
+		return priority === "low" || priority === undefined || priority === null;
+	}
+
+	if (level === "tag-high-energy") {
+		// High energy allows everything
 		return true;
 	}
-	if (level === "tag-low-energy") {
-		return task.priority !== "urgent" && task.priority !== "high";
-	}
-	if (level === "tag-high-energy") {
-		return task.priority === "urgent" || task.priority === "high";
-	}
-	return true;
+
+	// Balanced allows moderate + low
+	return (item as Task).priority !== "high";
 }
 
 export function ActionHubScreen({
 	navigation,
 }: FocusTabScreenProps<"ActionHub">) {
 	const [energy, setEnergy] = useAtom(energyLevelAtom);
+	const [preflightItem, setPreflightItem] = useState<{
+		id: string;
+		title: string;
+		resources: string[];
+	} | null>(null);
 
 	const tasks = useAtomValue(tasksAtom);
 	const isTasksLoaded = useAtomValue(isTasksLoadedAtom);
@@ -62,89 +86,205 @@ export function ActionHubScreen({
 	const habits = useAtomValue(habitsAtom);
 	const loadHabits = useSetAtom(loadHabitsAndRewardsAction);
 
-	const tags = useAtomValue(tagsAtom);
-	const loadTags = useSetAtom(loadTagsAction);
-	const isTagsLoaded = useAtomValue(isTagsLoadedAtom);
+	const goals = useAtomValue(goalsAtom);
+	const isGoalsLoaded = useAtomValue(isGoalsLoadedAtom);
+	const loadGoals = useSetAtom(loadGoalsAction);
+
+	const meanings = useAtomValue(meaningsAtom);
+	const isMeaningsLoaded = useAtomValue(isMeaningsLoadedAtom);
+	const loadMeanings = useSetAtom(loadMeaningsAction);
 
 	useEffect(() => {
 		if (!isTasksLoaded) loadTasks();
 		loadHabits();
-		if (!isTagsLoaded) loadTags();
+		if (!isGoalsLoaded) loadGoals();
+		if (!isMeaningsLoaded) loadMeanings();
 	}, [
 		isTasksLoaded,
 		loadTasks,
 		loadHabits,
-		isTagsLoaded,
-		loadTags,
+		isGoalsLoaded,
+		loadGoals,
+		isMeaningsLoaded,
+		loadMeanings,
 	]);
 
 	const handleFocusPress = (id: string) => {
-		setSelectedTaskId(id);
-		navigation.navigate("Now");
+		const activity = [...tasks, ...habits].find((a) => a.id === id) as
+			| Task
+			| (Habit & { resources?: string[] })
+			| undefined;
+		if (activity) {
+			const isTask = "title" in activity;
+			setPreflightItem({
+				id: activity.id,
+				title: isTask ? (activity as Task).title : (activity as Habit).name,
+				resources: (activity as ActivityWithResources).resources || [],
+			});
+		}
 	};
 
-	const todayTasks = tasks.filter(t => !!t.isForToday && t.status !== "done");
-	const visibleTasks = todayTasks.filter((t) => energyPassesTask(energy, t));
-	const visibleHabits = habits;
+	const startFocusSession = () => {
+		if (preflightItem) {
+			setSelectedTaskId(preflightItem.id);
+			setPreflightItem(null);
+			navigation.navigate("Now");
+		}
+	};
+
+	// ─── Grouping & Filtering Logic ──────────────────────────────────────────
+	const filteredTasks = useMemo(
+		() =>
+			tasks.filter(
+				(t) =>
+					!!t.isForToday &&
+					t.status !== "done" &&
+					activityPassesEnergy(energy, t),
+			),
+		[tasks, energy],
+	);
+
+	const filteredHabits = useMemo(
+		() => habits.filter((h) => activityPassesEnergy(energy, h)),
+		[habits, energy],
+	);
+
+	const dailyActivities = useMemo(() => {
+		const dailyHabits = filteredHabits.filter(
+			(h) =>
+				h.frequencyId === "freq-daily" || h.frequencyId === "freq-workdays",
+		);
+		return [...filteredTasks, ...dailyHabits];
+	}, [filteredTasks, filteredHabits]);
+
+	const weeklyHabits = useMemo(
+		() => filteredHabits.filter((h) => h.frequencyId === "freq-weekly"),
+		[filteredHabits],
+	);
+
+	const monthlyHabits = useMemo(
+		() => filteredHabits.filter((h) => h.frequencyId === "freq-monthly"),
+		[filteredHabits],
+	);
 
 	return (
 		<SafeAreaView style={styles.safe}>
 			<StatusBar barStyle="light-content" backgroundColor={colors.background} />
-			<ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-				<ScreenHeader
-					title="Action Hub"
-					subtitle="Your strategic execution plan for today."
-					onDrawerOpen={() => navigation.openDrawer()}
-				/>
 
-				<EnergyToggle value={energy} onChange={setEnergy} tags={tags} />
+			<ScreenHeader
+				layout="left"
+				title="Action Hub"
+				subtitle="Your strategic execution plan for today."
+				onDrawerOpen={() => navigation.openDrawer()}
+			/>
 
-				<View style={styles.section}>
-					<Typography variant="h3">Habits for Today</Typography>
-					{visibleHabits.length === 0 ? (
-						<EmptyState
-							emoji="⚡"
-							title="No habits active"
-							subtitle="Habits are the compound interest of self-development."
-							ctaLabel="Go to Backlog"
-							onCta={() => navigation.navigate("TasksBacklog" as never)}
-						/>
+			{/* Sticky Energy Filter */}
+			<View style={styles.stickyFilter}>
+				<EnergyToggle value={energy} onChange={setEnergy} />
+			</View>
+
+			<ScrollView
+				contentContainerStyle={styles.scroll}
+				showsVerticalScrollIndicator={false}
+			>
+				<Accordion title="DAILY ROUTINE" icon="🟢" initialExpanded={true}>
+					{dailyActivities.length === 0 ? (
+						<Typography
+							variant="bodySmall"
+							color={colors.muted}
+							style={styles.emptyAccordion}
+						>
+							No activities match your current energy.
+						</Typography>
 					) : (
-						visibleHabits.slice(0, 3).map((h) => (
-							<HabitCard
-								key={h.id}
-								habit={h}
-								onLongPress={() => {}}
-							/>
-						))
+						dailyActivities.map((item) => {
+							const isTask = "title" in item;
+							const task = item as Task;
+							const habit = item as Habit;
+							return (
+								<ActivityCard
+									key={item.id}
+									activity={item}
+									type={isTask ? "task" : "habit"}
+									goalName={
+										isTask
+											? goals.find((g) => g.id === task.goalId)?.name
+											: undefined
+									}
+									meaningName={
+										!isTask
+											? meanings.find((m) => m.id === habit.meaningId)?.name
+											: undefined
+									}
+									resources={(item as ActivityWithResources).resources}
+									onFocus={handleFocusPress}
+									onDetails={() => {}}
+								/>
+							);
+						})
 					)}
-				</View>
+				</Accordion>
 
-				<View style={styles.section}>
-					<Typography variant="h3" style={styles.sectionTitle}>
-						Focus Tasks
-					</Typography>
-					{visibleTasks.length === 0 ? (
-						<EmptyState
-							emoji="🎯"
-							title={todayTasks.length === 0 ? "No tasks for today" : "Energy Mismatch"}
-							subtitle={todayTasks.length === 0 
-								? "Promote tasks from your strategic backlog to start focusing." 
-								: "None of today's tasks fit your current energy level. Recalibrate?"}
-							ctaLabel={todayTasks.length === 0 ? "Open Backlog" : undefined}
-							onCta={() => navigation.navigate("TasksBacklog" as never)}
-						/>
+				<Accordion title="WEEKLY HABITS" icon="🟠" initialExpanded={false}>
+					{weeklyHabits.length === 0 ? (
+						<Typography
+							variant="bodySmall"
+							color={colors.muted}
+							style={styles.emptyAccordion}
+						>
+							No weekly habits scheduled or energetic enough.
+						</Typography>
 					) : (
-						visibleTasks.map((t) => (
-							<TaskCard 
-								key={t.id} 
-								task={t} 
+						weeklyHabits.map((item) => (
+							<ActivityCard
+								key={item.id}
+								activity={item}
+								type="habit"
+								meaningName={
+									meanings.find((m) => m.id === item.meaningId)?.name
+								}
+								resources={(item as ActivityWithResources).resources}
 								onFocus={handleFocusPress}
+								onDetails={() => {}}
 							/>
 						))
 					)}
-				</View>
+				</Accordion>
+
+				<Accordion title="MONTHLY CHECK-INS" icon="🔵" initialExpanded={false}>
+					{monthlyHabits.length === 0 ? (
+						<Typography
+							variant="bodySmall"
+							color={colors.muted}
+							style={styles.emptyAccordion}
+						>
+							No monthly check-ins for now.
+						</Typography>
+					) : (
+						monthlyHabits.map((item) => (
+							<ActivityCard
+								key={item.id}
+								activity={item}
+								type="habit"
+								meaningName={
+									meanings.find((m) => m.id === item.meaningId)?.name
+								}
+								resources={(item as ActivityWithResources).resources}
+								onFocus={handleFocusPress}
+								onDetails={() => {}}
+							/>
+						))
+					)}
+				</Accordion>
 			</ScrollView>
+
+			<PreflightModal
+				visible={!!preflightItem}
+				title={preflightItem?.title || ""}
+				resources={preflightItem?.resources || []}
+				onClose={() => setPreflightItem(null)}
+				onConfirm={startFocusSession}
+			/>
 		</SafeAreaView>
 	);
 }
@@ -154,15 +294,19 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: colors.background,
 	},
+	stickyFilter: {
+		zIndex: 10,
+		backgroundColor: colors.background,
+		borderBottomWidth: 1,
+		borderBottomColor: colors.border,
+	},
 	scroll: {
 		paddingBottom: 120,
+		paddingTop: spacing.md,
 	},
-	section: {
-		paddingHorizontal: spacing.xl,
-		marginTop: spacing.md,
-		gap: spacing.sm,
-	},
-	sectionTitle: {
-		marginBottom: spacing.xs,
+	emptyAccordion: {
+		paddingVertical: spacing.md,
+		textAlign: "center",
+		fontStyle: "italic",
 	},
 });

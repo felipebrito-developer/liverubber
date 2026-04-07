@@ -1,15 +1,27 @@
-import { Suspense, lazy } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useAtomValue } from "jotai";
+import { lazy, Suspense } from "react";
 import { isAuthenticatedAtom } from "@/stores/authStore";
 import { colors } from "@/theme";
 import type { RootStackParamList } from "./types";
 
 // ─── Lazy Load Screens to break circular/initialization loops ────────────────
-const WelcomeScreen = lazy(() => import("@/features/auth/WelcomeScreen").then(m => ({ default: m.WelcomeScreen })));
-const LoginScreen = lazy(() => import("@/features/auth/LoginScreen").then(m => ({ default: m.LoginScreen })));
-const RegisterScreen = lazy(() => import("@/features/auth/RegisterScreen").then(m => ({ default: m.RegisterScreen })));
+const WelcomeScreen = lazy(() =>
+	import("@/features/auth/WelcomeScreen").then((m) => ({
+		default: m.WelcomeScreen,
+	})),
+);
+const LoginScreen = lazy(() =>
+	import("@/features/auth/LoginScreen").then((m) => ({
+		default: m.LoginScreen,
+	})),
+);
+const RegisterScreen = lazy(() =>
+	import("@/features/auth/RegisterScreen").then((m) => ({
+		default: m.RegisterScreen,
+	})),
+);
 const AuthenticatedNavigator = lazy(() => import("./AuthenticatedNavigator"));
 
 const Stack = createNativeStackNavigator<RootStackParamList>();

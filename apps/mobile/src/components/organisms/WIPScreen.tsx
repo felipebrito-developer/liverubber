@@ -1,9 +1,9 @@
+import type { AnyType } from "@liverubber/shared";
 import { useNavigation } from "@react-navigation/native";
 import { StatusBar, StyleSheet, View } from "react-native";
 import { Typography } from "@/components/atoms/Typography";
 import { ScreenHeader } from "@/components/molecules/ScreenHeader";
 import { colors, spacing } from "@/theme";
-import type { AnyType } from "@liverubber/shared";
 
 export function WIPScreen({ name }: { name: string }) {
 	const navigation = useNavigation<AnyType>();

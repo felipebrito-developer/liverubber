@@ -3,10 +3,12 @@ import { Animated, Easing, StatusBar, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Typography } from "@/components/atoms/Typography";
 import { ScreenHeader } from "@/components/molecules/ScreenHeader";
-import { colors, radius, spacing } from "@/theme";
 import type { FitnessTabScreenProps } from "@/navigation/types";
+import { colors, radius, spacing } from "@/theme";
 
-export function FitnessExecutionScreen({ navigation }: FitnessTabScreenProps<"FitnessExecution">) {
+export function FitnessExecutionScreen({
+	navigation,
+}: FitnessTabScreenProps<"FitnessExecution">) {
 	const pulseAnim = useRef(new Animated.Value(1)).current;
 
 	useEffect(() => {
@@ -24,7 +26,7 @@ export function FitnessExecutionScreen({ navigation }: FitnessTabScreenProps<"Fi
 					easing: Easing.inOut(Easing.ease),
 					useNativeDriver: true,
 				}),
-			])
+			]),
 		).start();
 	}, [pulseAnim]);
 
@@ -39,23 +41,24 @@ export function FitnessExecutionScreen({ navigation }: FitnessTabScreenProps<"Fi
 
 			<View style={styles.container}>
 				<View style={styles.pacerContainer}>
-					<Animated.View 
+					<Animated.View
 						style={[
-							styles.pacerGlow, 
-							{ transform: [{ scale: pulseAnim }], opacity: 0.3 }
-						]} 
+							styles.pacerGlow,
+							{ transform: [{ scale: pulseAnim }], opacity: 0.3 },
+						]}
 					/>
-					<Animated.View 
-						style={[
-							styles.pacerCore, 
-							{ transform: [{ scale: pulseAnim }] }
-						]} 
+					<Animated.View
+						style={[styles.pacerCore, { transform: [{ scale: pulseAnim }] }]}
 					/>
-					<Typography variant="h1" style={styles.pacerText}>BREATHE</Typography>
+					<Typography variant="h1" style={styles.pacerText}>
+						BREATHE
+					</Typography>
 				</View>
 
 				<View style={styles.mirrorPlaceholder}>
-					<Typography variant="label" color={colors.muted}>MIRROR MODE</Typography>
+					<Typography variant="label" color={colors.muted}>
+						MIRROR MODE
+					</Typography>
 					<Typography variant="caption" color={colors.muted} align="center">
 						Visual feedback loop for form verification.
 					</Typography>

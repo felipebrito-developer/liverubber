@@ -1,38 +1,46 @@
-# Action Hub (Daily Execution) Wireframe
+# Action Hub (Daily Execution) Wireframe - REVISED
 
 [Status Bar (Time, Battery, etc.)]
 ----------------------------------------------------------------------
-[ (≡) Menu ]                 ACTION HUB                 [ (🔔) Notifications ]
-----------------------------------------------------------------------
+ACTION HUB                                                      [ (≡) Menu ]
 (Subtitle: "Your strategic execution plan for today.")
-
-[ (🧘) LOW Energy ]    [ (⚡) BALANCED Energy ]     [ (🔥) HIGH Energy ]
-(Descr: "Small wins")  (Descr: "Regular work")      (Descr: "Deep work")
 ----------------------------------------------------------------------
 
-[ Section: HABITS FOR TODAY (Horiz Scroll) ]
+[ STICKY ENERGY FILTER ]
+----------------------------------------------------------------------
+[ LOW ] (Small Wins) | [ BALANCED ] (Regular) | [ HIGH ] (Deep Work)
+----------------------------------------------------------------------
+
+[ 🟢 DAILY ROUTINE (Accordion Title) ]
 --------------------------------------------------
-| [ Card (Habit Name) ]   | [ Card (Habit Name) ]   | [ Card ... ]
-| [ Icon / 0 Streak ]     | [ Icon / 5 Streak ]     | [ ... ]
+| [ Card: Morning Meditation                                      ]
+| [ (15 min) | Streak: 12🔥                                       ]
+| [ #D4AF37 Meaning: Clarity ]  [ Goal: Inner Peace ]
+| [ (v) Resources: Pillow, Timer ]
+| [ DETAILS (Outline) ]                 [ 🎯 FOCUS (Sage Green) ]
 --------------------------------------------------
 
-[ Section: FOCUS TASKS (Vertical List) ]
+[ 🟠 WEEKLY HABITS (Accordion Title) ]
 --------------------------------------------------
-| [ Card: Task Title #1                                           ]
-| [ Priority Badge (HSL-colored) ]   [ 🎯 FOCUS (Action Btn) ]
---------------------------------------------------
-| [ Card: Task Title #2                                           ]
-| [ Priority Badge (HSL-colored) ]   [ 🎯 FOCUS (Action Btn) ]
---------------------------------------------------
-| [ Card: Task Title #3                                           ]
-| [ Priority Badge (HSL-colored) ]   [ 🎯 FOCUS (Action Btn) ]
+| [ Card: Strategic Review                                         ]
+...
 --------------------------------------------------
 
-... [ Clear scannable vertical list ] ...
-
+[ 🔵 MONTHLY CHECK-INS (Accordion Title) ]
 --------------------------------------------------
-[ List Padding: 120px Buffer for Nav Bar / Visibility ]
+| [ Card: Life Audit                                               ]
+...
 --------------------------------------------------
 
 [ (≡) STRATEGY ]   [ (🎯) DAILY ]   [ (🏋️) BODY ]   [ (📊) LOGS ]
 ------------------------- NAVIGATION BAR -----------------------------
+
+---
+
+### Functional Logic:
+1. **Low Energy Filtering**: 
+   - Hides medium/high energy tasks.
+   - **MANDATORY**: Always show URGENT tasks regardless of energy.
+2. **Pre-flight Checklist**: 
+   - Clicking [🎯 FOCUS] or [+] ADD opens a blocking modal.
+   - Checklist items are pulled from the task's `resources` field.

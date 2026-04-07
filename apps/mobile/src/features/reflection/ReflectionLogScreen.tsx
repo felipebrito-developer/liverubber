@@ -220,10 +220,7 @@ export function ReflectionLogScreen(props: AnyType) {
 				</View>
 			</ScrollView>
 
-			<FAB
-				label="New Reward"
-				onPress={() => setIsModalVisible(true)}
-			/>
+			<FAB label="New Reward" onPress={() => setIsModalVisible(true)} />
 
 			<Modal visible={isModalVisible} animationType="slide" transparent>
 				<View style={styles.modalOverlay}>

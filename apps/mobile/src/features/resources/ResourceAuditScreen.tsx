@@ -5,11 +5,17 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
 import { ScreenHeader } from "@/components/molecules/ScreenHeader";
-import { resourceLogsAtom, loadResourceLogsAction, resourceStoresAtom } from "@/stores/resourcesStore";
-import { colors, spacing } from "@/theme";
 import type { LogisticsTabScreenProps } from "@/navigation/types";
+import {
+	loadResourceLogsAction,
+	resourceLogsAtom,
+	resourceStoresAtom,
+} from "@/stores/resourcesStore";
+import { colors, spacing } from "@/theme";
 
-export function ResourceAuditScreen({ navigation }: LogisticsTabScreenProps<"StoreAudit">) {
+export function ResourceAuditScreen({
+	navigation,
+}: LogisticsTabScreenProps<"StoreAudit">) {
 	const logs = useAtomValue(resourceLogsAtom);
 	const loadLogs = useSetAtom(loadResourceLogsAction);
 	const stores = useAtomValue(resourceStoresAtom);
@@ -19,7 +25,7 @@ export function ResourceAuditScreen({ navigation }: LogisticsTabScreenProps<"Sto
 	}, [loadLogs]);
 
 	function getStoreName(id: string) {
-		return stores.find(s => s.id === id)?.name || "Unknown Resource";
+		return stores.find((s) => s.id === id)?.name || "Unknown Resource";
 	}
 
 	return (
@@ -37,12 +43,20 @@ export function ResourceAuditScreen({ navigation }: LogisticsTabScreenProps<"Sto
 				renderItem={({ item }) => (
 					<Card style={styles.logCard}>
 						<View style={styles.logHeader}>
-							<Typography variant="label">{getStoreName(item.resourceId)}</Typography>
-							<Typography 
-								variant="label" 
-								style={{ color: item.amountChange > 0 ? colors.winLoop : colors.overdueColor }}
+							<Typography variant="label">
+								{getStoreName(item.resourceId)}
+							</Typography>
+							<Typography
+								variant="label"
+								style={{
+									color:
+										item.amountChange > 0
+											? colors.winLoop
+											: colors.overdueColor,
+								}}
 							>
-								{item.amountChange > 0 ? "+" : ""}{item.amountChange.toLocaleString()}
+								{item.amountChange > 0 ? "+" : ""}
+								{item.amountChange.toLocaleString()}
 							</Typography>
 						</View>
 						<View style={styles.logFooter}>
@@ -50,7 +64,11 @@ export function ResourceAuditScreen({ navigation }: LogisticsTabScreenProps<"Sto
 								{item.changeType.replace("_", " ").toUpperCase()}
 							</Typography>
 							<Typography variant="caption" color={colors.muted}>
-								{new Date(item.logDate || "").toLocaleDateString()} {new Date(item.logDate || "").toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+								{new Date(item.logDate || "").toLocaleDateString()}{" "}
+								{new Date(item.logDate || "").toLocaleTimeString([], {
+									hour: "2-digit",
+									minute: "2-digit",
+								})}
 							</Typography>
 						</View>
 					</Card>

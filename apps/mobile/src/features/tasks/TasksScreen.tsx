@@ -15,8 +15,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/atoms/Button";
 import { FAB } from "@/components/atoms/FAB";
 import { Typography } from "@/components/atoms/Typography";
-import { ScreenHeader } from "@/components/molecules/ScreenHeader";
 import { Card } from "@/components/molecules/Card";
+import { ScreenHeader } from "@/components/molecules/ScreenHeader";
 import type { StrategicTabScreenProps } from "@/navigation/types";
 import {
 	createTaskAction,
@@ -58,15 +58,31 @@ function TaskItem({
 }) {
 	const status = task.status ?? "todo";
 	return (
-		<TouchableOpacity activeOpacity={0.8} onLongPress={() => onLongPress(task)} style={styles.taskContainer}>
+		<TouchableOpacity
+			activeOpacity={0.8}
+			onLongPress={() => onLongPress(task)}
+			style={styles.taskContainer}
+		>
 			<Card elevated style={styles.taskCard}>
 				<View style={styles.taskContent}>
 					<View style={styles.taskHeader}>
 						<Typography variant="h3" style={styles.taskTitle}>
 							{task.title}
 						</Typography>
-						<View style={[styles.statusBadge, { backgroundColor: `${statusColor(status)}20` }]}>
-							<Typography variant="caption" style={{ color: statusColor(status), fontSize: 10, fontWeight: '700' }}>
+						<View
+							style={[
+								styles.statusBadge,
+								{ backgroundColor: `${statusColor(status)}20` },
+							]}
+						>
+							<Typography
+								variant="caption"
+								style={{
+									color: statusColor(status),
+									fontSize: 10,
+									fontWeight: "700",
+								}}
+							>
 								{status.replace("_", " ").toUpperCase()}
 							</Typography>
 						</View>
@@ -184,19 +200,27 @@ export function TasksScreen({
 
 			{/* Filter Pills */}
 			<View style={styles.filterContainer}>
-				<ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterScroll}>
+				<ScrollView
+					horizontal
+					showsHorizontalScrollIndicator={false}
+					contentContainerStyle={styles.filterScroll}
+				>
 					{FILTERS.map((f) => (
 						<TouchableOpacity
 							key={f.key}
 							onPress={() => setFilter(f.key)}
 							style={[
 								styles.pill,
-								filter === f.key ? styles.pillActive : styles.pillInactive
+								filter === f.key ? styles.pillActive : styles.pillInactive,
 							]}
 						>
-							<Typography 
-								variant="label" 
-								style={filter === f.key ? { color: colors.onPrimary } : { color: colors.muted }}
+							<Typography
+								variant="label"
+								style={
+									filter === f.key
+										? { color: colors.onPrimary }
+										: { color: colors.muted }
+								}
 							>
 								{f.label}
 							</Typography>

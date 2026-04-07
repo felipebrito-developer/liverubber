@@ -31,7 +31,10 @@ export function MeaningCard({
 				onLongPress={() => onLongPress(meaning)}
 				accessibilityRole="button"
 			>
-				<Card elevated={expanded} style={[styles.meaningCard, expanded && styles.cardExpanded]}>
+				<Card
+					elevated={expanded}
+					style={[styles.meaningCard, expanded && styles.cardExpanded]}
+				>
 					<View style={styles.meaningHeader}>
 						<View
 							style={[
@@ -43,7 +46,9 @@ export function MeaningCard({
 							]}
 						/>
 						<View style={styles.meaningText}>
-							<Typography variant="h3" style={styles.title}>{meaning.name}</Typography>
+							<Typography variant="h3" style={styles.title}>
+								{meaning.name}
+							</Typography>
 							<Typography
 								variant="bodySmall"
 								color={colors.muted}
@@ -53,7 +58,14 @@ export function MeaningCard({
 							</Typography>
 						</View>
 						<View style={[styles.arrowBg, expanded && styles.arrowBgActive]}>
-							<Typography variant="caption" style={expanded ? { color: colors.onPrimary } : { color: colors.muted }}>
+							<Typography
+								variant="caption"
+								style={
+									expanded
+										? { color: colors.onPrimary }
+										: { color: colors.muted }
+								}
+							>
 								{expanded ? "−" : "+"}
 							</Typography>
 						</View>
@@ -75,15 +87,24 @@ export function MeaningCard({
 									</Typography>
 								</TouchableOpacity>
 							</View>
-							
+
 							<View style={styles.goalsList}>
 								{goals.length === 0 ? (
-									<Typography variant="caption" color={colors.muted} align="center" style={styles.emptyText}>
+									<Typography
+										variant="caption"
+										color={colors.muted}
+										align="center"
+										style={styles.emptyText}
+									>
 										No goals anchored to this purpose.
 									</Typography>
 								) : (
 									goals.map((g) => (
-										<GoalRow key={g.id} goal={g} onLongPress={onGoalLongPress} />
+										<GoalRow
+											key={g.id}
+											goal={g}
+											onLongPress={onGoalLongPress}
+										/>
 									))
 								)}
 							</View>
@@ -167,5 +188,5 @@ const styles = StyleSheet.create({
 	},
 	emptyText: {
 		paddingVertical: spacing.md,
-	}
+	},
 });
