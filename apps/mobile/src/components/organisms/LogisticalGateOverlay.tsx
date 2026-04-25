@@ -1,3 +1,4 @@
+import { useAtom, useSetAtom } from "jotai";
 import { useState } from "react";
 import {
 	Modal,
@@ -10,40 +11,43 @@ import { Button } from "@/components/atoms/Button";
 import { Select } from "@/components/atoms/Select";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
+import { activePreflightAtom, clearPreflightAction } from "@/stores/preflightStore";
 import { colors, radius, spacing } from "@/theme";
 
-interface LogisticalGateOverlayProps {
-	visible: boolean;
-	title: string;
-	subtitle?: string;
-	resources: string[];
-	onClose: () => void;
-	onConfirm: () => void;
-}
-
 /**
- * 🧭 Screen 1C: Logistical Gate (The Threshold)
+ * 🧭 Logistical Gate (The Threshold)
  * Purpose: Ensures all physical/mental requirements are met before engaging focus.
+ * Unified Version: Uses global preflight state.
  */
-export function LogisticalGateOverlay({
-	visible,
-	title,
-	subtitle = "A moment of preparation prevents flow interruptions.",
-	resources,
-	onClose,
-	onConfirm,
-}: LogisticalGateOverlayProps) {
+export function LogisticalGateOverlay() {
+	const [activePreflight] = useAtom(activePreflightAtom);
+	const clearPreflight = useSetAtom(clearPreflightAction);
+	
 	const [checked, setChecked] = useState<Record<string, boolean>>({});
 	const [capacity, setCapacity] = useState("tag-balanced-energy");
 
+	if (!activePreflight) return null;
+
+	const { title, resources, onConfirm } = activePreflight;
 	const allResourcesChecked = resources.every((r) => checked[r]);
 
 	const toggle = (resource: string) => {
 		setChecked((prev) => ({ ...prev, [resource]: !prev[resource] }));
 	};
 
+	const handleConfirm = () => {
+		if (onConfirm) onConfirm();
+		clearPreflight();
+		setChecked({}); // Reset for next time
+	};
+
+	const handleClose = () => {
+		clearPreflight();
+		setChecked({});
+	};
+
 	return (
-		<Modal visible={visible} transparent animationType="fade">
+		<Modal visible={!!activePreflight} transparent animationType="fade">
 			<View style={styles.overlay}>
 				<Card elevated style={styles.gateCard}>
 					<View style={styles.header}>
@@ -59,7 +63,7 @@ export function LogisticalGateOverlay({
 							align="center"
 							style={styles.subtitle}
 						>
-							{subtitle}
+							A moment of preparation prevents flow interruptions.
 						</Typography>
 					</View>
 
@@ -136,12 +140,12 @@ export function LogisticalGateOverlay({
 						<Button
 							label="Recalibrate"
 							variant="outline"
-							onPress={onClose}
+							onPress={handleClose}
 							style={styles.recalibrateBtn}
 						/>
 						<Button
 							label="Start Now 🚀"
-							onPress={onConfirm}
+							onPress={handleConfirm}
 							style={styles.startBtn}
 							disabled={!allResourcesChecked}
 						/>

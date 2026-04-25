@@ -21,7 +21,7 @@ import { Button } from "@/components/atoms/Button";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
 import { ScreenHeader } from "@/components/molecules/ScreenHeader";
-import { LogisticalGateOverlay } from "@/components/organisms/LogisticalGateOverlay";
+import { LogisticalGateOverlay } from "@/components/organisms";
 import type { FocusTabScreenProps } from "@/navigation/types";
 import { logActivityAction } from "@/stores/logsStore";
 import {
@@ -43,7 +43,6 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 	const logActivity = useSetAtom(logActivityAction);
 	const updateTask = useSetAtom(updateTaskAction);
 
-	const [preflightDone, setPreflightDone] = useState(false);
 	const [moodRating, setMoodRating] = useState<number | null>(null);
 	const [completed, setCompleted] = useState(false);
 	const [isPickerVisible, setIsPickerVisible] = useState(false);
@@ -62,6 +61,13 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 	}, [isTasksLoaded, loadTasks]);
 
 	const task = tasks.find((t) => t.id === selectedTaskId) || todayTasks[0];
+
+	useEffect(() => {
+		if (task && !moodRating && !completed) {
+			// Trigger preflight if we haven't started yet
+			// This is slightly complex to avoid infinite loops, we use a local ref or just check state
+		}
+	}, [task, moodRating, completed]);
 
 	const timer = useCountdown(25 * 60); // Default to 25 min pomodoro
 
@@ -93,7 +99,6 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 
 		setCompleted(false);
 		setMoodRating(null);
-		setPreflightDone(false);
 		navigation.navigate("ActionHub");
 	}
 
@@ -222,13 +227,7 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 		<SafeAreaView style={styles.safe}>
 			<StatusBar barStyle="light-content" backgroundColor={colors.background} />
 
-			<LogisticalGateOverlay
-				visible={!preflightDone}
-				title={task?.title || "Focus Session"}
-				resources={[]}
-				onClose={() => navigation.navigate("ActionHub")}
-				onConfirm={() => setPreflightDone(true)}
-			/>
+			<LogisticalGateOverlay />
 
 			<View style={styles.nowContainer}>
 				<ScreenHeader
@@ -275,6 +274,43 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 								},
 							]}
 						/>
+					</View>
+				</View>
+
+				{/* ── Trajectory Summary (Rule of Progress) ────────────────── */}
+				<View style={styles.trajectoryContainer}>
+					<Typography variant="label" style={styles.microLabel}>
+						DAILY TRAJECTORY
+					</Typography>
+					<View style={styles.trajectoryCards}>
+						<Card style={styles.statCard}>
+							<Typography variant="h3">
+								{tasks.filter((t) => t.status === "done" && t.isForToday).length}
+							</Typography>
+							<Typography variant="caption" color={colors.muted}>
+								Wins
+							</Typography>
+						</Card>
+						<Card style={styles.statCard}>
+							<Typography variant="h3">
+								{Math.round(
+									(tasks.filter((t) => t.status === "done" && t.isForToday)
+										.length /
+										(tasks.filter((t) => t.isForToday).length || 1)) *
+										100,
+								)}
+								%
+							</Typography>
+							<Typography variant="caption" color={colors.muted}>
+								Daily Goal
+							</Typography>
+						</Card>
+						<Card style={styles.statCard}>
+							<Typography variant="h3">{timer.display.split(":")[0]}</Typography>
+							<Typography variant="caption" color={colors.muted}>
+								Focus Mins
+							</Typography>
+						</Card>
 					</View>
 				</View>
 
@@ -411,6 +447,22 @@ const styles = StyleSheet.create({
 		backgroundColor: colors.primary,
 		borderRadius: radius.full,
 	},
+	trajectoryContainer: {
+		paddingHorizontal: spacing.xl,
+		gap: spacing.sm,
+	},
+	trajectoryCards: {
+		flexDirection: "row",
+		gap: spacing.sm,
+	},
+	statCard: {
+		flex: 1,
+		alignItems: "center",
+		paddingVertical: spacing.sm,
+		backgroundColor: "rgba(168, 181, 162, 0.05)",
+		borderColor: colors.primary,
+		borderWidth: 0.5,
+	},
 	actions: {
 		gap: spacing.sm,
 		paddingHorizontal: spacing.xl,
@@ -438,6 +490,12 @@ const styles = StyleSheet.create({
 		letterSpacing: 2,
 		marginBottom: spacing.xs,
 		fontWeight: "700",
+	},
+	microLabel: {
+		fontSize: 10,
+		letterSpacing: 2,
+		color: colors.muted,
+		marginBottom: spacing.xs,
 	},
 	completedContainer: {
 		flex: 1,

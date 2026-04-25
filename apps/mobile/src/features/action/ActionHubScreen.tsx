@@ -1,6 +1,6 @@
 import type { Habit, Task } from "@liverubber/shared";
 import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { ScrollView, StatusBar, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/atoms/Button";
@@ -29,6 +29,7 @@ import {
 import { colors, spacing } from "@/theme";
 import { ActivityCard } from "./components/ActivityCard";
 import { EnergyToggle } from "./components/EnergyToggle";
+import { startPreflightAction } from "@/stores/preflightStore";
 
 // ─── Energy Level ──────────────────────────────────────────────────────────────
 export type EnergyLevel =
@@ -73,11 +74,7 @@ export function ActionHubScreen({
 	navigation,
 }: FocusTabScreenProps<"ActionHub">) {
 	const [energy, setEnergy] = useAtom(energyLevelAtom);
-	const [preflightItem, setPreflightItem] = useState<{
-		id: string;
-		title: string;
-		resources: string[];
-	} | null>(null);
+	const startPreflight = useSetAtom(startPreflightAction);
 
 	const tasks = useAtomValue(tasksAtom);
 	const isTasksLoaded = useAtomValue(isTasksLoadedAtom);
@@ -117,21 +114,19 @@ export function ActionHubScreen({
 			| undefined;
 		if (activity) {
 			const isTask = "title" in activity;
-			setPreflightItem({
+			startPreflight({
 				id: activity.id,
 				title: isTask ? (activity as Task).title : (activity as Habit).name,
 				resources: (activity as ActivityWithResources).resources || [],
+				type: isTask ? "task" : "habit",
+				onConfirm: () => {
+					setSelectedTaskId(activity.id);
+					navigation.navigate("Now");
+				},
 			});
 		}
 	};
 
-	const startFocusSession = () => {
-		if (preflightItem) {
-			setSelectedTaskId(preflightItem.id);
-			setPreflightItem(null);
-			navigation.navigate("Now");
-		}
-	};
 
 	// ─── Grouping & Filtering Logic ──────────────────────────────────────────
 	const filteredTasks = useMemo(
@@ -312,13 +307,7 @@ export function ActionHubScreen({
 				</Accordion>
 			</ScrollView>
 
-			<LogisticalGateOverlay
-				visible={!!preflightItem}
-				title={preflightItem?.title || ""}
-				resources={preflightItem?.resources || []}
-				onClose={() => setPreflightItem(null)}
-				onConfirm={startFocusSession}
-			/>
+			<LogisticalGateOverlay />
 		</SafeAreaView>
 	);
 }

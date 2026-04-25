@@ -8,8 +8,10 @@ import {
 	StyleSheet,
 	TouchableOpacity,
 	View,
+	Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
 import { Button } from "@/components/atoms/Button";
 import { Typography } from "@/components/atoms/Typography";
 import { FormField } from "@/components/molecules/FormField";
@@ -17,14 +19,12 @@ import type { LoginScreenProps } from "@/navigation/types";
 import { type AuthUser, googleLoginAction, saveSessionAction } from "@/stores/authStore";
 import { colors, spacing } from "@/theme";
 
-// We try to import the library, but provide a mock if it's not installed yet
-// biome-ignore lint/suspicious/noExplicitAny: library is optional
-let GoogleSignin: any;
-try {
-	GoogleSignin = require("@react-native-google-signin/google-signin").GoogleSignin;
-} catch {
-	GoogleSignin = null;
-}
+// Configure Google Sign-In
+// Note: webClientId is required for Android even if you only want to get the ID token
+GoogleSignin.configure({
+	webClientId: "YOUR_WEB_CLIENT_ID_FROM_GOOGLE_CONSOLE.apps.googleusercontent.com", // TODO: Replace with actual ID
+	offlineAccess: true,
+});
 
 export function LoginScreen({ navigation }: LoginScreenProps) {
 	const saveSession = useSetAtom(saveSessionAction);
@@ -39,24 +39,31 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
 	async function handleGoogleLogin() {
 		setLoading(true);
 		try {
-			if (GoogleSignin) {
-				// Actual implementation when library is installed
-				// await GoogleSignin.hasPlayServices();
-				// const userInfo = await GoogleSignin.signIn();
-				// await googleLogin(userInfo.user);
-			} else {
-				// Mock implementation for local testing
-				console.log("Google Sign-in library not found, using mock...");
-				await new Promise((resolve) => setTimeout(resolve, 1000));
+			await GoogleSignin.hasPlayServices();
+			const userInfo = await GoogleSignin.signIn();
+			
+			if (userInfo.data?.user) {
 				await googleLogin({
-					id: `google_${Date.now()}`,
-					email: "google.user@example.com",
-					name: "Google Explorer",
+					id: userInfo.data.user.id,
+					email: userInfo.data.user.email,
+					name: userInfo.data.user.name || "Google User",
 				});
+				Alert.alert("Success", `Welcome ${userInfo.data.user.name}!`);
 			}
-		} catch (error) {
+		} catch (error: any) {
 			console.error("Google Login Error:", error);
-			setErrors({ email: "Google login failed." });
+			if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+				// user cancelled the login flow
+			} else if (error.code === statusCodes.IN_PROGRESS) {
+				// operation (e.g. sign in) is in progress already
+			} else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+				Alert.alert("Error", "Google Play Services not available");
+			} else {
+				Alert.alert(
+					"Developer Note",
+					"Google Login failed. Ensure 'google-services.json' is added and SHA-1 is registered in Firebase Console.\n\nError: " + error.message
+				);
+			}
 		} finally {
 			setLoading(false);
 		}
@@ -69,11 +76,11 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
 		setErrors(next);
 		return Object.keys(next).length === 0;
 	}
+
 	async function handleLogin() {
 		if (!validate()) return;
 		setLoading(true);
 		try {
-			// Simulating auth since AI bridge integration is paused
 			const mockUser: AuthUser = {
 				id: `mock_${Date.now()}`,
 				email,

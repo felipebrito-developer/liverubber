@@ -8,6 +8,7 @@ import {
 	StyleSheet,
 	TouchableOpacity,
 	View,
+	Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/atoms/Button";
@@ -15,11 +16,21 @@ import { Typography } from "@/components/atoms/Typography";
 import { FormField } from "@/components/molecules/FormField";
 import type { RegisterScreenProps } from "@/navigation/types";
 import { api } from "@/services/api";
-import { type AuthUser, userAtom } from "@/stores/authStore";
+import { type AuthUser, googleLoginAction, userAtom } from "@/stores/authStore";
 import { colors, spacing } from "@/theme";
+
+// Optional dependency handling
+// biome-ignore lint/suspicious/noExplicitAny: library is optional
+let GoogleSignin: any;
+try {
+	GoogleSignin = require("@react-native-google-signin/google-signin").GoogleSignin;
+} catch {
+	GoogleSignin = null;
+}
 
 export function RegisterScreen({ navigation }: RegisterScreenProps) {
 	const setUser = useSetAtom(userAtom);
+	const googleLogin = useSetAtom(googleLoginAction);
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
@@ -53,6 +64,30 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
 			setErrors({
 				email: "Registration failed. This email might already be in use.",
 			});
+		} finally {
+			setLoading(false);
+		}
+	}
+
+	async function handleGoogleLogin() {
+		setLoading(true);
+		try {
+			if (GoogleSignin) {
+				// Real implementation placeholder
+			} else {
+				// Mock for local development
+				Alert.alert("Google Sign-in", "Simulating Google Sign-up...");
+				await new Promise((resolve) => setTimeout(resolve, 1500));
+				await googleLogin({
+					id: `google_${Date.now()}`,
+					email: "google.user@example.com",
+					name: "Google Explorer",
+				});
+				Alert.alert("Success", "Registered with Google (Mock)");
+			}
+		} catch (error) {
+			console.error("Google Login Error:", error);
+			setErrors({ email: "Google registration failed." });
 		} finally {
 			setLoading(false);
 		}
@@ -113,6 +148,22 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
 							onPress={handleRegister}
 							style={styles.submitBtn}
 						/>
+
+						<View style={styles.divider}>
+							<View style={styles.line} />
+							<Typography variant="bodySmall" color={colors.muted}>
+								OR
+							</Typography>
+							<View style={styles.line} />
+						</View>
+
+						<Button
+							label="Continue with Google"
+							variant="outline"
+							fullWidth
+							loading={loading}
+							onPress={handleGoogleLogin}
+						/>
 					</View>
 
 					<View style={styles.footer}>
@@ -158,6 +209,18 @@ const styles = StyleSheet.create({
 	},
 	submitBtn: {
 		marginTop: spacing.sm,
+	},
+	divider: {
+		flexDirection: "row",
+		alignItems: "center",
+		gap: spacing.sm,
+		marginVertical: spacing.md,
+	},
+	line: {
+		flex: 1,
+		height: 1,
+		backgroundColor: colors.border,
+		opacity: 0.2,
 	},
 	footer: {
 		flexDirection: "row",
