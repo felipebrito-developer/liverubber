@@ -80,8 +80,8 @@ export function MeaningsScreen({
 		<SafeAreaView style={styles.safe}>
 			<StatusBar barStyle="light-content" backgroundColor={colors.background} />
 			<ScreenHeader
-				title="Meanings"
-				subtitle="The 'Why' behind every action."
+				title="Your Purpose Foundations"
+				subtitle="The core identities driving your strategic trajectory."
 				onDrawerOpen={() => navigation.openDrawer()}
 			/>
 

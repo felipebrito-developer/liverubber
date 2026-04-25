@@ -1,12 +1,7 @@
 import type { Goal, NewGoal } from "@liverubber/shared";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
-import {
-	Modal,
-	StyleSheet,
-	TextInput,
-	View,
-} from "react-native";
+import { Modal, StyleSheet, TextInput, View } from "react-native";
 import {
 	isMeaningsLoadedAtom,
 	loadMeaningsAction,

@@ -2,7 +2,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Text } from "react-native";
 import { ResourceAuditScreen } from "@/features/resources/ResourceAuditScreen";
 import { ResourceDashboardScreen } from "@/features/resources/ResourceDashboardScreen";
-import { ResourcesScreen } from "@/features/resources/ResourcesScreen";
+import { StorageScreen } from "@/features/resources/StorageScreen";
 import { colors, radius, spacing } from "@/theme";
 import type { StoreTabParamList } from "./types";
 
@@ -17,7 +17,7 @@ function TabIcon({ icon, focused }: { icon: string; focused: boolean }) {
 export function StoreTabNavigator() {
 	return (
 		<Tab.Navigator
-			initialRouteName="StoreManagement"
+			initialRouteName="Storage"
 			screenOptions={{
 				headerShown: false,
 				tabBarStyle: {
@@ -48,11 +48,11 @@ export function StoreTabNavigator() {
 				}}
 			/>
 			<Tab.Screen
-				name="StoreManagement"
-				component={ResourcesScreen}
+				name="Storage"
+				component={StorageScreen}
 				options={{
-					tabBarLabel: "Assets",
-					tabBarIcon: ({ focused }) => <TabIcon icon="💎" focused={focused} />,
+					tabBarLabel: "Storage",
+					tabBarIcon: ({ focused }) => <TabIcon icon="📦" focused={focused} />,
 				}}
 			/>
 			<Tab.Screen

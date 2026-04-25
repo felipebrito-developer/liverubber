@@ -1,133 +1,218 @@
-import { useAtomValue } from "jotai";
-import { useEffect } from "react";
-import { ScrollView, StatusBar, StyleSheet, View } from "react-native";
-import Animated, {
-	useAnimatedStyle,
-	useSharedValue,
-	withSpring,
-} from "react-native-reanimated";
+import type { Task } from "@liverubber/shared";
+import { useAtomValue, useSetAtom } from "jotai";
+import { useEffect, useState } from "react";
+import {
+	ScrollView,
+	StatusBar,
+	StyleSheet,
+	TouchableOpacity,
+	View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
+import { ProgressPizza } from "@/components/molecules/ProgressPizza";
 import { ScreenHeader } from "@/components/molecules/ScreenHeader";
 import type { FocusTabScreenProps } from "@/navigation/types";
 import { goalsAtom } from "@/stores/goalsStore";
+import {
+	activityLogsAtom,
+	loadLogsAction,
+	logActivityAction,
+} from "@/stores/logsStore";
+import { meaningsAtom } from "@/stores/meaningsStore";
 import { tasksAtom } from "@/stores/tasksStore";
-import { colors, spacing } from "@/theme";
-
-function ProgressPizza({
-	percentage,
-	label,
-	color = colors.primary,
-}: {
-	percentage: number;
-	label: string;
-	color?: string;
-}) {
-	// Animate from 0 → percentage on mount
-	const fillHeight = useSharedValue(0);
-
-	useEffect(() => {
-		fillHeight.value = withSpring(percentage, { damping: 14, stiffness: 120 });
-	}, [fillHeight, percentage]);
-
-	const animatedStyle = useAnimatedStyle(() => ({
-		height: `${fillHeight.value}%` as `${number}%`,
-	}));
-
-	return (
-		<View style={styles.pizzaContainer}>
-			<View style={[styles.pizzaOuter, { borderColor: color }]}>
-				{/* ── Pizza Base ─────────────────────────────────────────────────── */}
-				<View style={styles.pizzaBase}>
-					<Animated.View
-						style={[
-							styles.pizzaInner,
-							{ backgroundColor: color },
-							animatedStyle,
-						]}
-					/>
-					{/* ── Pizza Toppings (Visual flair) ───────────────────────────── */}
-					<View style={styles.toppings}>
-						{[10, 30, 60, 80].map((_top, i) => (
-							<View
-								key={_top}
-								style={[
-									styles.topping,
-									{ bottom: i * 20, left: (i % 2) * 40 + 10 },
-								]}
-							/>
-						))}
-					</View>
-				</View>
-				<View style={styles.pizzaOverlay}>
-					<Typography variant="h3" style={styles.pizzaText}>
-						{percentage}%
-					</Typography>
-				</View>
-			</View>
-			<Typography
-				variant="caption"
-				align="center"
-				style={{ marginTop: spacing.xs, fontWeight: "600" }}
-			>
-				{label}
-			</Typography>
-		</View>
-	);
-}
+import { colors, radius, spacing } from "@/theme";
 
 export function UserProgressScreen({
 	navigation,
 }: FocusTabScreenProps<"UserProgress">) {
 	const goals = useAtomValue(goalsAtom);
-
 	const tasks = useAtomValue(tasksAtom);
+	const meanings = useAtomValue(meaningsAtom);
+	const logs = useAtomValue(activityLogsAtom);
+	const loadLogs = useSetAtom(loadLogsAction);
+	const logActivity = useSetAtom(logActivityAction);
 
-	const completedTasks = tasks.filter((t) => t.status === "completed").length;
-	const totalTasks = tasks.length || 1;
-	const taskProgress = Math.round((completedTasks / totalTasks) * 100);
+	const [moodRating, setMoodRating] = useState<number | null>(null);
 
-	const activeGoals = goals.filter((g) => g.status === "active").length;
+	useEffect(() => {
+		loadLogs();
+	}, [loadLogs]);
+
+	// Identity Anchor: becoming the most recently updated Meaning
+	const identityMeaning = meanings[0];
+
+	const completedTasks = tasks.filter((t: Task) => t.status === "done").length;
+
 	const totalGoals = goals.length || 1;
-	const goalProgress = Math.round((activeGoals / totalGoals) * 100);
+	const goalProgress = Math.round((completedTasks / totalGoals) * 100);
+
+	const fitnessTasks = tasks.filter((t: Task) => {
+		const taskGoal = goals.find((g) => g.id === t.goalId);
+		return taskGoal?.categoryId === "cat-fitness";
+	});
+	const completedFitness = fitnessTasks.filter(
+		(t: Task) => t.status === "done",
+	).length;
+	const totalFitness = fitnessTasks.length || 1;
+	const fitnessProgress = Math.round((completedFitness / totalFitness) * 100);
+
+	const todayTasks = tasks.filter(
+		(t: Task) => !!t.isForToday && t.status !== "done",
+	);
+
+	const handleMoodSelect = async (n: number) => {
+		setMoodRating(n);
+		await logActivity({
+			activityId: "mood_check",
+			moodRating: n,
+			amountAchieved: 0,
+			completedAt: new Date().toISOString(),
+		});
+	};
 
 	return (
 		<SafeAreaView style={styles.safe}>
 			<StatusBar barStyle="light-content" backgroundColor={colors.background} />
 			<ScrollView contentContainerStyle={styles.scroll}>
 				<ScreenHeader
-					title="Progress"
-					subtitle="Your neuro-journey at a glance."
+					title="Your Progress"
+					subtitle="Proof of your trajectory and success."
 					onDrawerOpen={() => navigation.openDrawer()}
 				/>
 
-				<View style={styles.pizzasRow}>
-					<ProgressPizza percentage={taskProgress} label="Task Completion" />
-					<ProgressPizza percentage={goalProgress} label="Goal Momentum" />
-				</View>
-
+				{/* ── Section: DAILY IDENTITY ANCHOR ───────────────────────── */}
 				<View style={styles.section}>
-					<Typography variant="h3" style={styles.sectionTitle}>
-						Daily Summary
+					<Typography variant="label" style={styles.microLabel}>
+						IDENTITY ANCHOR
 					</Typography>
-					<Card elevated>
-						<Typography variant="label">Today's Focus</Typography>
-						<Typography variant="bodySmall" color={colors.muted}>
-							Focus on the "Small Wins" strategy. You have{" "}
-							{tasks.filter((t) => t.status !== "completed").length} pending
-							tasks.
+					<Card elevated style={styles.anchorCard}>
+						<Typography variant="body" align="center">
+							"Today I am becoming:{" "}
+							<Typography variant="meaning">
+								{identityMeaning?.name || "Auto suficiente"}
+							</Typography>
+							"
 						</Typography>
 					</Card>
 				</View>
 
+				{/* ── Progress Visualization ───────────────────────────────── */}
+				<View style={styles.pizzasRow}>
+					<ProgressPizza percentage={goalProgress} label="Goal Progress" />
+					<ProgressPizza
+						percentage={fitnessProgress}
+						label="Fitness Progress"
+						color={colors.secondary}
+					/>
+				</View>
+
+				{/* ── Today's Events Summary ───────────────────────────────── */}
 				<View style={styles.section}>
-					<Typography variant="h3" style={styles.sectionTitle}>
-						Latest Activity
+					<Typography variant="label" style={styles.microLabel}>
+						TODAY'S EVENTS SUMMARY
 					</Typography>
-					<Typography variant="caption" color={colors.muted} align="center">
-						No recent activities logged. Start a session in the Now screen!
+					<Card elevated style={styles.summaryCard}>
+						{todayTasks.length === 0 ? (
+							<Typography variant="caption" color={colors.muted} align="center">
+								No pending events for today.
+							</Typography>
+						) : (
+							todayTasks.slice(0, 3).map((t) => (
+								<View key={t.id} style={styles.summaryItem}>
+									<Typography variant="bodySmall" style={{ flex: 1 }}>
+										• {t.title}
+									</Typography>
+									{t.estimatedTime && (
+										<Typography variant="caption" color={colors.muted}>
+											{t.estimatedTime}m
+										</Typography>
+									)}
+								</View>
+							))
+						)}
+					</Card>
+				</View>
+
+				{/* ── Section: MOOD TRACKER (Minimalist) ────────────────────── */}
+				<View style={styles.section}>
+					<Typography variant="label" style={styles.microLabel}>
+						CURRENT BASELINE
 					</Typography>
+					<Card style={styles.moodCard}>
+						<Typography variant="bodySmall" color={colors.muted} align="center">
+							How is your mental clarity right now?
+						</Typography>
+						<View style={styles.moodRow}>
+							{[1, 2, 3, 4, 5].map((n) => (
+								<TouchableOpacity
+									key={n}
+									onPress={() => handleMoodSelect(n)}
+									style={[
+										styles.moodBtn,
+										moodRating === n && styles.moodBtnActive,
+									]}
+								>
+									<Typography variant="h2">
+										{["🌑", "🌘", "🌗", "🌖", "🌕"][n - 1]}
+									</Typography>
+								</TouchableOpacity>
+							))}
+						</View>
+					</Card>
+				</View>
+
+				{/* ── Section: TRAJECTORY SUMMARY ─────────────────────────── */}
+				<View style={styles.section}>
+					<Typography variant="label" style={styles.microLabel}>
+						DAILY TRAJECTORY
+					</Typography>
+					<Card elevated>
+						<View style={styles.trajectoryRow}>
+							<View style={styles.statBox}>
+								<Typography variant="h3">{completedTasks}</Typography>
+								<Typography variant="caption">Wins</Typography>
+							</View>
+							<View style={styles.statSeparator} />
+							<View style={styles.statBox}>
+								<Typography variant="h3">{logs.length}</Typography>
+								<Typography variant="caption">Logs</Typography>
+							</View>
+							<View style={styles.statSeparator} />
+							<View style={styles.statBox}>
+								<Typography variant="h3" color={colors.accent}>
+									{totalGoals}
+								</Typography>
+								<Typography variant="caption">Goals</Typography>
+							</View>
+						</View>
+					</Card>
+				</View>
+
+				<View style={[styles.section, { paddingBottom: 40 }]}>
+					<Typography variant="label" style={styles.microLabel}>
+						LATEST LOGS
+					</Typography>
+					{logs.length === 0 ? (
+						<Typography variant="caption" color={colors.muted} align="center">
+							No recent activities logged.
+						</Typography>
+					) : (
+						logs.slice(0, 3).map((log) => (
+							<View key={log.id} style={styles.logItem}>
+								<Typography variant="bodySmall">
+									✦ {log.activityId.replace("_", " ")}
+								</Typography>
+								<Typography variant="caption" color={colors.muted}>
+									{new Date(log.completedAt).toLocaleTimeString([], {
+										hour: "2-digit",
+										minute: "2-digit",
+									})}
+								</Typography>
+							</View>
+						))
+					)}
 				</View>
 			</ScrollView>
 		</SafeAreaView>
@@ -205,7 +290,72 @@ const styles = StyleSheet.create({
 		paddingHorizontal: spacing.xl,
 		gap: spacing.sm,
 	},
-	sectionTitle: {
+	microLabel: {
+		fontSize: 10,
+		letterSpacing: 2,
+		color: colors.muted,
 		marginBottom: spacing.xs,
+	},
+	anchorCard: {
+		borderColor: colors.accent,
+		borderWidth: 1,
+		backgroundColor: "rgba(212, 175, 55, 0.05)",
+		paddingVertical: spacing.lg,
+	},
+	moodCard: {
+		gap: spacing.md,
+		paddingVertical: spacing.md,
+	},
+	moodRow: {
+		flexDirection: "row",
+		justifyContent: "space-around",
+	},
+	moodBtn: {
+		padding: spacing.sm,
+		borderRadius: radius.md,
+		backgroundColor: colors.surface,
+		borderWidth: 1,
+		borderColor: colors.border,
+	},
+	moodBtnActive: {
+		backgroundColor: colors.primary,
+		borderColor: colors.primary,
+	},
+	trajectoryRow: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+		paddingVertical: spacing.sm,
+	},
+	statBox: {
+		flex: 1,
+		alignItems: "center",
+		gap: 2,
+	},
+	statSeparator: {
+		width: 1,
+		height: "60%",
+		backgroundColor: colors.border,
+	},
+	logItem: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+		paddingVertical: spacing.sm,
+		borderBottomWidth: 1,
+		borderBottomColor: colors.border,
+	},
+	summaryCard: {
+		paddingVertical: spacing.md,
+		backgroundColor: "rgba(168, 181, 162, 0.05)",
+		borderColor: colors.primary,
+		borderWidth: 0.5,
+	},
+	summaryItem: {
+		flexDirection: "row",
+		alignItems: "center",
+		gap: spacing.sm,
+		paddingVertical: spacing.xs,
+		paddingHorizontal: spacing.sm,
 	},
 });

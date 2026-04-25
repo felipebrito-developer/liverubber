@@ -14,6 +14,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/atoms/Button";
 import { FAB } from "@/components/atoms/FAB";
+import { Select } from "@/components/atoms/Select";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
 import { ScreenHeader } from "@/components/molecules/ScreenHeader";
@@ -33,11 +34,11 @@ import {
 	updateResourceAction,
 } from "@/stores/resourcesStore";
 import { colors, radius, spacing } from "@/theme";
-import { ResourceCard } from "./components/ResourceCard";
+import { StorageItemCard } from "./components/StorageItemCard";
 
-export function ResourcesScreen({
+export function StorageScreen({
 	navigation,
-}: LogisticsTabScreenProps<"StoreManagement">) {
+}: LogisticsTabScreenProps<"Storage">) {
 	const stores = useAtomValue(resourceStoresAtom);
 	const _loadResources = useSetAtom(loadResourcesAction);
 	const _logChange = useSetAtom(logResourceChangeAction);
@@ -55,9 +56,7 @@ export function ResourcesScreen({
 		"cat-resources",
 	);
 
-	const [filterCategoryId, setFilterCategoryId] = useState<string | null>(
-		"cat-resources",
-	);
+	const [filterCategoryId, setFilterCategoryId] = useState<string | null>(null);
 	const categories = useAtomValue(categoriesAtom);
 	const loadCategories = useSetAtom(loadCategoriesAction);
 	const isCategoriesLoaded = useAtomValue(isCategoriesLoadedAtom);
@@ -112,33 +111,23 @@ export function ResourcesScreen({
 		});
 	};
 
-	const handleDeletePress = (store: UIResourceStore) => {
+	const handleDeletePress = () => {
+		if (!editingStore) return;
 		Alert.alert(
 			"Shelve Resource",
-			`Are you sure you want to stop tracking "${store.name}"?`,
+			`Are you sure you want to stop tracking "${editingStore.name}"?`,
 			[
 				{ text: "Keep it", style: "cancel" },
 				{
 					text: "Shelve / Remove",
 					style: "destructive",
 					onPress: async () => {
-						await deleteResource(store.id);
+						await deleteResource(editingStore.id);
+						handleCloseModal();
 					},
 				},
 			],
 		);
-	};
-
-	const handleLongPress = (store: UIResourceStore) => {
-		Alert.alert("Resource Options", `Manage "${store.name}"`, [
-			{ text: "Edit Details", onPress: () => handleEditPress(store) },
-			{
-				text: "Archive / Delete",
-				style: "destructive",
-				onPress: () => handleDeletePress(store),
-			},
-			{ text: "Cancel", style: "cancel" },
-		]);
 	};
 
 	const handleCloseModal = () => {
@@ -164,8 +153,8 @@ export function ResourcesScreen({
 		<SafeAreaView style={styles.safe}>
 			<StatusBar barStyle="light-content" backgroundColor={colors.background} />
 			<ScreenHeader
-				title="Life Resources"
-				subtitle="Track your internal and external reserves."
+				title="Storage Hub"
+				subtitle="Manage your inventory and reserves with precision."
 				onDrawerOpen={() => navigation.openDrawer()}
 			/>
 
@@ -183,7 +172,7 @@ export function ResourcesScreen({
 								variant="caption"
 								style={!filterCategoryId && { color: colors.onPrimary }}
 							>
-								ALL
+								ALL ITEMS
 							</Typography>
 						</TouchableOpacity>
 						{categories.map((cat) => {
@@ -217,10 +206,10 @@ export function ResourcesScreen({
 				data={filteredStores}
 				keyExtractor={(item) => item.id}
 				renderItem={({ item }) => (
-					<ResourceCard
+					<StorageItemCard
 						store={item}
 						onAdjust={(delta) => handleAdjust(item, delta)}
-						onLongPress={handleLongPress}
+						onEdit={() => handleEditPress(item)}
 					/>
 				)}
 				contentContainerStyle={styles.list}
@@ -229,7 +218,7 @@ export function ResourcesScreen({
 				ListEmptyComponent={
 					<View style={styles.empty}>
 						<Typography color={colors.muted} align="center">
-							No resources tracked yet.{"\n"}Tap + to add your first one!
+							No items found in this section.{"\n"}Tap + to add one!
 						</Typography>
 					</View>
 				}
@@ -240,55 +229,52 @@ export function ResourcesScreen({
 			<Modal visible={isModalVisible} animationType="slide" transparent>
 				<View style={styles.modalOverlay}>
 					<Card style={styles.modalCard}>
-						<Typography variant="h3">
-							{editingStore ? "Edit Resource" : "New Resource"}
-						</Typography>
+						<View style={styles.modalHeader}>
+							<Typography variant="h3">
+								{editingStore ? "Edit Storage Item" : "New Storage Item"}
+							</Typography>
+							{editingStore && (
+								<TouchableOpacity onPress={handleDeletePress}>
+									<Typography color={colors.error}>Delete Item</Typography>
+								</TouchableOpacity>
+							)}
+						</View>
+
 						<TextInput
-							placeholder="Resource Name"
+							placeholder="Item Name (e.g. Rice, Mental Energy)"
 							placeholderTextColor={colors.muted}
 							value={name}
 							onChangeText={setName}
 							style={styles.input}
 						/>
-						<TextInput
-							placeholder="Amount"
-							placeholderTextColor={colors.muted}
-							value={amountStr}
-							onChangeText={setAmountStr}
-							keyboardType="numeric"
-							style={styles.input}
-						/>
-						<View>
+
+						<View style={styles.amountInputRow}>
+							<Typography variant="label" style={{ marginBottom: spacing.xs }}>
+								Initial / Current Amount
+							</Typography>
+							<TextInput
+								placeholder="0"
+								placeholderTextColor={colors.muted}
+								value={amountStr}
+								onChangeText={setAmountStr}
+								keyboardType="numeric"
+								style={styles.input}
+							/>
+						</View>
+
+						<View style={styles.selectWrapper}>
 							<Typography variant="label" style={{ marginBottom: spacing.xs }}>
 								Category
 							</Typography>
-							<ScrollView horizontal showsHorizontalScrollIndicator={false}>
-								<View style={styles.filterRow}>
-									{categories.map((cat) => {
-										const active = resourceCategoryId === cat.id;
-										return (
-											<TouchableOpacity
-												key={cat.id}
-												onPress={() => setResourceCategoryId(cat.id)}
-												style={[
-													styles.filterPill,
-													active && {
-														backgroundColor: cat.categoryColor,
-														borderColor: cat.categoryColor,
-													},
-												]}
-											>
-												<Typography
-													variant="caption"
-													style={active && { color: colors.onPrimary }}
-												>
-													{cat.name}
-												</Typography>
-											</TouchableOpacity>
-										);
-									})}
-								</View>
-							</ScrollView>
+							<Select
+								options={categories.map((c) => ({
+									label: c.name,
+									value: c.id,
+								}))}
+								value={resourceCategoryId}
+								onValueChange={setResourceCategoryId}
+								placeholder="Select category..."
+							/>
 						</View>
 
 						<View style={styles.modalActions}>
@@ -298,7 +284,11 @@ export function ResourcesScreen({
 								onPress={handleCloseModal}
 								style={{ flex: 1 }}
 							/>
-							<Button label="Save" onPress={handleSave} style={{ flex: 1 }} />
+							<Button
+								label="Save Changes"
+								onPress={handleSave}
+								style={{ flex: 1 }}
+							/>
 						</View>
 					</Card>
 				</View>
@@ -315,6 +305,7 @@ const styles = StyleSheet.create({
 	list: {
 		paddingHorizontal: spacing.xl,
 		paddingBottom: spacing.xl,
+		paddingTop: spacing.md,
 		gap: spacing.md,
 	},
 	empty: {
@@ -323,12 +314,18 @@ const styles = StyleSheet.create({
 	},
 	modalOverlay: {
 		flex: 1,
-		backgroundColor: "rgba(0,0,0,0.5)",
+		backgroundColor: "rgba(0,0,0,0.7)",
 		justifyContent: "center",
 		padding: spacing.xl,
 	},
 	modalCard: {
-		gap: spacing.md,
+		gap: spacing.lg,
+		padding: spacing.xl,
+	},
+	modalHeader: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
 	},
 	input: {
 		backgroundColor: colors.surface,
@@ -337,21 +334,33 @@ const styles = StyleSheet.create({
 		borderRadius: radius.md,
 		padding: spacing.md,
 		color: colors.onBackground,
+		fontSize: 16,
+	},
+	amountInputRow: {
+		gap: spacing.xs,
+	},
+	selectWrapper: {
+		gap: spacing.xs,
 	},
 	modalActions: {
 		flexDirection: "row",
 		gap: spacing.sm,
+		marginTop: spacing.md,
 	},
 	filterContainer: {
-		marginTop: spacing.md,
+		paddingVertical: spacing.md,
+		backgroundColor: colors.background,
+		borderBottomWidth: 1,
+		borderBottomColor: colors.border,
 	},
 	filterRow: {
 		flexDirection: "row",
 		gap: spacing.sm,
+		paddingHorizontal: spacing.xl,
 	},
 	filterPill: {
 		paddingHorizontal: spacing.lg,
-		paddingVertical: 8,
+		paddingVertical: 10,
 		borderRadius: radius.full,
 		borderWidth: 1,
 		borderColor: colors.border,

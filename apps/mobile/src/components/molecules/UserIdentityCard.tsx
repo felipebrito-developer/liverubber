@@ -19,9 +19,11 @@ export function UserIdentityCard() {
 					</Typography>
 				</View>
 				<View style={styles.info}>
-					<Typography variant="label">{user.name}</Typography>
+					<Typography variant="label" style={{ fontSize: 18 }}>
+						{user.name}
+					</Typography>
 					<Typography variant="caption" color={colors.muted}>
-						{user.age} Years Old • {user.email}
+						{user.age} Years Old
 					</Typography>
 				</View>
 			</View>

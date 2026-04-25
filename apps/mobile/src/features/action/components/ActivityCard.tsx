@@ -1,4 +1,4 @@
-import type { Habit, Task } from "@liverubber/shared";
+import type { AnyType, Habit, Task } from "@liverubber/shared";
 import { useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
@@ -14,6 +14,7 @@ interface ActivityCardProps {
 	resources?: string[];
 	onFocus: (id: string) => void;
 	onDetails: (id: string) => void;
+	style?: AnyType;
 }
 
 export function ActivityCard({
@@ -24,6 +25,7 @@ export function ActivityCard({
 	resources = [],
 	onFocus,
 	onDetails,
+	style,
 }: ActivityCardProps) {
 	const [showResources, setShowResources] = useState(false);
 
@@ -33,7 +35,7 @@ export function ActivityCard({
 	const streak = type === "habit" ? (activity as Habit).streakCount : undefined;
 
 	return (
-		<Card elevated style={styles.card}>
+		<Card elevated style={[styles.card, style]}>
 			{/* Title Row: Name (Left) | (Time) Center | (Streak) Right */}
 			<View style={styles.titleRow}>
 				<Typography variant="h3" style={styles.activityTitle} numberOfLines={1}>

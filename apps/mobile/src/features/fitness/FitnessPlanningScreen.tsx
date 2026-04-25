@@ -1,5 +1,13 @@
 import { useAtomValue } from "jotai";
-import { FlatList, StatusBar, StyleSheet, View } from "react-native";
+import { useMemo, useState } from "react";
+import {
+	FlatList,
+	ScrollView,
+	StatusBar,
+	StyleSheet,
+	TouchableOpacity,
+	View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Typography } from "@/components/atoms/Typography";
 import { ScreenHeader } from "@/components/molecules/ScreenHeader";
@@ -8,13 +16,9 @@ import type { FitnessTabScreenProps } from "@/navigation/types";
 import { tasksAtom } from "@/stores/tasksStore";
 import { colors, radius, spacing } from "@/theme";
 
-export function FitnessPlanningScreen({
-	navigation,
-}: FitnessTabScreenProps<"FitnessPlanning">) {
-	const tasks = useAtomValue(tasksAtom);
-
-	// Filter tasks that are body-maintenance related
-	const fitnessKeywords = [
+// Filter tasks that are body-maintenance related
+const fitnessKeywords: Record<string, string[]> = {
+	ALL: [
 		"walk",
 		"run",
 		"meditat",
@@ -23,12 +27,29 @@ export function FitnessPlanningScreen({
 		"stretch",
 		"yoga",
 		"exercise",
-		"treinar",
-		"caminhar",
-	];
-	const fitnessTasks = tasks.filter((t) =>
-		fitnessKeywords.some((kw) => t.title.toLowerCase().includes(kw)),
-	);
+		"push",
+		"pull",
+		"squat",
+		"bench",
+	],
+	UPPER: ["push", "pull", "bench", "shoulder", "arm", "back", "chest"],
+	LOWER: ["squat", "leg", "run", "walk", "calf", "glute"],
+	CORE: ["abs", "core", "plank", "situp"],
+	CARDIO: ["run", "walk", "cycle", "jump", "hiit"],
+};
+
+export function FitnessPlanningScreen({
+	navigation,
+}: FitnessTabScreenProps<"FitnessPlanning">) {
+	const tasks = useAtomValue(tasksAtom);
+	const [activeFilter, setActiveFilter] = useState("ALL");
+
+	const fitnessTasks = useMemo(() => {
+		const keywords = fitnessKeywords[activeFilter] || fitnessKeywords.ALL;
+		return tasks.filter((t) =>
+			keywords.some((kw) => t.title.toLowerCase().includes(kw)),
+		);
+	}, [tasks, activeFilter]);
 
 	return (
 		<SafeAreaView style={styles.safe}>
@@ -40,22 +61,28 @@ export function FitnessPlanningScreen({
 			/>
 
 			<View style={styles.filterContainer}>
-				{["ALL", "UPPER", "LOWER", "CORE", "CARDIO"].map((f) => (
-					<View
-						key={f}
-						style={[styles.filterPill, f === "ALL" && styles.filterPillActive]}
-					>
-						<Typography
-							variant="caption"
-							style={{
-								color: f === "ALL" ? colors.onPrimary : colors.muted,
-								fontWeight: "700",
-							}}
+				<ScrollView horizontal showsHorizontalScrollIndicator={false}>
+					{["ALL", "UPPER", "LOWER", "CORE", "CARDIO"].map((f) => (
+						<TouchableOpacity
+							key={f}
+							onPress={() => setActiveFilter(f)}
+							style={[
+								styles.filterPill,
+								f === activeFilter && styles.filterPillActive,
+							]}
 						>
-							{f}
-						</Typography>
-					</View>
-				))}
+							<Typography
+								variant="caption"
+								style={{
+									color: f === activeFilter ? colors.onPrimary : colors.muted,
+									fontWeight: "700",
+								}}
+							>
+								{f}
+							</Typography>
+						</TouchableOpacity>
+					))}
+				</ScrollView>
 			</View>
 
 			<FlatList
@@ -65,7 +92,7 @@ export function FitnessPlanningScreen({
 					<TaskCard
 						task={item}
 						onFocus={() => {
-							navigation.navigate("Now" as never);
+							navigation.navigate("FitnessExecution");
 						}}
 					/>
 				)}
@@ -75,8 +102,9 @@ export function FitnessPlanningScreen({
 				ListEmptyComponent={
 					<View style={styles.empty}>
 						<Typography color={colors.muted} align="center">
-							No body-maintenance tasks identified.{"\n"}Try adding 'Walk' or
-							'Yoga' to your backlog.
+							{activeFilter === "ALL"
+								? "No body-maintenance tasks identified.\nTry adding 'Walk' or 'Bench Press' to your backlog."
+								: `No tasks found for ${activeFilter} category.`}
 						</Typography>
 					</View>
 				}
@@ -93,17 +121,17 @@ const styles = StyleSheet.create({
 	filterContainer: {
 		flexDirection: "row",
 		paddingHorizontal: spacing.xl,
-		gap: spacing.sm,
 		marginTop: spacing.sm,
 		marginBottom: spacing.md,
 	},
 	filterPill: {
 		paddingHorizontal: spacing.md,
-		paddingVertical: 6,
+		paddingVertical: 8,
 		borderRadius: radius.full,
 		borderWidth: 1,
 		borderColor: colors.border,
 		backgroundColor: colors.surface,
+		marginRight: spacing.sm,
 	},
 	filterPillActive: {
 		backgroundColor: colors.primary,

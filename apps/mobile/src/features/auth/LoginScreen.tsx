@@ -14,17 +14,53 @@ import { Button } from "@/components/atoms/Button";
 import { Typography } from "@/components/atoms/Typography";
 import { FormField } from "@/components/molecules/FormField";
 import type { LoginScreenProps } from "@/navigation/types";
-import { type AuthUser, saveSessionAction } from "@/stores/authStore";
+import { type AuthUser, googleLoginAction, saveSessionAction } from "@/stores/authStore";
 import { colors, spacing } from "@/theme";
+
+// We try to import the library, but provide a mock if it's not installed yet
+// biome-ignore lint/suspicious/noExplicitAny: library is optional
+let GoogleSignin: any;
+try {
+	GoogleSignin = require("@react-native-google-signin/google-signin").GoogleSignin;
+} catch {
+	GoogleSignin = null;
+}
 
 export function LoginScreen({ navigation }: LoginScreenProps) {
 	const saveSession = useSetAtom(saveSessionAction);
+	const googleLogin = useSetAtom(googleLoginAction);
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [errors, setErrors] = useState<{ email?: string; password?: string }>(
 		{},
 	);
+
+	async function handleGoogleLogin() {
+		setLoading(true);
+		try {
+			if (GoogleSignin) {
+				// Actual implementation when library is installed
+				// await GoogleSignin.hasPlayServices();
+				// const userInfo = await GoogleSignin.signIn();
+				// await googleLogin(userInfo.user);
+			} else {
+				// Mock implementation for local testing
+				console.log("Google Sign-in library not found, using mock...");
+				await new Promise((resolve) => setTimeout(resolve, 1000));
+				await googleLogin({
+					id: `google_${Date.now()}`,
+					email: "google.user@example.com",
+					name: "Google Explorer",
+				});
+			}
+		} catch (error) {
+			console.error("Google Login Error:", error);
+			setErrors({ email: "Google login failed." });
+		} finally {
+			setLoading(false);
+		}
+	}
 
 	function validate() {
 		const next: typeof errors = {};
@@ -100,6 +136,22 @@ export function LoginScreen({ navigation }: LoginScreenProps) {
 							onPress={handleLogin}
 							style={styles.submitBtn}
 						/>
+
+						<View style={styles.divider}>
+							<View style={styles.line} />
+							<Typography variant="bodySmall" color={colors.muted}>
+								OR
+							</Typography>
+							<View style={styles.line} />
+						</View>
+
+						<Button
+							label="Continue with Google"
+							variant="outline"
+							fullWidth
+							loading={loading}
+							onPress={handleGoogleLogin}
+						/>
 					</View>
 
 					<View style={styles.footer}>
@@ -145,6 +197,18 @@ const styles = StyleSheet.create({
 	},
 	submitBtn: {
 		marginTop: spacing.sm,
+	},
+	divider: {
+		flexDirection: "row",
+		alignItems: "center",
+		gap: spacing.sm,
+		marginVertical: spacing.md,
+	},
+	line: {
+		flex: 1,
+		height: 1,
+		backgroundColor: colors.border,
+		opacity: 0.2,
 	},
 	footer: {
 		flexDirection: "row",

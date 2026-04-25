@@ -83,7 +83,9 @@ function TaskItem({
 							onPress={() => onToggleToday(task)}
 							style={[styles.taskActionBtn, isToday && styles.todayActive]}
 						>
-							<Typography style={{ fontSize: 14 }}>{isToday ? "🌙" : "☀️"}</Typography>
+							<Typography style={{ fontSize: 14 }}>
+								{isToday ? "🌙" : "☀️"}
+							</Typography>
 						</TouchableOpacity>
 						<TouchableOpacity
 							onPress={() => onEdit(task)}
@@ -382,7 +384,7 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 	todayActive: {
-		backgroundColor: colors.warning + "20",
+		backgroundColor: `${colors.warning}20`,
 		borderColor: colors.warning,
 	},
 	statusRow: {

@@ -5,6 +5,7 @@ import { Alert, FlatList, StatusBar, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FAB } from "@/components/atoms/FAB";
 import { Typography } from "@/components/atoms/Typography";
+import { ProgressPizza } from "@/components/molecules/ProgressPizza";
 import { ScreenHeader } from "@/components/molecules/ScreenHeader";
 import { GoalCreationModal } from "@/components/organisms";
 import type { StrategicTabScreenProps } from "@/navigation/types";
@@ -16,6 +17,7 @@ import {
 	loadGoalsAction,
 	updateGoalAction,
 } from "@/stores/goalsStore";
+import { tasksAtom } from "@/stores/tasksStore";
 import { colors, spacing } from "@/theme";
 import { GoalCard } from "./components";
 
@@ -26,6 +28,12 @@ export function GoalsScreen({ navigation }: StrategicTabScreenProps<"Goals">) {
 	const createGoal = useSetAtom(createGoalAction);
 	const updateGoal = useSetAtom(updateGoalAction);
 	const deleteGoal = useSetAtom(deleteGoalAction);
+	const tasks = useAtomValue(tasksAtom);
+
+	// Calculate overall goal completion vs. total goals (Tasks-based logic from wireframe)
+	const completedTasks = tasks.filter((t) => t.status === "done").length;
+	const totalGoals = goals.length || 1;
+	const goalProgress = Math.round((completedTasks / totalGoals) * 100);
 
 	const [isGoalModalVisible, setIsGoalModalVisible] = useState(false);
 	const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
@@ -83,6 +91,10 @@ export function GoalsScreen({ navigation }: StrategicTabScreenProps<"Goals">) {
 				onDrawerOpen={() => navigation.openDrawer()}
 			/>
 
+			<View style={styles.headerProgress}>
+				<ProgressPizza percentage={goalProgress} label="Overall Completion" />
+			</View>
+
 			<FlatList
 				data={goals}
 				keyExtractor={(item) => item.id}
@@ -132,5 +144,12 @@ const styles = StyleSheet.create({
 	empty: {
 		marginTop: spacing.xxl,
 		alignItems: "center",
+	},
+	headerProgress: {
+		paddingVertical: spacing.lg,
+		backgroundColor: "rgba(255,255,255,0.02)",
+		borderBottomWidth: 1,
+		borderBottomColor: colors.border,
+		marginBottom: spacing.md,
 	},
 });

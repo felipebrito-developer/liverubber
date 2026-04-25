@@ -52,3 +52,23 @@ export const logoutAction = atom(null, async (_get, set) => {
 		console.error("Failed to clear auth session", err);
 	}
 });
+
+/** Action to handle Google Login (Simulated for now) */
+export const googleLoginAction = atom(
+	null,
+	async (_get, set, googleUser: { id: string; email: string; name: string; idToken?: string }) => {
+		try {
+			const authUser: AuthUser = {
+				id: googleUser.id,
+				email: googleUser.email,
+				name: googleUser.name,
+				age: 0, // Default age
+				token: googleUser.idToken || "mock_google_token",
+			};
+		await AsyncStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authUser));
+		set(userAtom, authUser);
+	} catch (err) {
+		console.error("Failed to save Google auth session", err);
+		throw err;
+	}
+});

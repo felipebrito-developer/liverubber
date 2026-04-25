@@ -2,6 +2,7 @@ import {
 	ActivityIndicator,
 	Pressable,
 	StyleSheet,
+	type TextStyle,
 	type ViewStyle,
 } from "react-native";
 import Animated, {
@@ -21,6 +22,7 @@ interface ButtonProps {
 	fullWidth?: boolean;
 	disabled?: boolean;
 	style?: ViewStyle;
+	labelStyle?: TextStyle;
 	onPress?: () => void;
 }
 
@@ -33,6 +35,7 @@ export function Button({
 	fullWidth = false,
 	disabled,
 	style,
+	labelStyle,
 	onPress,
 }: ButtonProps) {
 	const isDisabled = disabled || loading;
@@ -74,6 +77,7 @@ export function Button({
 						variant === "outline" || variant === "ghost"
 							? { color: colors.primary }
 							: { color: colors.onPrimary },
+						labelStyle,
 					]}
 				>
 					{label}

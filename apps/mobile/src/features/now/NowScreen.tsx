@@ -21,6 +21,7 @@ import { Button } from "@/components/atoms/Button";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
 import { ScreenHeader } from "@/components/molecules/ScreenHeader";
+import { LogisticalGateOverlay } from "@/components/organisms/LogisticalGateOverlay";
 import type { FocusTabScreenProps } from "@/navigation/types";
 import { logActivityAction } from "@/stores/logsStore";
 import {
@@ -31,7 +32,6 @@ import {
 	updateTaskAction,
 } from "@/stores/tasksStore";
 import { colors, radius, spacing } from "@/theme";
-import { PreflightModal } from "./components/PreflightModal";
 import { useCountdown } from "./hooks/useCountdown";
 
 export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
@@ -222,8 +222,11 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 		<SafeAreaView style={styles.safe}>
 			<StatusBar barStyle="light-content" backgroundColor={colors.background} />
 
-			<PreflightModal
+			<LogisticalGateOverlay
 				visible={!preflightDone}
+				title={task?.title || "Focus Session"}
+				resources={[]}
+				onClose={() => navigation.navigate("ActionHub")}
 				onConfirm={() => setPreflightDone(true)}
 			/>
 
@@ -234,25 +237,21 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 					onDrawerOpen={() => navigation.openDrawer()}
 				/>
 
-				{/* Task info w/ Change button */}
+				{/* Task info w/ Meaning Anchor */}
 				<View style={styles.taskInfoContainer}>
 					<TouchableOpacity
 						style={styles.taskSelector}
 						onPress={() => setIsPickerVisible(true)}
 						activeOpacity={0.7}
 					>
-						<Typography
-							variant="caption"
-							color={colors.primary}
-							style={styles.selectorLabel}
-						>
-							TARGETING:
+						<Typography variant="label" style={styles.meaningAnchorTag}>
+							#D4AF37 VALUE/PEACE ANCHOR
 						</Typography>
 						<Typography variant="h2" align="center" style={styles.taskTitle}>
 							{task.title}
 						</Typography>
 						<Typography variant="caption" color={colors.muted}>
-							Tap to switch task (Today's Plan)
+							Shifting perspective? Tap to switch.
 						</Typography>
 					</TouchableOpacity>
 				</View>
@@ -279,26 +278,28 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 					</View>
 				</View>
 
-				{/* Actions */}
+				{/* Actions (Cognitive OS hierarchy) */}
 				<View style={styles.actions}>
 					<Button
-						label={timer.running ? "Hold" : "Engage Focus"}
-						fullWidth
-						onPress={timer.toggle}
-					/>
-					<Button
-						label="Recalibrate"
-						variant="outline"
-						fullWidth
-						onPress={handleRecalibrate}
-						style={styles.recalibrateBtn}
-					/>
-					<Button
 						label="Mission Accomplished ✓"
-						variant="ghost"
 						fullWidth
 						onPress={handleComplete}
+						style={styles.missionBtn}
 					/>
+					<View style={styles.secondaryActions}>
+						<Button
+							label={timer.running ? "Hold" : "Resume"}
+							variant="outline"
+							onPress={timer.toggle}
+							style={styles.holdBtn}
+						/>
+						<Button
+							label="Recalibrate"
+							variant="outline"
+							onPress={handleRecalibrate}
+							style={styles.recalibrateBtn}
+						/>
+					</View>
 				</View>
 			</View>
 
@@ -388,12 +389,15 @@ const styles = StyleSheet.create({
 	timerContainer: {
 		gap: spacing.lg,
 		alignItems: "center",
+		paddingHorizontal: spacing.md, // Horizontal buffer for digit "overshoot"
 	},
 	timerText: {
-		fontSize: 84, // Even bigger for focus
-		fontWeight: "200", // Sleeker, more premium look
+		fontSize: 84,
+		fontWeight: "200",
 		letterSpacing: 4,
 		color: colors.primary,
+		lineHeight: 110, // Sufficient height for the 84pt font size
+		includeFontPadding: false, // Prevents vertical shifts on Android
 	},
 	timerTrack: {
 		width: "75%",
@@ -414,7 +418,26 @@ const styles = StyleSheet.create({
 		paddingBottom: 40,
 	},
 	recalibrateBtn: {
+		flex: 1,
 		borderColor: colors.muted,
+	},
+	missionBtn: {
+		backgroundColor: colors.primary,
+		height: 60,
+	},
+	secondaryActions: {
+		flexDirection: "row",
+		gap: spacing.sm,
+	},
+	holdBtn: {
+		flex: 1,
+	},
+	meaningAnchorTag: {
+		color: colors.accent,
+		fontSize: 10,
+		letterSpacing: 2,
+		marginBottom: spacing.xs,
+		fontWeight: "700",
 	},
 	completedContainer: {
 		flex: 1,

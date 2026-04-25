@@ -1,12 +1,7 @@
 import type { Meaning, NewMeaning } from "@liverubber/shared";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
-import {
-	Modal,
-	StyleSheet,
-	TextInput,
-	View,
-} from "react-native";
+import { Modal, StyleSheet, TextInput, View } from "react-native";
 import {
 	categoriesAtom,
 	isCategoriesLoadedAtom,
@@ -72,12 +67,19 @@ export function MeaningCreationModal({
 		<Modal visible={visible} animationType="slide" transparent>
 			<View style={styles.modalOverlay}>
 				<Card style={styles.modalCard}>
-					<Typography variant="h3">
-						{editingMeaning ? "Edit Meaning" : "Define Meaning"}
-					</Typography>
-					<Typography variant="bodySmall" color={colors.muted}>
-						What truly matters to you? (e.g. Health, Growth)
-					</Typography>
+					<View style={styles.header}>
+						<Typography variant="h3" align="center">
+							{editingMeaning ? "Refine Meaning ✎" : "Define Meaning ✦"}
+						</Typography>
+						<Typography
+							variant="bodySmall"
+							color={colors.muted}
+							align="center"
+							style={styles.subtitle}
+						>
+							What truly matters to you? (e.g. Health, Growth)
+						</Typography>
+					</View>
 
 					<TextInput
 						placeholder="Outcome Name"
@@ -130,12 +132,19 @@ export function MeaningCreationModal({
 const styles = StyleSheet.create({
 	modalOverlay: {
 		flex: 1,
-		backgroundColor: "rgba(0,0,0,0.5)",
+		backgroundColor: "rgba(0,0,0,0.8)",
 		justifyContent: "center",
 		padding: spacing.xl,
 	},
 	modalCard: {
-		gap: spacing.md,
+		gap: spacing.lg,
+	},
+	header: {
+		gap: spacing.xs,
+		marginBottom: spacing.sm,
+	},
+	subtitle: {
+		marginTop: spacing.xs,
 	},
 	input: {
 		backgroundColor: colors.surface,
@@ -144,14 +153,15 @@ const styles = StyleSheet.create({
 		borderRadius: radius.md,
 		padding: spacing.md,
 		color: colors.onBackground,
+		fontSize: 16,
 	},
 	textArea: {
-		height: 80,
+		height: 100,
 		textAlignVertical: "top",
 	},
 	modalActions: {
 		flexDirection: "row",
 		gap: spacing.sm,
-		marginTop: spacing.sm,
+		marginTop: spacing.md,
 	},
 });

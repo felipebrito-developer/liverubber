@@ -3,9 +3,11 @@ import { atom, useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useMemo, useState } from "react";
 import { ScrollView, StatusBar, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Button } from "@/components/atoms/Button";
 import { Typography } from "@/components/atoms/Typography";
 import { Accordion } from "@/components/molecules/Accordion";
 import { ScreenHeader } from "@/components/molecules/ScreenHeader";
+import { LogisticalGateOverlay } from "@/components/organisms/LogisticalGateOverlay";
 import type { FocusTabScreenProps } from "@/navigation/types";
 import {
 	goalsAtom,
@@ -27,7 +29,6 @@ import {
 import { colors, spacing } from "@/theme";
 import { ActivityCard } from "./components/ActivityCard";
 import { EnergyToggle } from "./components/EnergyToggle";
-import { PreflightModal } from "./components/PreflightModal";
 
 // ─── Energy Level ──────────────────────────────────────────────────────────────
 export type EnergyLevel =
@@ -183,45 +184,78 @@ export function ActionHubScreen({
 				<EnergyToggle value={energy} onChange={setEnergy} />
 			</View>
 
+			{/* 🎯 GO TO NOW Singular CTA (Rule of One) */}
+			<View style={styles.ctaContainer}>
+				<Button
+					label="🎯 GO TO NOW"
+					fullWidth
+					onPress={() => navigation.navigate("Now")}
+					style={{ backgroundColor: colors.primary }}
+					labelStyle={{ color: colors.onPrimary, fontWeight: "bold" }}
+				/>
+			</View>
+
 			<ScrollView
 				contentContainerStyle={styles.scroll}
 				showsVerticalScrollIndicator={false}
 			>
-				<Accordion title="DAILY ROUTINE" icon="🟢" initialExpanded={true}>
+				<Accordion title="DAILY ROUTINE" icon="📅" initialExpanded={true}>
 					{dailyActivities.length === 0 ? (
 						<Typography
 							variant="bodySmall"
 							color={colors.muted}
 							style={styles.emptyAccordion}
 						>
-							No activities match your current energy.
+							No routines for today.
 						</Typography>
 					) : (
-						dailyActivities.map((item) => {
-							const isTask = "title" in item;
-							const task = item as Task;
-							const habit = item as Habit;
-							return (
-								<ActivityCard
-									key={item.id}
-									activity={item}
-									type={isTask ? "task" : "habit"}
-									goalName={
-										isTask
-											? goals.find((g) => g.id === task.goalId)?.name
-											: undefined
-									}
-									meaningName={
-										!isTask
-											? meanings.find((m) => m.id === habit.meaningId)?.name
-											: undefined
-									}
-									resources={(item as ActivityWithResources).resources}
-									onFocus={handleFocusPress}
-									onDetails={() => {}}
-								/>
-							);
-						})
+						<ScrollView
+							horizontal
+							showsHorizontalScrollIndicator={false}
+							contentContainerStyle={styles.carousel}
+						>
+							{dailyActivities
+								.filter((a) => !("title" in a))
+								.map((item) => (
+									<ActivityCard
+										key={item.id}
+										activity={item}
+										type="habit"
+										meaningName={
+											meanings.find((m) => m.id === (item as Habit).meaningId)
+												?.name
+										}
+										resources={(item as ActivityWithResources).resources}
+										onFocus={handleFocusPress}
+										onDetails={() => {}}
+										style={styles.carouselCard}
+									/>
+								))}
+						</ScrollView>
+					)}
+				</Accordion>
+
+				<Accordion title="FOCUS TASKS" icon="🎯" initialExpanded={true}>
+					{filteredTasks.length === 0 ? (
+						<Typography
+							variant="bodySmall"
+							color={colors.muted}
+							style={styles.emptyAccordion}
+						>
+							No tasks match your energy.
+						</Typography>
+					) : (
+						filteredTasks.map((item) => (
+							<ActivityCard
+								key={item.id}
+								activity={item}
+								type="task"
+								goalName={goals.find((g) => g.id === item.goalId)?.name}
+								resources={(item as ActivityWithResources).resources}
+								onFocus={handleFocusPress}
+								onDetails={() => {}}
+							/>
+						))
 					)}
 				</Accordion>
 
@@ -232,7 +266,7 @@ export function ActionHubScreen({
 							color={colors.muted}
 							style={styles.emptyAccordion}
 						>
-							No weekly habits scheduled or energetic enough.
+							No weekly habits.
 						</Typography>
 					) : (
 						weeklyHabits.map((item) => (
@@ -278,7 +312,7 @@ export function ActionHubScreen({
 				</Accordion>
 			</ScrollView>
 
-			<PreflightModal
+			<LogisticalGateOverlay
 				visible={!!preflightItem}
 				title={preflightItem?.title || ""}
 				resources={preflightItem?.resources || []}
@@ -308,5 +342,19 @@ const styles = StyleSheet.create({
 		paddingVertical: spacing.md,
 		textAlign: "center",
 		fontStyle: "italic",
+	},
+	ctaContainer: {
+		paddingHorizontal: spacing.xl,
+		paddingVertical: spacing.md,
+		backgroundColor: colors.background,
+		borderBottomWidth: 1,
+		borderBottomColor: colors.border,
+	},
+	carousel: {
+		paddingRight: spacing.xl,
+		gap: spacing.md,
+	},
+	carouselCard: {
+		width: 280,
 	},
 });

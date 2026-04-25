@@ -50,7 +50,7 @@ export type StrategicTabParamList = {
 // ─── Module 3: Logistics (Store) ──────────────────────────────────────────────
 export type StoreTabParamList = {
 	StoreDashboard: undefined;
-	StoreManagement: undefined;
+	Storage: undefined;
 	StoreAudit: undefined;
 };
 
