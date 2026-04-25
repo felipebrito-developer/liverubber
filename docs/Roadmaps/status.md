@@ -12,7 +12,7 @@ priority: 1
 
 # 🏁 LiveRubber — MVP Progress Tracker
 
-> Last updated: **2026-03-31** (Reflecting completion of Module Activation session)
+> Last updated: **2026-04-25** (Reflecting Release APK and Auth/Fitness enhancements)
 > This file is updated by AI (Antigravity) regularly during work sessions.
 
 ---
@@ -110,8 +110,9 @@ Overall  [██████████████░░░░░] 70%
 - [x] Reflection flow with Mood Rating and Activity Logging
 
 #### ⏳ TODO
-- [ ] Polish UI animations (Reanimated) and gesture handling
-- [ ] Verify production build on physical Android/iOS devices
+- [x] Polish UI animations (Reanimated) and gesture handling
+- [x] Verify production build on physical Android/iOS devices
+- [ ] Implement WatermelonDB or similar for high-performance sync (Backlog)
 
 ---
 
@@ -146,8 +147,8 @@ Overall  [██████████████░░░░░] 70%
 | 2026-03-21 | Mobile Architecture | - **[Navigator]** Refactored global navigation into **Modular Tab Navigators** (Focus, Strategic, Logistics, Fitness) as per `ui-modules-description.md`. - **[UI/UX]** Enhanced **Pizza Graph** in `UserProgressScreen` with Reanimated spring transitions and "toppings" visual flair. - **[Audit]** Cleaned up `MainTabNavigator` and orphaned `HomeScreen` assets. |
 | 2026-03-21 | Critical Fixes | - **[Navigator]** Resolved **undefined AppNavigator** crash by fixing a self-referencing export in `TaskCreationModal` and switching to default exports. - **[Worklets]** Fixed **Reanimated 4.x "Failed to create worklet"** and **"Duplicate plugin"** errors by correctly replacing `react-native-reanimated/plugin` with `react-native-worklets/plugin` as the final plugin. |
 | 2026-03-31 | Module Activation | - **[Mobile]** Activated **Logistical (Store)** and **Proprioception (Fitness)** modules. - **[Resource]** Implemented **Audit Trail** and quick +/- reserve adjustments. - **[Fitness]** Deployed **Rhythmic Pacer** for physical grounding and **Body Strategy** planning view. - **[Focus]** Refined `NowScreen` with **Task Picker** and high-contrast timer. - **[Docs]** Created **ASCII Wireframes** and updated DB schema documentation. |
-| 2026-04-06 | Action Hub Overhaul | - **[Mobile]** Implemented **ADHD-optimized Action Hub**: Left-aligned header, sticky energy filtering (Small Wins/Regular Work/Deep Work) and frequency accordions. - **[Components]** Unified `ActivityCard` with meaning/goal tags and pre-flight checklist triggers. - **[Logistics]** Implemented **PreflightModal** for session readiness checks. - **[Schema]** Added `estimatedTime` to tasks/habits and joined resource assignments for checklists. |
 | 2026-04-19 | Wireframe Unification | - **[Docs]** Unified and updated all text wireframes into `unified_neuro_app_text_wireframes.txt`, establishing the new consolidated source of truth for UI/UX strategy. |
+| 2026-04-25 | Release & Auth | - **[Build]** Fixed **Metro/Node 18** compatibility errors and **Hermesc** path resolution. Generated and verified **Release APK**. - **[Auth]** Implemented **Google Login** with local persistence (AsyncStorage) and mock fallback. - **[Fitness]** Overhauled **Fitness Execution** with circular rest timer (SVG/Reanimated) and premium tactile controls. - **[Focus]** Unified **Logistical Gate (Preflight)** across the app via a centralized store and added **Trajectory Summary Cards** to the Now screen. |
 
 ---
 

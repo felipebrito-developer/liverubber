@@ -26,6 +26,8 @@ priority: 1
     * **Summary:** Today's events list (minimalist).
 * **Tab 2: Now Screen**
     * Improved Focus Mode: Zero-distraction UI with the "Meaning Anchor".
+    * **Trajectory Summary:** Horizontal cards showing daily "Wins", "Goal %", and "Focus Mins".
+    * **Logistical Gate:** Unified pre-session ritual system for resource and capacity check.
 * **Tab 3: Action Hub**
     * Energy-filtered task selection.
 
@@ -51,8 +53,10 @@ priority: 1
 * **Tab 1: Fitness Dashboard**
     * Weekly progress cards + Today's Exercise list.
 * **Tab 2: Execution Screen (Neuro-Possibilities)**
-    * *Option A: The Rhythmic Pacer:* Visual/Audio pulses to help with motor planning and focus.
-    * *Option B: Mirror Mode:* Minimalist gif/video loops to ground the user in their body (Proprioception).
+    * **Circular Rest Timer:** Premium SVG/Reanimated visualization for neural recovery.
+    * **Tactile Controls:** Oversized +/- steppers for Reps and Weight logging.
+    * **Contextual Anchors:** "Last Set" display for immediate performance baseline.
+    * *The Rhythmic Pacer:* Visual pulses to help with motor planning and focus.
 * **Tab 3: Planning**
     * Task-tree view for planning body-part-specific sessions.
 
