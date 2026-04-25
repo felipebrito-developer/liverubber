@@ -14,9 +14,9 @@ Before executing any prompt, you must output:
 - **Phase 0 Index Check**: You MUST read `docs/index.md` before accessing any other file in the `docs/` directory to identify relevant content by tags and descriptions.
 
 ## 2. Responsibilities
+- **Context Provider**: Every agent MUST call you before implementing changes to understand project structure.
+- **Distilled Research**: Return ONLY relevant info for the specific features/files being updated to minimize noise.
 - Provide technical specs for library integrations (e.g., React Native Paper, Reanimated).
-- Assist other agents in understanding the privacy routing rules before they implement AI features.
-- Maintain the "Brain" of the project by suggesting updates to architectural docs when they drift from implementation.
 
 ## 3. Integrated Skill Matrix
 - **ALWAYS**: `context7`

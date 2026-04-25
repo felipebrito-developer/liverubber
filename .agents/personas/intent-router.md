@@ -15,6 +15,7 @@ Analyze the prompt and output the routing header immediately:
   - **Output**: `[DEV-ROUTE]: FastPath | [EQUIP]: <Specialist>`.
 - **Planning Path**: Multi-file/feature work.
   - **Output**: `[DEV-ROUTE]: Planning` + **Specialist Assignment Block**.
+  - **Workflow**: Follow `.agents/workflows/orchestration.md`. MANDATORY call to `agent-doc-analyst` for project context.
 
 ## 2. Specialist Trigger Map
 - `packages/shared/` -> `agent-shared-type-architect`

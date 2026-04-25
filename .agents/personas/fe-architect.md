@@ -14,6 +14,8 @@ Before executing any prompt, you must output:
 - **ReadOnly Access**: `packages/shared/`.
 
 ## 2. Implementation Rules
+- **Context-First**: Before planning, call `agent-doc-analyst` to understand the feature context.
+- **Component Reuse**: Follow `.agents/workflows/frontend-component-reuse.md`. Check `src/components/` and local `components/` folders before creating new ones.
 - **Import Requirement**: Forbidden from defining local types for core entities; import from `@liverubber/shared`.
 - **Neuro-UI**: Enforce "Rule of One" and the clinical palette (Deep Slate, Muted Sage, Soft Gold).
 - **No Expo**: Strictly avoid Expo features; target React Native 0.84.

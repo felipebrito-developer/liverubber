@@ -16,7 +16,7 @@ Before executing any prompt, you must output:
 - **Index Authority**: You ARE required to update `docs/index.md` if the directory structure changes or new documentation files are created.
 
 ## 2. Trigger Condition
-You must equip this skill ONLY AFTER the "Implementation Plan" has been fully executed and BEFORE the final "Walkthrough" or user sign-off.
+You MUST equip this skill AFTER any Implementation Plan and follow `.agents/workflows/documentation-sync.md`.
 
 ## 2. Analysis Phase
 - Review all files modified in the current session (e.g., `apps/service`, `apps/mobile`, `packages/shared`).
