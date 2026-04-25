@@ -8,3 +8,6 @@
 4. **Clean Architecture**: Follow `handler → service → repository → domain`.
 5. **Privacy**: Use the Privacy Router in `apps/ai-bridge/` for all user-generated content.
 6. **Sync**: Update `docs/mvp-progress.md` after every Planning Path task.
+7. **Local Binary Execution**
+- ONLY execute binaries from the workspace proxy folder: `./.agents/bin/`.
+- Commands: `./.agents/bin/bun`, `./.agents/bin/biome`, `./.agents/bin/turbo`.

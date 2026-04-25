@@ -65,3 +65,5 @@ apps/mobile/android/app/debug.keystore
 */*/dist/*
 apps/mobile/dist-web/
 __tests__/
+.gradle_home/wrapper/dists/
+bun.lock

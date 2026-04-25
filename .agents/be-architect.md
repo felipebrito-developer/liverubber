@@ -1,0 +1,1 @@
+/home/felip/global-agents/be-architect.md
