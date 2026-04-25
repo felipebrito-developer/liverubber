@@ -58,12 +58,23 @@ yarn-error.log*
 *.db-shm
 *.db-wal
 
+# Environment
+.env
+.env.*
+.env.local
+!.env.example
 
+# Lints/Tools
+.biome_cache
+.eslintcache
+
+# Project specifics
 apps/mobile/android/local.properties
 apps/mobile/android/app/debug.keystore
-.gitignore
+.gradle_home/wrapper/dists/
+
 */*/dist/*
 apps/mobile/dist-web/
+
+# AI local test only
 __tests__/
-.gradle_home/wrapper/dists/
-bun.lock

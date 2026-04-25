@@ -22,7 +22,9 @@
 		"mobile:android:clean": "cd apps/mobile/android && ./gradlew clean",
 		"mobile:android:clean-all": "rm -rf apps/mobile/android/build apps/mobile/android/app/build",
 		"mobile:start": "turbo run start --filter=mobile",
-		"mobile:dev": "concurrently --kill-others -n \"METRO,ANDROID\" -c \"cyan,green\" \"bun mobile:start\" \"bun mobile:android\""
+		"mobile:dev": "concurrently --kill-others -n \"METRO,ANDROID\" -c \"cyan,green\" \"./.agents/bin/bun mobile:start\" \"./.agents/bin/bun mobile:android\"",
+		"mobile:android:install": "adb install -r apps/mobile/android/app/build/outputs/apk/release/app-release.apk",
+		"mobile:android:deploy": "cd apps/mobile/android && ./gradlew assembleRelease && cd ../../../ && ./.agents/bin/bun mobile:android:install"
 	},
 	"devDependencies": {
 		"@babel/runtime": "^7.24.0",
