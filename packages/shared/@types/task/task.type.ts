@@ -8,8 +8,8 @@ export type TaskPriority = Priority;
 
 export type TaskStatus = Status;
 
-import type { TagType } from "../tag/tag.type";
 import type { Goal } from "../goal/goal.type";
+import type { TagType } from "../tag/tag.type";
 
 /**
  * Core types inferred from Zod schemas for consistency with DB.
