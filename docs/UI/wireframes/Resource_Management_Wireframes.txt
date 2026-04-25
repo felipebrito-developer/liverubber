@@ -1,46 +1,44 @@
-# Resource Management (Assets & Audit) Wireframes
+# Storage Hub (Inventory & Infrastructure) Wireframe
 
----
-
-## 💎 RESOURCE ASSETS (Inventory)
-[ (≡) Menu ]                 RESOURCES                [ (🔔) Notifications ]
+[Status Status Bar (Time, Battery, etc.)]
 ----------------------------------------------------------------------
-(Subtitle: "Inventory of biological and logistical reserves.")
-
-[ ALL ]  [ MONEY ]  [ HEALTH ]  [ TIME ]
-------------------------- CATEGORY FILTER -----------------------------
-
-[ Section: RESOURCE STORES (Vertical List) ]
---------------------------------------------------
-| [ Card: (💰) Cash Wallet                                       ]
-| [ Amount: $1,250 ]   [ (⬆️) Add ]   [ (⬇️) Subtract ]
---------------------------------------------------
-| [ Card: (🌿) Biological Vitality                              ]
-| [ Amount: 75% ]      [ (⬆️) Log Sleep ] [ (⬇️) Log Stress ]
---------------------------------------------------
-| [ Card: (⚡) Spare Time                                        ]
-| [ Amount: 12h ]      [ (⬆️) Add ]   [ (⬇️) Subtract ]
---------------------------------------------------
-
-[ (➕) FAB: Create Resource Store (Bottom Right) ]
---------------------------------------------------
-
----
-
-## 📜 RESOURCE AUDIT (Transaction History)
+STORAGE HUB                                                      [ (≡) Menu ]
+(Subtitle: "Manage your inventory and reserves with precision.")
 ----------------------------------------------------------------------
-(Subtitle: "Historical ledger of resource changes.")
 
-[ Section: AUDIT LOG (Vertical List) ]
+[ Section: CATEGORY FILTERS (Horizontal Scroll) ]
+----------------------------------------------------------------------
+[ ALL ITEMS ]  [ 🍏 MEALS ]  [ 🧼 CLEANING ]  [ 💊 HEALTH ]  [ 🏋️ FITNESS ]
+----------------------------------------------------------------------
+
+[ Section: STORAGE ITEMS (Vertical List) ]
 --------------------------------------------------
-| (Timeline view of Resource shifts)
-|
-| [ Card: (🌿) Vitality (Regen: Sleep)                           ]
-| [ (+ 10%) ]  [ Date: Today, 08:00 ]
+| [ Card: 🍏 Rice                                                ]
+| [ Meaning Anchor: (❤️) Auto suficiente                         ]
+| [ Amount: 5.0 kg ]      [ ✎ ]   [ ➖ ]   [ ➕ ]
 --------------------------------------------------
-| [ Card: (💰) Cash Wallet (Spend: Coffee)                       ]
-| [ (- $5)  ]  [ Date: Yesterday, 14:00 ]
+| [ Card: 💊 Mental Energy                                       ]
+| [ Meaning Anchor: (🧠) Clarity                                ]
+| [ Amount: 85 ]          [ ✎ ]   [ ➖ ]   [ ➕ ]
+--------------------------------------------------
+| [ Card: 🧼 Laundry Detergent                                   ]
+| [ Meaning Anchor: (🏠) Maintenance                             ]
+| [ Amount: 1.2 L ]        [ ✎ ]   [ ➖ ]   [ ➕ ]
 --------------------------------------------------
 
-[ (📊) STATUS ]   [ (💎) ASSETS ]   [ (📜) AUDIT ]
+[ (➕) FAB: Create Storage Item (Bottom Right) ]
+----------------------------------------------------------------------
+
+[ (📊) STATUS ]   [ (📦) STORAGE ]   [ (📜) AUDIT ]
 ------------------------- STORE TABS (INTERNAL) ----------------------
+
+---
+
+### Functional Logic:
+1. **Tactile Adjustment**: 
+   - [➕] and [➖] buttons perform a ±1 increment on the primary amount.
+   - Updates are persisted immediately with a haptic pulse (if available).
+2. **Metadata Edit**: 
+   - Clicking [ ✎ ] opens the Management Modal for renaming or categorizing.
+3. **Seeding Logic**:
+   - New items start with "0" balance and are categorized under "Unsorted" if no category is provided.

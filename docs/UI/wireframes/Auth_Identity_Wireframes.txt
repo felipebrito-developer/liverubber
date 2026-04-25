@@ -1,0 +1,42 @@
+# Auth & Identity (Access) Wireframes
+
+[Status Bar (Time, Battery, etc.)]
+----------------------------------------------------------------------
+LIVE RUBBER                                                     [ (❓) Help ]
+(Subtitle: "Defining your strategic self.")
+----------------------------------------------------------------------
+
+## 🔐 LOGIN (Universal Access)
+----------------------------------------------------------------------
+[ (👤) Email / Username                           ]
+[ (🔒) Password                                   ]
+
+[         LOGIN TO STRATEGY HUB         ] (Primary Button)
+
+--------------------------------------------------
+| [ Forgot Password? ] | [ Create Account ]
+--------------------------------------------------
+
+---
+
+## 🏗️ REGISTER (Identity Initialization)
+----------------------------------------------------------------------
+[ (👤) Preferred Name                             ]
+[ (📧) Email Address                              ]
+[ (🔒) Secure Password                            ]
+[ (🔒) Confirm Password                           ]
+
+[         INITIALIZE IDENTITY           ] (Primary Button)
+
+--------------------------------------------------
+| "By joining, you commit to your growth trajectory."
+--------------------------------------------------
+
+---
+
+### Functional Logic:
+1. **Low Friction**: 
+   - Auto-focus on the first field.
+   - Large touch targets for input fields.
+2. **Onboarding Sequence**: 
+   - Successful registration leads directly to the "Meaning Initialization" flow.

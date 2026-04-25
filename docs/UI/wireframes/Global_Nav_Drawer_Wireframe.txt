@@ -9,10 +9,10 @@
 
 [ CORE MODULES LIST ]
 --------------------------------------------------
-| [ (🎯) FOCUS             ] -> Navigate: ActionHub / Now
-| [ (🏗️) STRATEGY          ] -> Navigate: GoalsDashboard / Backlog
-| [ (💎) STORE             ] -> Navigate: ResourceDashboard / Assets
-| [ (🏋️) BODY & MIND       ] -> Navigate: FitnessDashboard / Stats
+| [ (🎯) FOCUS             ] -> Navigate: UserProgress / ActionHub / Now
+| [ (🎯) GOALS             ] -> Navigate: Meanings / Goals / Tasks / Reflection
+| [ (📦) STORAGE           ] -> Navigate: Status / Storage / Audit
+| [ (🏋️) FITNESS           ] -> Navigate: Dashboard / Execution / Planning
 --------------------------------------------------
 
 [ RECENT ANALYTICS (Mini-View) ]

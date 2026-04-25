@@ -1,0 +1,179 @@
+🏁 Global Application Configuration (The Cognitive OS)
+Theme: M3 Dark Mode (Background: #121212 Deep Slate).
+
+Primary Action Color: #A8B5A2 (Muted Sage).
+
+Dopamine Reward Anchor (Meaning/Value Color): #D4AF37 (Soft Gold).
+
+Typography: Clear Sans Serif, min 16sp, Line-height 1.5x.
+
+🧭 The Global Drawer (Navigation Context Reset)
+Purpose: Create modular isolation and identity anchoring.
+
+Header: [ { User Identity Card } ]
+
+[ (Placeholder Avatar) ]
+
+[ Name ] + [ Age ]
+
+Navigation List: Focus, Goals Management, Store, Fitness, Settings.
+
+Footer: [ App Version ] | [ (Button) Logout ] (Secondary weight).
+
+🧩 Module 1: Focus (Strategic Execution)
+Screen 1A: User Progress (Initial Entry Screen)
+Purpose: Combat hopelessness through visual proof of success.
+
+[ = ] Header: "Your Progress" (Center Aligned).
+
+[ { Goal Progress Pizza Graph } ] (Pie chart showing overall task completion vs. total goals).
+
+[ { Fitness Progress Pizza Graph } ] (Pie chart of weekly exercise volume).
+
+[ { Today’s Events Summary } ] (Minimalist chronological list).
+
+[Nav: Progress | Action Hub | Now ] (Bottom Tab Navigation).
+
+Screen 1B: Action Hub (Decision Funnel)
+Purpose: Combat decision paralysis via energy filtering.
+
+[ = ] Header: "Action Hub" (Left); Menu (≡); Notifications (🔔).
+
+[ Sticky Energy Filter ] (3-toggle SegmentedButton):
+
+[ LOW ] (Soft Sage) -> Label: "Small Wins".
+
+[ Balanced ] -> Label: "Regular Work".
+
+[ HIGH ] -> Label: "Deep Work".
+
+[ { Daily Routine Accordion } ] (Horizontal carousel of high-streak Requirements Inheritance tasks/habits).
+
+[ { Focus Tasks Accordion } ] (Vertical list of tasks matching the current energy filter):
+
+[ { Task Card } ]
+
+Task Title (Large) | (Estimated Time) (Combats time blindness) | (Streak).
+
+(Gold Tag) Meaning Anchor (Activates purpose dopamine).
+
+(Grey Tag) Associated Goal.
+
+[ 🎯 GO TO NOW ] Singular CTA (sage green, Rule of One).
+
+[ (FAB) + ] (Bottom-right elevated button - Add new Task).
+
+Overlay: The Logistical Gate ( flow Preservation)
+Purpose: Prevent frustrative mid-task Flow Interruption.
+
+Trigger: Clicar em 🎯 FOCUS.
+
+[ { Blocking Modal - Dim Blurred Background } ]
+
+Title: "Logistical Gate" (O Portal Logístico).
+
+Do you have these ready?
+
+[ { Item 1 Icon } ] [ Checkbox ] Item Name (READY).
+
+[ { Item 2 Icon } ] [ Checkbox ] Item Name (NOT READY) (Links to StoreModule).
+
+[ (outlined button) Recalibrate ] (Anti-guilt alternative) | [ (filled sage button) Start Now ].
+
+Screen 1C: Now Screen (Focus Mode)
+Purpose: Immersive blackout mode for execution.
+
+[ = ] Header: (≡) Action Hub (minimal return link).
+
+[ { Value/Peace Anchor Soft Gold Tag } ] (ex: "FAMILY: Building a happy home").
+
+[ { Task Name (LARGE BOLD TYPOGRAPHY) } ].
+
+[ { Visual Progress Bar (Sage Green) } ] (Combats time-blindness).
+
+[ (Outlined button) Recalibrate ] (Strategic reassignment, no failure) | [ (Filled Sage button) Done ✅ ] (Triggers success haptics).
+
+🧩 Module 2: Goals Management (Strategic layer)
+Screen 2A: Goals Dashboard (Meaning Tree/Identity Hub)
+Purpose: Activate reward system via acting on ACT (Values).
+
+[ = ] Header: "My Meaning Hub".
+
+[ { Vertical Value/Meaning Card Stack } ]:
+
+Value Icon (e.g., ❤️ for Family).
+
+Value Name + Personal Meaning Statement ("Why this matters").
+
+Pizza Graph showing task progress only under this Value.
+
+Next Step (Highest priority task in this value).
+
+[ (FAB) + Meaning ].
+
+Screen 2B/C: Task & Goal Backlogs (Backlog Management)
+Purpose: Safe, comprehensive capture of complex goals/tasks.
+
+UI: Filterable Self-referencing hierarchy list.
+
+[ (FAB) + ] Details (Full-Screen Modal):
+
+Title (Required).
+
+Description (Optional).
+
+Icon selection.
+
+Date/Time Selector (combating time blindness).
+
+Multi-Select Tags: Category, Tags, Related Goal.
+
+Pizza Graph current status.
+
+[ { Logistics Check: Requirements needed } ] (Pre-check Materials before adding).
+
+[ { Reward Check: Resources to be added } ] (Inventory balance upon completion).
+
+Screen 2D: Reflection Log (Audit/Mood Tracking)
+Purpose: Behavioral Activation (CBT) visual feedback.
+
+[ = ] Header: "Reflection Log".
+
+[ { Activity vs Mood Graph } ] (Visualizing that effort leads to mood change).
+
+[ (Reverse Timeline List) } ]:
+
+[ { Task Card } ] + Mood Score (1-5 slider) (Activates self-awareness/mindfulness).
+
+🧩 Module 3: Store Module (Logistical layer)
+Screen 3A: Resource Dashboard
+Purpose: Externalize Object Permanence to prevent Flow Interruption.
+
+UI: Horizontal card stacks Categorized by resource type (Coffee, Materials, Fitness Gear). status indicator (In Stock / Buy Soon).
+
+Screen 3B: Management Store
+UI: Filterable list view of resources (Inventory Thresholds) + [ (FAB) + Resource ].
+
+Screen 3C: Resource Audit
+UI: History of Resource_Logs (Added/Removed transaction log).
+
+🧩 Module 4: Fitness Module (Proprioception layer)
+Screen 4A: Body Dashboard
+Purpose: Focus only on tasks categorized as Fitness.
+
+UI: Weekly progress cards (Frequencies) + Today's Exercise List.
+
+Screen 4B: Execution Pacer (Possibility: Rhythmic Pacer)
+Purpose: Reduce executive gap and ground user in the body.
+
+UI: Immersive screen. Centered visual object (expanding/contracting) that guides breathing/tempo. Minimalist haptic feedback for pacing.
+
+Screen 4C: Exercise Planning
+Purpose: Organize Activity_Logs into specific body-part focus.
+
+UI: Nested list view (Parent Fitness Task reveals recursive Fitness subtasks / Exercises).
+
+⚙️ Module 5: Settings (Minimalist)
+UI: Simple vertical list.
+
+Display Name, Color Theme Selector, Locked "Game Mode" (Classic), Age (time blindness combat), Avatar Photo.

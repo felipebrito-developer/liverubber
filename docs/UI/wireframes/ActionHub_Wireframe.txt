@@ -17,7 +17,7 @@ ACTION HUB                                                      [ (≡) Menu ]
 | [ (15 min) | Streak: 12🔥                                       ]
 | [ #D4AF37 Meaning: Clarity ]  [ Goal: Inner Peace ]
 | [ (v) Resources: Pillow, Timer ]
-| [ DETAILS (Outline) ]                 [ 🎯 FOCUS (Sage Green) ]
+| [ DETAILS ]                 [ 🎯 FOCUS (Sage Green) ]
 --------------------------------------------------
 
 [ 🟠 WEEKLY HABITS (Accordion Title) ]
@@ -32,15 +32,17 @@ ACTION HUB                                                      [ (≡) Menu ]
 ...
 --------------------------------------------------
 
-[ (≡) STRATEGY ]   [ (🎯) DAILY ]   [ (🏋️) BODY ]   [ (📊) LOGS ]
-------------------------- NAVIGATION BAR -----------------------------
+[ (🎯) FOCUS ]   [ (🎯) GOALS ]   [ (📦) STORAGE ]   [ (🏋️) FITNESS ]
+------------------------- GLOBAL NAVIGATION (Drawer/Tabs) ------------------
 
 ---
 
 ### Functional Logic:
 1. **Low Energy Filtering**: 
-   - Hides medium/high energy tasks.
+   - Hides medium/high energy tasks to prevent choice paralysis.
    - **MANDATORY**: Always show URGENT tasks regardless of energy.
-2. **Pre-flight Checklist**: 
-   - Clicking [🎯 FOCUS] or [+] ADD opens a blocking modal.
-   - Checklist items are pulled from the task's `resources` field.
+2. **Activity Preparation (Pre-flight)**: 
+   - Pressing [🎯 FOCUS] opens the **Pre-flight Check ✈️** modal.
+   - This modal enforces resource verification and intention setting before the timer starts.
+3. **Accordion Hierarchy**: 
+   - Tasks are grouped by frequency (DAILY / WEEKLY / MONTHLY) to reduce visual noise.

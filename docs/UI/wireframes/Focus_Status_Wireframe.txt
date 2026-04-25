@@ -1,0 +1,55 @@
+# Status Hub (Daily Progress) Wireframe
+
+[Status Bar (Time, Battery, etc.)]
+----------------------------------------------------------------------
+STATUS HUB                                                      [ (≡) Menu ]
+(Subtitle: "Your trajectory of growth.")
+----------------------------------------------------------------------
+
+[ Section: DAILY IDENTITY ANCHOR ]
+--------------------------------------------------
+| (LABEL: IDENTITY ANCHOR)
+| "Today I am becoming: (❤️) Auto suficiente"
+--------------------------------------------------
+
+[ Section: PROGRESS VISUALIZATION ]
+--------------------------------------------------
+|   [ (🍕) 65% ]             [ (🍕) 40% ]
+|   Focus Execution        Strategic Path
+--------------------------------------------------
+
+[ Section: CURRENT BASELINE (Mood Tracker) ]
+--------------------------------------------------
+| (LABEL: CURRENT BASELINE)
+| How is your mental clarity right now?
+| [ 🌑 ]  [ 🌘 ]  [ 🌗 ]  [ 🌖 ]  [ 🌕 ]
+--------------------------------------------------
+
+[ Section: DAILY TRAJECTORY ]
+--------------------------------------------------
+| (LABEL: DAILY TRAJECTORY)
+| [  3  ] | [  12  ] | [  5  ]
+|  Wins   |   Logs   |  Goals
+--------------------------------------------------
+
+[ Section: LATEST LOGS ]
+--------------------------------------------------
+| (LABEL: LATEST LOGS)
+| ✦ focus_session           10:30 AM
+| ✦ mood_check              09:15 AM
+| ✦ task_completion         08:45 AM
+--------------------------------------------------
+
+[ (🎯) FOCUS ]   [ (🎯) GOALS ]   [ (📦) STORAGE ]   [ (🏋️) FITNESS ]
+------------------------- GLOBAL NAVIGATION (Drawer/Tabs) ------------------
+
+---
+
+### Functional Logic:
+1. **Mood Tracking**: 
+   - Selecting a mood icon logs a timestamped entry with `amountAchieved: 0`.
+2. **Progress Logic**: 
+   - Focus Execution based on today's tasks.
+   - Strategic Path based on active goals.
+3. **Identity Anchor**: 
+   - Pulls the most recently updated Meaning as the primary identity reinforcement.

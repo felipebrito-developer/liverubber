@@ -1,0 +1,56 @@
+# Activity & Strategic Modals Wireframes
+
+---
+
+## 📋 PRE-FLIGHT CHECKLIST (Activity Preparation)
+--------------------------------------------------
+[ (X) Cancel ]             Pre-flight Check ✈️           [ Engage Focus 🚀 ]
+--------------------------------------------------
+(Subtitle: "A moment of preparation prevents flow interruptions.")
+
+[ Section: ACTIVITY ]
+--------------------------------------------------
+| (📋) Bench Press (4 x 10)
+--------------------------------------------------
+
+[ Section: RESOURCE PREPARATION ]
+--------------------------------------------------
+| [ (✔️) Gym Access           ] (Checkbox)
+| [ (✔️) Water Bottle         ] (Checkbox)
+| [ (✔️) Gym Clothes          ] (Checkbox)
+--------------------------------------------------
+
+[ Section: CURRENT CAPACITY ]
+--------------------------------------------------
+| Energy Level: [ Balanced Energy (Regular) ▼ ] (Select)
+--------------------------------------------------
+
+---
+
+## 🧠 MEANING CREATION (Strategic Induction)
+--------------------------------------------------
+[ (X) Cancel ]             Define Meaning ✦              [ Solidify Meaning ]
+--------------------------------------------------
+(Subtitle: "What truly matters to you? (e.g. Health, Growth)")
+
+Meaning Name: [ Outcome Name ________________ ]
+
+[ Section: LIFE CATEGORY ]
+--------------------------------------------------
+| Category: [ Choice: (❤️) Health ▼ ] (Select Dropdown)
+--------------------------------------------------
+
+Why does this matter? (Personal legacy)
+[ __________________________________________________ ]
+[ __________________________________________________ ]
+
+---
+
+### Functional Logic:
+1. **The Pre-flight Gap**: 
+   - Mandatory for activities to reduce starting friction and flow interruptions.
+   - [Engage Focus 🚀] is disabled until all resource checkboxes are checked.
+2. **Selective Focus**: 
+   - Modals use the `Select` atom for category selection to prevent cognitive overload.
+3. **Identity Anchor**: 
+   - Meaning creation focuses on the "Why" (Personal legacy) to provide deep anchoring.

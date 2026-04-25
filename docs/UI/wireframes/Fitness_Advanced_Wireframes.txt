@@ -1,42 +1,67 @@
-# Fitness Execution & Planning Wireframes
+# Fitness (Proprioception & Action) Wireframes
+
+[Status Bar (Time, Battery, etc.)]
+----------------------------------------------------------------------
+BODY & MIND                                                     [ (≡) Menu ]
+(Subtitle: "Grounding your potential in physical action.")
+----------------------------------------------------------------------
+
+## 💪 FITNESS EXECUTION (Active Mode)
+
+### [ State A: LIFTING ]
+--------------------------------------------------
+| SET 2                           ✦ PROGRESSIVE
+| 
+| [ REPS ]                       [ WEIGHT (kg) ]
+| [ ➖ ] [  10  ] [ ➕ ]         [ ➖ ] [  60  ] [ ➕ ]
+|
+| [        LOG SET & REST        ] (Focus Action)
+--------------------------------------------------
+
+### [ State B: RESTING ]
+--------------------------------------------------
+| (LABEL: RESTING)
+| 
+|            01:29 
+|        (Giant Timer)
+|
+| [        Skip Rest →          ] (Outline)
+--------------------------------------------------
+
+[ Section: RHYTHMIC PACER ]
+--------------------------------------------------
+| ( [🔵] Pulsing Core )
+| (LABEL: PACE)
+| "Sync with the pulse for rhythmic motor planning."
+--------------------------------------------------
 
 ---
 
-## 💪 FITNESS EXECUTION (Proprioception & Focus)
+## 🏗️ BODY STRATEGY (Workout Planning)
 ----------------------------------------------------------------------
-[ (≡) Menu ]                 EXECUTION                [ (🔔) Notifications ]
-----------------------------------------------------------------------
-(Subtitle: "Grounding the user in their body.")
+(Subtitle: "Structure your physical maintenance routines.")
 
-[ OPTION A: THE RHYTHMIC PACER (Visual Flow) ]
+[ ALL ]  [ UPPER ]  [ LOWER ]  [ CORE ]  [ CARDIO ]
+------------------------- CATEGORY FILTERS ---------------------------
+
+[ Section: EXERCISE PLAN (List) ]
 --------------------------------------------------
-| ( [🔵] Pulsing Aura (Visual Heartrate Sync) )
-| ( Audio pulses (Metronome) for rhythmic motor planning )
---------------------------------------------------
-
-[ OPTION B: MIRROR MODE (Form Verification) ]
---------------------------------------------------
-| ( [🖼️] Minimalist GIF/Video Loops of Form )
---------------------------------------------------
-
-[ (🏠) DASHBOARD ]   [ (💪) EXECUTION ]   [ (📊) LOGS ]
-------------------------- FITNESS TABS (INTERNAL) --------------------
-
----
-
-## 🏗️ FITNESS PLANNING (Body-Part Specific)
-----------------------------------------------------------------------
-(Subtitle: "Planning body-part-specific sessions.")
-
-[ UPPER BODY ]  [ LOWER BODY ]  [ CORE ]  [ CARDIO ]
-------------------------- TARGET FILTERS ----------------------------
-
-[ Section: EXERCISE PLAN (Task-Tree View) ]
---------------------------------------------------
-| (Vertical List of Exercise Tasks)
-| [ Card: (🏋️) Push Up (3 Sets of 10)                           ]
-| [ Card: (🏃) Jumping Jacks (5 Min)                            ]
+| [ Card: (🏋️) Bench Press (4 x 10)            🎯 ]
+| [ Card: (🏋️) Push Up      (3 x 15)            🎯 ]
+| [ Card: (🏃) Jumping Jacks (5 Min)            🎯 ]
 --------------------------------------------------
 
 [ (➕) FAB: Create Fitness Plan (Bottom Right) ]
---------------------------------------------------
+------------------------- FITNESS TABS (INTERNAL) --------------------
+
+[ (🏠) DASHBOARD ]   [ (💪) EXECUTION ]   [ (🏗️) PLANNING ]
+
+---
+
+### Functional Logic:
+1. **Interactive Execution**: 
+   - [➖] and [➕] steps are high-contrast to prevent dexterity errors during exertion.
+   - [LOG SET] automates the transition to the REST state.
+2. **Body Strategy**: 
+   - Filters refine the task list to specific muscle groups/modalities.
+   - [🎯] Focus button on cards transitions the user directly to Execution Mode.
