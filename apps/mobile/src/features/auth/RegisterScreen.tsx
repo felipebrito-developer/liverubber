@@ -2,7 +2,6 @@ import { useSetAtom } from "jotai";
 import { useState } from "react";
 import {
 	KeyboardAvoidingView,
-	Platform,
 	ScrollView,
 	StatusBar,
 	StyleSheet,
@@ -11,6 +10,8 @@ import {
 	Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
+import auth from "@react-native-firebase/auth";
 import { Button } from "@/components/atoms/Button";
 import { Typography } from "@/components/atoms/Typography";
 import { FormField } from "@/components/molecules/FormField";
@@ -18,15 +19,6 @@ import type { RegisterScreenProps } from "@/navigation/types";
 import { api } from "@/services/api";
 import { type AuthUser, googleLoginAction, userAtom } from "@/stores/authStore";
 import { colors, spacing } from "@/theme";
-
-// Optional dependency handling
-// biome-ignore lint/suspicious/noExplicitAny: library is optional
-let GoogleSignin: any;
-try {
-	GoogleSignin = require("@react-native-google-signin/google-signin").GoogleSignin;
-} catch {
-	GoogleSignin = null;
-}
 
 export function RegisterScreen({ navigation }: RegisterScreenProps) {
 	const setUser = useSetAtom(userAtom);
@@ -72,22 +64,46 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
 	async function handleGoogleLogin() {
 		setLoading(true);
 		try {
-			if (GoogleSignin) {
-				// Real implementation placeholder
-			} else {
-				// Mock for local development
-				Alert.alert("Google Sign-in", "Simulating Google Sign-up...");
-				await new Promise((resolve) => setTimeout(resolve, 1500));
-				await googleLogin({
-					id: `google_${Date.now()}`,
-					email: "google.user@example.com",
-					name: "Google Explorer",
-				});
-				Alert.alert("Success", "Registered with Google (Mock)");
+			await GoogleSignin.hasPlayServices();
+			const userInfo = await GoogleSignin.signIn();
+			
+			// 1. Get the credential from the Google Sign-In response
+			const { idToken } = userInfo.data || {};
+			if (!idToken) {
+				throw new Error("No ID Token found from Google Sign-In");
 			}
-		} catch (error) {
-			console.error("Google Login Error:", error);
-			setErrors({ email: "Google registration failed." });
+
+			// 2. Create a Firebase credential from the Google ID token
+			const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+			// 3. Sign-in to Firebase with the credential
+			const userCredential = await auth().signInWithCredential(googleCredential);
+			const firebaseUser = userCredential.user;
+
+			if (firebaseUser) {
+				await googleLogin({
+					id: firebaseUser.uid,
+					email: firebaseUser.email || "",
+					name: firebaseUser.displayName || "Google User",
+					idToken: idToken,
+				});
+				Alert.alert("Success", `Account created for ${firebaseUser.displayName}!`);
+			}
+		} catch (error: unknown) {
+			const googleError = error as { code?: string; message?: string };
+			console.error("Google Register Error:", googleError);
+			if (googleError.code === statusCodes.SIGN_IN_CANCELLED) {
+				// cancelled
+			} else if (googleError.code === "auth/account-exists-with-different-credential") {
+				Alert.alert("Error", "An account already exists with the same email address but different sign-in credentials.");
+			} else if (googleError.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+				Alert.alert("Error", "Google Play Services not available");
+			} else {
+				Alert.alert(
+					"Setup Required",
+					"Google Registration failed. Ensure 'google-services.json' is added and SHA-1 is registered in Firebase Console."
+				);
+			}
 		} finally {
 			setLoading(false);
 		}
@@ -97,7 +113,7 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
 		<SafeAreaView style={styles.safe}>
 			<StatusBar barStyle="light-content" backgroundColor={colors.background} />
 			<KeyboardAvoidingView
-				behavior={Platform.OS === "ios" ? "padding" : "height"}
+				behavior="height"
 				style={{ flex: 1 }}
 			>
 				<ScrollView
@@ -164,6 +180,25 @@ export function RegisterScreen({ navigation }: RegisterScreenProps) {
 							loading={loading}
 							onPress={handleGoogleLogin}
 						/>
+
+						<TouchableOpacity
+							onPress={async () => {
+								setLoading(true);
+								await setUser({
+									id: "test_user_1",
+									email: "test@liverubber.app",
+									name: "Test Explorer",
+									age: 28,
+									token: "dev_bypass_token",
+								});
+								setLoading(false);
+							}}
+							style={{ marginTop: spacing.md, alignSelf: "center" }}
+						>
+							<Typography variant="caption" color={colors.primary}>
+								🛠️ BYPASS REGISTER (TEST USER)
+							</Typography>
+						</TouchableOpacity>
 					</View>
 
 					<View style={styles.footer}>
