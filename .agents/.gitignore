@@ -1,0 +1,9 @@
+/temp
+/bin
+
+# AI
+.agents/skills/
+.agents/bin/
+.agents/logs/
+.agents/memory/
+.agents/tmp/
