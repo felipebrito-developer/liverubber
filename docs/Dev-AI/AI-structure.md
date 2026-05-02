@@ -18,26 +18,26 @@ priority: 1
 LiveRubber uses a **Meta-Agent Dispatcher** model. Instead of a generic prompt-response cycle, every task must be processed through a deterministic multi-agent lifecycle.
 
 ### Core Lifecycle (Phase 1-4)
-| Phase           | Agent Role                                  | Primary Tool / Skill   | Output                                      |
-| :-------------- | :------------------------------------------ | :--------------------- | :------------------------------------------ |
-| **1. Intent**   | `intent-router`                             | Intent analysis        | **[DEV-ROUTE]** decision (Fast vs Planning) |
-| **2. Contract** | `shared-type-architect`                     | Zod / TS               | Updated `packages/shared/`                  |
-| **3. Impl**     | `be-architect` / `fe-architect`             | Vercel AI SDK / Bun tests | Clean Architecture + AI Routing            |
-| **4. Audit**    | `doc-updater` / `file-manager`              | MVP Log Sync           | Updated `docs/mvp-progress.md`              |
+| Phase           | Agent Role                      | Primary Tool / Skill      | Output                                      |
+| :-------------- | :------------------------------ | :------------------------ | :------------------------------------------ |
+| **1. Intent**   | `intent-router`                 | Intent analysis           | **[DEV-ROUTE]** decision (Fast vs Planning) |
+| **2. Contract** | `shared-type-architect`         | Zod / TS                  | Updated `packages/shared/`                  |
+| **3. Impl**     | `be-architect` / `fe-architect` | Vercel AI SDK / Bun tests | Clean Architecture + AI Routing             |
+| **4. Audit**    | `doc-updater` / `file-manager`  | MVP Log Sync              | Updated `docs/mvp-progress.md`              |
 
 ---
 
 ## 🧩 2. Agent Persona Registry
 Specialist profiles are managed in `.agents/personas/` as the single source of truth for identities and protocols. Modular technical skills (e.g., `zod`, `drizzle`) are unversioned dependencies in `.agents/skills/`.
 
-| Agent Persona                     | 🧪 Associated Skills (Modular)                                                                                                              | 🪐 Workspace Boundary (Locks)                          |
-| :-------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------ |
-| **`intent-router`**               | tech-lead-protocol                                                                                                                         | Project Root `.`                                  |
-| **`be-architect`**                | `nodejs-backend-patterns`, `sqlite-database-expert`, `drizzle-orm`, `claud-api`                                                           | `apps/service/`                                   |
-| **`fe-architect`**                | `adhd-design-expert`, `jotai-expert`, `react-native-design`, `ui-component-patterns`                                                       | `apps/mobile/src/features/`                       |
-| **`ai-bridge-specialist`**        | `mcp-builder`, `scrub-pii`, `vercel-ai-sdk`                                                                                                | `apps/ai-bridge/`                                 |
-| **`doc-updater`**                 | `doc-analyst`                                                                                                                              | `docs/`, Root `.md`, Full Read Access             |
-| **`file-manager`**                | `validate-skills`                                                                                                                          | Project Root `.`                                  |
+| Agent Persona                                                                   | 🧪 Associated Skills (Modular)                                                      | 🪐 Workspace Boundary (Locks)                                                  |
+| *-----------------------------------------------------------------------------* | t----------------------------------------------------------------------------------l | P-----------------------------------------------------------------------------` |
+| **`be-architect`** |  | `nodejs-backend-patterns`, `sqlite-database-expert`, `drizzle-orm`, `claud-api` |
+| :----------------- || `apps/service/`                                                                 |
+| **`fe-architect`**                                                              | `adhd-design-expert`, `jotai-expert`, `react-native-design`, `ui-component-patterns` | `apps/mobile/src/features/`                                                     |
+| **`ai-bridge-specialist`**                                                      | `mcp-builder`, `scrub-pii`, `vercel-ai-sdk`                                          | `apps/ai-bridge/`                                                               |
+| **`doc-updater`**                                                               | `doc-analyst`                                                                        | `docs/`, Root `.md`, Full Read Access                                           |
+| **`file-manager`**                                                              | `validate-skills`                                                                    | Project Root `.`                                                                |
 
 ---
 
