@@ -42,10 +42,10 @@ Update the mobile application's UI to utilize the newly seeded Categories, Tags,
 - **Category Filter:** Update the resource listing to filter by the new `Resources Management` category by default, but allow cross-searching.
 
 ## 🚀 Priority Checklist
-1. [ ] Connect `TaskModal` to DB Tags (Urgent, Low Energy, etc.).
-2. [ ] Implement "Low Energy" logic in `ActionHubScreen.tsx`.
-3. [ ] Sync Category colors in `CategoryItem` components.
-4. [ ] Standardize FAB (Floating Action Button) behavior across all screens.
+1. [x] Connect `TaskModal` to DB Tags (Urgent, Low Energy, etc.).
+2. [x] Implement "Low Energy" logic in `ActionHubScreen.tsx`.
+3. [x] Sync Category colors in `CategoryItem` components.
+4. [x] Standardize FAB (Floating Action Button) behavior across all screens.
 
 ## 🛡️ Clinical Guardrails
 - **Rule of One:** Each modal must have one clearly high-contrast "Confirm" button.
