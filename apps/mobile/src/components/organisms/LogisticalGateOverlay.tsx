@@ -4,6 +4,7 @@ import {
 	Modal,
 	ScrollView,
 	StyleSheet,
+	Switch,
 	TouchableOpacity,
 	View,
 } from "react-native";
@@ -95,21 +96,12 @@ export function LogisticalGateOverlay() {
 											style={styles.checkRow}
 											activeOpacity={0.8}
 										>
-											<View
-												style={[
-													styles.checkbox,
-													checked[item] && styles.checkboxDone,
-												]}
-											>
-												{checked[item] && (
-													<Typography
-														variant="caption"
-														style={{ color: colors.onPrimary }}
-													>
-														✓
-													</Typography>
-												)}
-											</View>
+											<Switch
+												value={!!checked[item]}
+												onValueChange={() => toggle(item)}
+												trackColor={{ false: colors.border, true: colors.primary }}
+												thumbColor={colors.surface}
+											/>
 											<Typography variant="bodySmall" style={styles.checkLabel}>
 												{item}
 											</Typography>

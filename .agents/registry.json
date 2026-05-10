@@ -1,4 +1,44 @@
 {
+  "_version": "registry/v1",
+  "project": {
+    "name": "LiveRubber",
+    "description": "Neuro-inclusive React Native fitness application.",
+    "root": ".",
+    "packageManager": "bun",
+    "testRunner": "bun:test",
+    "linter": "bun biome check --write ."
+  },
+  "workspaces": {
+    "shared": {
+      "path": "packages/shared/",
+      "specialist": "agent-shared-type-architect"
+    },
+    "backend": {
+      "path": "apps/service/",
+      "specialist": "agent-be-architect"
+    },
+    "mobile": {
+      "path": "apps/mobile/",
+      "type": "mobile",
+      "specialist": "agent-mobile-architect",
+      "config": {
+        "framework": "react-native",
+        "version": "0.78",
+        "rules": [
+          "./.agents/rules/mobile-rules.md",
+          "./.agents/workflows/mobile-component-reuse.md"
+        ]
+      }
+    },
+    "ai": {
+      "path": "apps/ai-bridge/",
+      "specialist": "agent-ai-bridge-specialist"
+    },
+    "docs": {
+      "path": "docs/",
+      "specialist": "agent-doc-updater"
+    }
+  },
   "permissions": {
     "allow": [
       "./.agents/bin/bun install",
@@ -14,8 +54,7 @@
       "touch",
       "mv",
       "find",
-      "./.agents/bin/bun install",
-      "./.agents/bin/bun biome check --write",
+      "./.agents/bin/biome check --write",
       "./.agents/bin/turbo run build"
     ],
     "deny": [
@@ -23,18 +62,18 @@
       "mv (outside project root)",
       "sudo",
       "curl"
-    ]
-  },
-  "workspace_locks": {
-    "intent-router": ".",
-    "doc-analyst": ".",
-    "doc-updater": ".",
-    "file-manager": ".",
-    "shared-type-architect": "packages/shared/",
-    "be-architect": "apps/service/",
-    "fe-architect": "apps/mobile/",
-    "ai-bridge-specialist": "apps/ai-bridge/",
-    "qa-specialist": "."
+    ],
+    "agent-file-manager": {
+      "allowedRoots": [".", ".agents/"],
+      "lintCommand": "bun biome check --write ."
+    },
+    "agent-qa-specialist": {
+      "writeAccess": ["**/*.spec.ts", "**/*.test.ts", "e2e/**", "__tests__/**", "test-plans/**"]
+    },
+    "agent-test-runner": {
+      "functionalCommand": "bun test",
+      "regressionCommand": "bun test --coverage"
+    }
   },
   "env": {
     "BUN_BINARY": "./.agents/bin/bun",

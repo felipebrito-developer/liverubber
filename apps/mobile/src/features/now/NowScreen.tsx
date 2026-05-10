@@ -20,6 +20,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "@/components/atoms/Button";
 import { Typography } from "@/components/atoms/Typography";
 import { Card } from "@/components/molecules/Card";
+import { ProgressPizza } from "@/components/molecules/ProgressPizza";
 import { ScreenHeader } from "@/components/molecules/ScreenHeader";
 import { LogisticalGateOverlay } from "@/components/organisms";
 import type { FocusTabScreenProps } from "@/navigation/types";
@@ -283,35 +284,63 @@ export function NowScreen({ navigation }: FocusTabScreenProps<"Now">) {
 						DAILY TRAJECTORY
 					</Typography>
 					<View style={styles.trajectoryCards}>
-						<Card style={styles.statCard}>
-							<Typography variant="h3">
-								{tasks.filter((t) => t.status === "done" && t.isForToday).length}
-							</Typography>
-							<Typography variant="caption" color={colors.muted}>
-								Wins
-							</Typography>
-						</Card>
-						<Card style={styles.statCard}>
-							<Typography variant="h3">
-								{Math.round(
-									(tasks.filter((t) => t.status === "done" && t.isForToday)
-										.length /
-										(tasks.filter((t) => t.isForToday).length || 1)) *
-										100,
-								)}
-								%
-							</Typography>
-							<Typography variant="caption" color={colors.muted}>
-								Daily Goal
-							</Typography>
-						</Card>
-						<Card style={styles.statCard}>
-							<Typography variant="h3">{timer.display.split(":")[0]}</Typography>
-							<Typography variant="caption" color={colors.muted}>
-								Focus Mins
-							</Typography>
-						</Card>
+						<ProgressPizza 
+							percentage={Math.round(
+								(tasks.filter((t) => t.status === "done" && t.isForToday).length /
+									(tasks.filter((t) => t.isForToday).length || 1)) *
+									100,
+							)}
+							label="Daily Progress"
+							size={120}
+						/>
+						<View style={{ flex: 1, gap: spacing.sm, justifyContent: 'center' }}>
+							<Card style={[styles.statCard, { paddingVertical: spacing.md }]}>
+								<Typography variant="h3">
+									{tasks.filter((t) => t.status === "done" && t.isForToday).length}
+								</Typography>
+								<Typography variant="caption" color={colors.muted}>
+									Wins Today
+								</Typography>
+							</Card>
+							<Card style={[styles.statCard, { paddingVertical: spacing.md }]}>
+								<Typography variant="h3">{timer.display.split(":")[0]}</Typography>
+								<Typography variant="caption" color={colors.muted}>
+									Focus Mins
+								</Typography>
+							</Card>
+						</View>
 					</View>
+
+				{/* ── Mood Tracking ────────────────────────────────────────────── */}
+				<Card style={{ marginTop: spacing.md, gap: spacing.sm }}>
+					<Typography variant="label" style={styles.microLabel}>
+						DAILY MOOD
+					</Typography>
+					<View style={styles.moodRow}>
+						{[1, 2, 3, 4, 5].map((n) => (
+							<TouchableOpacity
+								key={n}
+								onPress={() => setMoodRating(n)}
+								style={[
+									styles.moodBtn,
+									moodRating === n && styles.moodBtnActive,
+								]}
+							>
+								<Typography
+									variant="h3"
+									style={{
+										color:
+											moodRating === n
+												? colors.onPrimary
+												: colors.onBackground,
+									}}
+								>
+									{["😞", "😕", "😐", "🙂", "😄"][n - 1]}
+								</Typography>
+							</TouchableOpacity>
+						))}
+					</View>
+				</Card>
 				</View>
 
 				{/* Actions (Cognitive OS hierarchy) */}

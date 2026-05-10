@@ -56,7 +56,7 @@ export function StorageScreen({
 		"cat-resources",
 	);
 
-	const [filterCategoryId, setFilterCategoryId] = useState<string | null>(null);
+	const [filterCategoryId, setFilterCategoryId] = useState<string | null>("cat-resources");
 	const categories = useAtomValue(categoriesAtom);
 	const loadCategories = useSetAtom(loadCategoriesAction);
 	const isCategoriesLoaded = useAtomValue(isCategoriesLoadedAtom);

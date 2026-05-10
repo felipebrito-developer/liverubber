@@ -14,7 +14,7 @@ import {
 	isGoalsLoadedAtom,
 	loadGoalsAction,
 } from "@/stores/goalsStore";
-import { tagsAtom } from "@/stores/tagsStore";
+import { tagsAtom, isTagsLoadedAtom, loadTagsAction } from "@/stores/tagsStore";
 import { colors, radius, spacing } from "../../theme";
 import { Button, Select, Typography } from "../atoms";
 import { Card } from "../molecules/Card";
@@ -39,15 +39,19 @@ export function TaskCreationModal({
 	const [goalId, setGoalId] = useState<string | null>(null);
 
 	const tags = useAtomValue(tagsAtom);
+	const isTagsLoaded = useAtomValue(isTagsLoadedAtom);
+	const loadTags = useSetAtom(loadTagsAction);
+	
 	const goals = useAtomValue(goalsAtom);
-	const loadGoals = useSetAtom(loadGoalsAction);
 	const isGoalsLoaded = useAtomValue(isGoalsLoadedAtom);
+	const loadGoals = useSetAtom(loadGoalsAction);
 
 	useEffect(() => {
-		if (visible && !isGoalsLoaded) {
-			loadGoals();
+		if (visible) {
+			if (!isGoalsLoaded) loadGoals();
+			if (!isTagsLoaded) loadTags();
 		}
-	}, [visible, isGoalsLoaded, loadGoals]);
+	}, [visible, isGoalsLoaded, loadGoals, isTagsLoaded, loadTags]);
 
 	useEffect(() => {
 		if (editingTask) {
@@ -55,7 +59,7 @@ export function TaskCreationModal({
 			setDesc(editingTask.description || "");
 			setPriority(editingTask.priority || "medium");
 			setGoalId(editingTask.goalId || null);
-			setSelectedTagIds(editingTask.tags?.map((t) => t.id) || []);
+			setSelectedTagIds(editingTask.tags?.map((t: any) => t.id) || []);
 		} else {
 			setTitle("");
 			setDesc("");

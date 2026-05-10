@@ -7,6 +7,11 @@ import {
 	loadMeaningsAction,
 	meaningsAtom,
 } from "../../stores/meaningsStore";
+import {
+	categoriesAtom,
+	isCategoriesLoadedAtom,
+	loadCategoriesAction,
+} from "../../stores/categoriesStore";
 import { colors, radius, spacing } from "../../theme";
 import { Button, Select, Typography } from "../atoms";
 import { Card } from "../molecules/Card";
@@ -29,26 +34,34 @@ export function GoalCreationModal({
 	const [name, setName] = useState("");
 	const [desc, setDesc] = useState("");
 	const [meaningId, setMeaningId] = useState<string | null>(null);
+	const [categoryId, setCategoryId] = useState<string | null>(null);
 
 	const meanings = useAtomValue(meaningsAtom);
 	const loadMeanings = useSetAtom(loadMeaningsAction);
 	const isMeaningsLoaded = useAtomValue(isMeaningsLoadedAtom);
+	
+	const categories = useAtomValue(categoriesAtom);
+	const loadCategories = useSetAtom(loadCategoriesAction);
+	const isCategoriesLoaded = useAtomValue(isCategoriesLoadedAtom);
 
 	useEffect(() => {
-		if (visible && !isMeaningsLoaded) {
-			loadMeanings();
+		if (visible) {
+			if (!isMeaningsLoaded) loadMeanings();
+			if (!isCategoriesLoaded) loadCategories();
 		}
-	}, [visible, isMeaningsLoaded, loadMeanings]);
+	}, [visible, isMeaningsLoaded, loadMeanings, isCategoriesLoaded, loadCategories]);
 
 	useEffect(() => {
 		if (editingGoal) {
 			setName(editingGoal.name);
 			setDesc(editingGoal.description || "");
 			setMeaningId(editingGoal.meaningId || null);
+			setCategoryId(editingGoal.categoryId || null);
 		} else {
 			setName("");
 			setDesc("");
 			setMeaningId(preselectedMeaningId || null);
+			setCategoryId(null);
 		}
 	}, [editingGoal, preselectedMeaningId]);
 
@@ -58,6 +71,7 @@ export function GoalCreationModal({
 			name,
 			description: desc,
 			meaningId,
+			categoryId,
 			status: editingGoal?.status || "active",
 			progress: editingGoal?.progress || 0,
 			coverImageId: editingGoal?.coverImageId || null,
@@ -95,6 +109,18 @@ export function GoalCreationModal({
 						onChangeText={setDesc}
 						multiline
 						style={[styles.input, styles.textArea]}
+					/>
+
+					<Select
+						label="Life Category"
+						placeholder="Choose a category..."
+						value={categoryId}
+						options={categories.map((cat) => ({
+							label: cat.name,
+							value: cat.id,
+							color: cat.categoryColor,
+						}))}
+						onValueChange={setCategoryId}
 					/>
 
 					{!preselectedMeaningId && (
